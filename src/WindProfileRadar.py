@@ -12,6 +12,8 @@ import types
 import functools
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+from . import base
+originData=base.originData
 
 #region 绘图参数
 velocity_colors=[
@@ -127,14 +129,10 @@ L3data_variables = {
 
 #endregion
 
-class originData:
-    def __getitem__(self, key): # 允许通过类似字典的索引方法返回属性值
-        return getattr(self, key)
-    def __setitem__(self, key, value): # 允许通过类似字典添加新索引一样设置(新)属性
-        setattr(self, key, value)
 
 L2Data=types.new_class('L2Data',(originData,))
 L3Data=types.new_class('L3Data',(originData,))
+L3Datas=types.new_class('L3Datas',(originData,))
 L2LevelData=types.new_class('L2LevelData',(originData,))
 
 def readL2(fp:str)->L2Data:
@@ -340,7 +338,7 @@ def CalcL2toL3(fkxL2obj,qcw=3,interp=False,rollmean=True,rollmeancout=5):
     
     return fkxL3obj
 
-def readL3(fp:str)->L3Data:
+def readSingleL3file(fp:str)->L3Data:
     
     '''
     读取风廓线雷达L3产品数据文件
@@ -388,6 +386,17 @@ def readL3(fp:str)->L3Data:
         print(ex)
         # raise ex
         return None
+
+def readL3files(fps:list,use_multiprocess=False,multiproces_corenum=-1)->L3Datas:
+    rbds=L3Datas()
+    if(use_multiprocess):
+        rbds['L3Datas']=Parallel(n_jobs=multiproces_corenum)(delayed(readSingleBaseData)(fp) for fp in fps)
+    else:
+        rbds['L3Datas']=[readSingleBaseData(fp) for fp in fps]
+    for i,ld in enumerate(rbds['L3Datas']):
+        rbds.append(ld)    
+    return rbds
+
 
 
 # if(__name__=='__main__'):

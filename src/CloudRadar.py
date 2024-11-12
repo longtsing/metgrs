@@ -6,6 +6,8 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import types
 from joblib import Parallel, delayed
+from . import base
+originData=base.originData
 
 #region 绘图参数
 ref_colors=[
@@ -281,13 +283,6 @@ data_unit_header=np.dtype([
 
 #endregion
 
-class originData:
-    def __getitem__(self, key):
-        return getattr(self, key)
-
-    def __setitem__(self, key, value):
-        setattr(self, key, value)
-
 SingleBaseData=types.new_class('SingleBaseData',(originData,))
 
 BaseDatas=types.new_class('BaseDatas',(originData,))
@@ -429,6 +424,8 @@ def readBaseDatas(fps:list,use_multiprocess=False,multiproces_corenum=-1)->BaseD
         rbds['BaseDatas']=Parallel(n_jobs=multiproces_corenum)(delayed(readSingleBaseData)(fp) for fp in fps)
     else:
         rbds['BaseDatas']=[readSingleBaseData(fp) for fp in fps]
+    for i,ld in enumerate(rbds['BaseDatas']):
+        rbds.append(ld)    
     return rbds
 
 def BaseDatasgetDatas(self, data_name='Z1',fixData_Length='max',unobdata=unobdata):
