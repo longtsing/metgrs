@@ -10,8 +10,11 @@ But It will suit for the Europen or USA instruments in future.
 2. Generate secondary products based on the above products
 3. Data visualization
 
-office website: [metgrs](https://github.com/longtsing/metgrs)   
+开源代码地址: [metgrs github](https://github.com/longtsing/metgrs)   
 
+文档地址：[metgrs document](https://longtsing.github.io/metgrs/)
+
+pypi发布地址:[metgrs pypi](https://pypi.org/project/metgrs/)
 # 依赖与安装
 metgrs以高内聚低耦合思想开发，主要在 python3.9 环境下开发，依赖于以下第三方库：
 - numpy
