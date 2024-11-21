@@ -18,7 +18,8 @@ metgrs以高内聚低耦合思想开发，主要在 python3.9 环境下开发，
 - matplotlib
 - joblib
 - python-dateutil
-可以通过以下命令安装：
+可以通过以下命令安装依赖：
 ```shell
 conda create -n metgrs python=3.9 numpy pandas xarray matplotlib joblib python-dateutil -c conda-forge -y
 ```
+
