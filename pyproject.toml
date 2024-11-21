@@ -9,24 +9,25 @@ readme = "README.md"
 requires-python = ">=3.8"
 classifiers = [
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: GPL License",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Operating System :: OS Independent",
 ]
-license = {text = "GPL License", file = "LICENSE"}
-dynamic = ["license", "dependencies"]
+license = {file = "LICENSE"}
 
-[project.dependencies]
-numpy = "*"
-pandas = "*"
-xarray = "*"
-matplotlib = "*"
-joblib = "*"
-python-dateutil = "*"
+dependencies = [
+    'python>=3.7,<3.12',
+    'matplotlib >=3.1',
+    'numpy >=1.21.5',
+    'pandas>=1.0.4',
+    'xarray>=0.10.0',
+    'joblib >=1.0',
+    'python-dateutil >=1.0',
+]
 
 [project.urls]
-Homepage = "https://github.com/longtsing/metgrs"
-Issues = "https://github.com/longtsing/metgrs/issues"
+homepage = "https://github.com/longtsing/metgrs"
+issues = "https://github.com/longtsing/metgrs/issues"
 
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = ["setuptools>=70.0"]
 build-backend = "setuptools.build_meta"
