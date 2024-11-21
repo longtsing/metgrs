@@ -13,6 +13,7 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 license = {text = "GPL License", file = "LICENSE"}
+dynamic = ["license", "dependencies"]
 
 [project.dependencies]
 numpy = "*"
