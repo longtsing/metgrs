@@ -12,6 +12,15 @@ classifiers = [
     "License :: OSI Approved :: GPL License",
     "Operating System :: OS Independent",
 ]
+license = {text = "GPL License", file = "LICENSE"}
+
+[project.dependencies]
+numpy = "*"
+pandas = "*"
+xarray = "*"
+matplotlib = "*"
+joblib = "*"
+python-dateutil = "*"
 
 [project.urls]
 Homepage = "https://github.com/longtsing/metgrs"
