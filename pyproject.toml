@@ -1,6 +1,6 @@
 [project]
 name = "metgrs"
-version = "0.2.2"
+dynamic = ["version"]
 authors = [
     { name="longtsing", email="longtsing@cug.edu.cn" },
 ]
