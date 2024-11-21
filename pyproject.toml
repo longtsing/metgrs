@@ -1,0 +1,22 @@
+[project]
+name = "metgrs"
+version = "0.2.0"
+authors = [
+    { name="longtsing", email="longtsing@cug.edu.cn" },
+]
+description = "The Python Package work for The Ground-based Remote Sensing Data Operation."
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GPL License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/longtsing/metgrs"
+Issues = "https://github.com/longtsing/metgrs/issues"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
