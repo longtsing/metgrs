@@ -17,6 +17,14 @@ L0Data=types.new_class('L0Data',(originData,))
 L0Datas=types.new_class('L0Datas',(originData,))
 
 def readSingleL0File(l0file:str)->L0Data:
+    '''
+    读取单个L0激光雷达文件
+    Args:
+        l0file: L0激光雷达文件路径
+
+    Returns:
+        L0Data: 激光雷达L0产品对象
+    '''
     l0da=L0Data()
     dts=dateutil.parser.parse(l0file[-34:-20])    
     # dt=dts-timedelta(hours=8)
