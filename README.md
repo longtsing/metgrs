@@ -15,20 +15,23 @@ But It will suit for the Europen or USA instruments in future.
 文档地址：[metgrs document](https://longtsing.github.io/metgrs/)
 
 pypi发布地址:[metgrs pypi](https://pypi.org/project/metgrs/)
+
 # 依赖与安装
-metgrs以高内聚低耦合思想开发，主要在 python3.9 环境下开发，依赖于以下第三方库：
+推荐使 用mamba 管理环境安装依赖（建议使用 Miniforge），metgrs以高内聚低耦合思想开发，主要在 python3.9 环境下开发，依赖于以下第三方库：
 - numpy
 - pandas
 - xarray
 - matplotlib
 - joblib
 - python-dateutil
+
 可以通过以下命令创建环境并安装依赖：
 ```shell
-conda create -n metgrs python=3.9 numpy pandas xarray matplotlib joblib python-dateutil -c conda-forge -y
+conda create -n metgrs python==3.9 numpy pandas xarray matplotlib joblib python-dateutil -c conda-forge -y
 ```
 可以通过以下命令安装metgrs：
 ```shell
 pip install metgrs
 ```
-
+## 特别说明
+在国内使用清华源安装metgrs及依赖库时，可能会出现403错误，这是因为清华源的问题，切换到其他源即可。
