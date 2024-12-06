@@ -130,16 +130,17 @@ L3data_variables = {
 #endregion
 
 
+L1Data=types.new_class('L1Data',(originData,))
 L2Data=types.new_class('L2Data',(originData,))
 L3Data=types.new_class('L3Data',(originData,))
 L3Datas=types.new_class('L3Datas',(originData,))
 L2LevelData=types.new_class('L2LevelData',(originData,))
 
-def readL2(fp:str)->L2Data:
+def readL2SingleL3file(fp:str)->L2Data:
     '''
-    读取风廓线雷达L2产品数据文件
+    读取风廓线雷达单个L2径向数据文件，文件命名格式为：Z_RADA_I_IIiii_yyyyMMddhhmmss_O_WPRD_雷达型号_RAD.TXT
     args:
-        fp:L2产品文件路径
+        fp:L2产品径向数据文件路径
     return:
         L2Data对象
     '''
@@ -234,7 +235,7 @@ def readL2(fp:str)->L2Data:
 
 def CalcL2toL3(fkxL2obj,qcw=3,interp=False,rollmean=True,rollmeancout=5):
     '''
-    基于L2数据计算L3数据
+    基于L2数据数学计算L3数据
     args:
         fkxL2obj:L2Data对象
         qcw:质控阈值
@@ -341,7 +342,7 @@ def CalcL2toL3(fkxL2obj,qcw=3,interp=False,rollmean=True,rollmeancout=5):
 def readSingleL3file(fp:str)->L3Data:
     
     '''
-    读取风廓线雷达L3产品数据文件
+    读取风廓线雷达单个L3产品数据文件
     args:
         fp:L3产品文件路径
     return:
