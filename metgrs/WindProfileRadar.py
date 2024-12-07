@@ -5,13 +5,14 @@ import dateutil.parser
 import dateutil.rrule
 import numpy as np
 import pandas as pd
+import xarray as xr
 from . import Utils
 import io
 import math
 import types
-import functools
 import matplotlib as mpl
-import matplotlib.pyplot as plt
+from joblib import Parallel,delayed
+import xml.etree.ElementTree as ET
 from . import base
 originData=base.originData
 
@@ -126,17 +127,174 @@ L3data_variables = {
     "Vertical_Confidence": "垂直方向可信度",
     "Cn2": "Cn2"
 } 
-
+L1Struct_FileTag = np.dtype([
+    ('FileID', 'S8'),   # 字符类型数组，用于存储文件标识，字节数为8，这里固定值为WNDFFT
+    ('VersionNo', 'f4'),  # 单精度浮点数类型，用于表示数据格式版本号，字节数为4，格式为两位整数两位小数，示例值如01.20
+    ('FileHeaderLength', 'i4') # 32位整数类型，用于表示文件头的长度，字节数为4，是4位整数
+])
+L1Struct_SiteInfo = np.dtype([
+    ('Country', 'S16'),
+    ('Province', 'S16'),
+    ('StationNumber', 'S16'),
+    ('Station', 'S16'),
+    ('RadarType', 'S16'),
+    ('Longitude', 'S16'),
+    ('Latitude', 'S16'),
+    ('Altitude', 'S16'),
+    ('Temp', 'S40')
+])
+L1Struct_PerformanceInfo = np.dtype([
+    ('Ae', 'i4'),
+    ('AgcWast', 'f4'),
+    ('AngleE', 'f4'),
+    ('AngleW', 'f4'),
+    ('AngleS', 'f4'),
+    ('AngleN', 'f4'),
+    ('AngleR', 'f4'),
+    ('AngleL', 'f4'),
+    ('ScanBeamN', 'u4'),
+    ('SampleP', 'u4'),
+    ('WaveLength', 'u4'),
+    ('Prp', 'f4'),
+    ('PusleW', 'f4'),
+    ('HBeamW', 'u2'),
+    ('VBeamW', 'u2'),
+    ('TranPp', 'f4'),
+    ('TranAp', 'f4'),
+    ('StartSamplBin', 'u4'),
+    ('EndSamplBin', 'u4'),
+    ('BinLength', 'i2'),
+    ('BinNum', 'i2'),
+    ('Temp', 'S40')
+])
+L1Struct_ObservationInfo = np.dtype([
+    ('SYear', 'u2'),
+    ('SMonth', 'u1'),
+    ('SDay', 'u1'),
+    ('SHour', 'u1'),
+    ('SMinute', 'u1'),
+    ('SSecond', 'u1'),
+    ('TimeP', 'u1'),
+    ('SMillisecond', 'u4'),
+    ('Calibration', 'u2'),
+    ('BeamfxChange', 'i2'),
+    ('EYear', 'u2'),
+    ('EMonth', 'u1'),
+    ('EDay', 'u1'),
+    ('EHour', 'u1'),
+    ('EMinute', 'u1'),
+    ('ESecond', 'u1'),
+    ('NNtr', 'i1'),
+    ('Ntr', 'i2'),
+    ('SpAver', 'u2'),
+    ('Fft', 'u2'),
+    ('unknow', 'u2'),
+    ('BeamDir', 'S12'),
+    ('AzimuthE', 'f4'),
+    ('AzimuthW', 'f4'),
+    ('AzimuthS', 'f4'),
+    ('AzimuthN', 'f4'),
+    ('Temp', 'S40')
+])
 #endregion
 
 
 L1Data=types.new_class('L1Data',(originData,))
+L1ObData=types.new_class('L1ObData',(originData,))
 L2Data=types.new_class('L2Data',(originData,))
+L2LevelData=types.new_class('L2LevelData',(originData,))
 L3Data=types.new_class('L3Data',(originData,))
 L3Datas=types.new_class('L3Datas',(originData,))
-L2LevelData=types.new_class('L2LevelData',(originData,))
+CalibrationData=types.new_class('CalibrationDatas',(originData,))
+StatusData=types.new_class('StatusData',(originData,))
 
-def readL2SingleL3file(fp:str)->L2Data:
+
+def readSingleL1file(fp:str)->L1Data:
+    '''
+    读取风廓线雷达单个L1功率谱文件，文件命名格式为：Z_RADA_I_IIiii_yyyyMMddhhmmss_O_WPRD_雷达型号_FFT.BIN
+    args:
+        fp:L1功率谱文件路径
+    return:
+        L1Data对象
+    '''
+    try:
+        with open(fp, 'rb') as f:
+            bs=f.read()
+        fkxL1obj=L1Data()
+        bsoffset = 0
+        data = np.frombuffer(bs[bsoffset:bsoffset + L1Struct_FileTag.itemsize], L1Struct_FileTag)
+        bsoffset = bsoffset + L1Struct_FileTag.itemsize
+        fkxL1obj['FileTag'] = originData.from_dict({name: data[name][0] for name in data.dtype.names})
+        fkxL1obj.FileTag['FileID'] = fkxL1obj.FileTag['FileID'].split(b'\x00')[0].decode('gbk')
+        data = np.frombuffer(bs[bsoffset:bsoffset + L1Struct_SiteInfo.itemsize], L1Struct_SiteInfo)
+        bsoffset = bsoffset + L1Struct_SiteInfo.itemsize
+        fkxL1obj['SiteInfo'] = originData.from_dict(
+            {name: data[name][0].split(b'\x00')[0].decode('gbk') for name in data.dtype.names}
+        )
+        fkxL1obj['Datas'] = []
+        while (bsoffset < len(bs)):
+            L1ObDatai = L1ObData()
+            data = np.frombuffer(bs[bsoffset:bsoffset + L1Struct_PerformanceInfo.itemsize], L1Struct_PerformanceInfo)
+            bsoffset = bsoffset + L1Struct_PerformanceInfo.itemsize
+            L1ObDatai['PerformanceInfo'] = originData.from_dict({name: data[name][0] for name in data.dtype.names})
+            L1ObDatai.PerformanceInfo['Temp'] = L1ObDatai.PerformanceInfo['Temp'].split(b'\x00')[0].decode('gbk')
+            data = np.frombuffer(bs[bsoffset:bsoffset + L1Struct_ObservationInfo.itemsize], L1Struct_ObservationInfo)
+            bsoffset = bsoffset + L1Struct_ObservationInfo.itemsize
+            L1ObDatai['ObservationInfo'] = originData.from_dict({name: data[name][0] for name in data.dtype.names})
+            L1ObDatai.ObservationInfo.BeamDir = L1ObDatai.ObservationInfo['BeamDir'].decode('gbk')
+            L1ObDatai.ObservationInfo.Temp = L1ObDatai.ObservationInfo['Temp'].decode('gbk')
+            L1ObDatai.Speed_per_FFT_point = L1ObDatai.PerformanceInfo.Prp / 2 / L1ObDatai.ObservationInfo.Fft * L1ObDatai.PerformanceInfo.WaveLength * 1e-5
+            data_len = L1ObDatai.ObservationInfo.Fft * L1ObDatai.PerformanceInfo.BinNum * L1ObDatai.PerformanceInfo.ScanBeamN
+            data = np.frombuffer(
+                bs[bsoffset:bsoffset + 4 * data_len],
+                'f4',
+                count=data_len
+            ).reshape(L1ObDatai.PerformanceInfo.ScanBeamN, L1ObDatai.PerformanceInfo.BinNum,
+                      L1ObDatai.ObservationInfo.Fft)
+            bsoffset = bsoffset + 4 * data_len
+            da = xr.DataArray(
+                data,
+                dims=['Beam', 'height', 'Fft'],
+                coords={
+                    'Beam': list(L1ObDatai.ObservationInfo.BeamDir),
+                    'height': np.arange(
+                        L1ObDatai.PerformanceInfo.BinNum) * L1ObDatai.PerformanceInfo.BinLength + L1ObDatai.PerformanceInfo.StartSamplBin,
+                    'Fft': np.arange(L1ObDatai.ObservationInfo.Fft)
+                },
+                attrs={
+                    'WaveLength': L1ObDatai.PerformanceInfo.WaveLength,
+                    'Prp': L1ObDatai.PerformanceInfo.Prp,
+                    'ObStarTime': datetime(
+                        L1ObDatai.ObservationInfo.SYear,
+                        L1ObDatai.ObservationInfo.SMonth,
+                        L1ObDatai.ObservationInfo.SDay,
+                        L1ObDatai.ObservationInfo.SHour,
+                        L1ObDatai.ObservationInfo.SMinute,
+                        L1ObDatai.ObservationInfo.SSecond,
+                    ),
+                    'ObEndTime': datetime(
+                        L1ObDatai.ObservationInfo.EYear,
+                        L1ObDatai.ObservationInfo.EMonth,
+                        L1ObDatai.ObservationInfo.EDay,
+                        L1ObDatai.ObservationInfo.EHour,
+                        L1ObDatai.ObservationInfo.EMinute,
+                        L1ObDatai.ObservationInfo.ESecond,
+                    ),
+                    'Speed_per_FFT_point': L1ObDatai.Speed_per_FFT_point,
+                    'WaveLength_unit': '1e-5 meter',
+                    'Prp_unit': 'Hz',
+                    'Speed_per_FFT_point_unit': 'm/s',
+                    'height_unit': 'meter',
+                }
+            )
+            L1ObDatai['DspToDpDat'] = da
+            fkxL1obj['Datas'].append(L1ObDatai)
+        return fkxL1obj
+    except Exception as ex:
+        print(ex)
+        return None
+
+def readSingleL2file(fp:str)->L2Data:
     '''
     读取风廓线雷达单个L2径向数据文件，文件命名格式为：Z_RADA_I_IIiii_yyyyMMddhhmmss_O_WPRD_雷达型号_RAD.TXT
     args:
@@ -340,9 +498,12 @@ def CalcL2toL3(fkxL2obj,qcw=3,interp=False,rollmean=True,rollmeancout=5):
     return fkxL3obj
 
 def readSingleL3file(fp:str)->L3Data:
-    
     '''
-    读取风廓线雷达单个L3产品数据文件
+    读取风廓线雷达单个L3产品数据文件；
+    支持
+    ROBS：Z_RADA_I_IIiii_yyyyMMddhhmmss_P_WPRD_雷达型号_ROBS.TXT
+    HOBS：Z_RADA_I_IIiii_yyyyMMddhhmmss_P_WPRD_雷达型号_HOBS.TXT
+    OOBS：Z_RADA_I_IIiii_yyyyMMddhhmmss_P_WPRD_雷达型号_OOBS.TXT
     args:
         fp:L3产品文件路径
     return:
@@ -389,16 +550,78 @@ def readSingleL3file(fp:str)->L3Data:
         return None
 
 def readL3files(fps:list,use_multiprocess=False,multiproces_corenum=-1)->L3Datas:
+    """
+    读取多个L3产品文件，并返回L3Datas对象。
+
+    参数:
+        fps (list): L3产品文件路径列表。
+        use_multiprocess (bool): 是否使用多进程读取文件，默认为False。
+        multiproces_corenum (int): 多进程核心数量，默认为-1表示使用所有可用核心。
+
+    返回:
+        L3Datas: 包含所有读取的L3Data对象的L3Datas实例。
+    """
     rbds=L3Datas()
     if(use_multiprocess):
-        rbds['L3Datas']=Parallel(n_jobs=multiproces_corenum)(delayed(readSingleBaseData)(fp) for fp in fps)
+        rbds['L3Datas']=Parallel(n_jobs=multiproces_corenum)(delayed(readSingleL3file)(fp) for fp in fps)
     else:
-        rbds['L3Datas']=[readSingleBaseData(fp) for fp in fps]
+        rbds['L3Datas']=[readSingleL3file(fp) for fp in fps]
     for i,ld in enumerate(rbds['L3Datas']):
         rbds.append(ld)    
     return rbds
 
+def parse_element(element):
+    # print(element.tag,len(element))
+    if(len(element)>0):
+        tags=list(map(lambda x:x.tag,element))
+        # print(len(set(tags))==len(element))
+        if(len(set(tags))==len(element)):
+            parsed_data = {}
+            for child in element:
+                parsed_data[child.tag]=parse_element(child)
+        else:
+            parsed_data = []
+            for child in element:
+                parsed_data.append(parse_element(child))
+    else:
+        if(len(element.keys())>0):
+            parsed_data= {attr: element.get(attr) for attr in element.keys()}
+        else:
+            parsed_data= element.text.strip()
+    return parsed_data
 
+def readCalibrationXMLfile(fp:str)->CalibrationData:
+    '''
+    读取风廓线雷达单个标校数据xml格式文件；
+    支持 Z_RADA_I _IIiii_yyyyMMddhhmmss_C_WPRD_雷达型号_CAL.XML
+    args:
+        fp:单个标校数据xml格式文件
+    return:
+        CalibrationData对象
+    '''
+    try:
+        with open(fp, 'r', encoding='utf8') as f:
+            xml_data = f.read()
+        xmld = ET.fromstring(xml_data)
+        return CalibrationData.from_dict(parse_element(xmld))
+    except Exception as ex:
+        print(ex)
+        return None
 
-# if(__name__=='__main__'):
-#     readL2('../Datas/WPR/L2/57461/20240807/Z_RADA_I_57461_20240807000000_O_WPRD_LC_RAD.TXT')
+def readStatuXMLfile(fp:str)->StatusData:
+    '''
+    读取风廓线雷达单个状态数据xml格式文件；
+    支持 Z_RADA_I_IIiii_yyyyMMddhhmmss_R_WPRD_雷达型号_STA.XML
+    args:
+        fp:单个状态数据xml格式文件
+    return:
+        StatusData对象
+    '''
+    try:
+        with open(fp, 'r', encoding='utf8') as f:
+            xml_data = f.read()
+        xmld = ET.fromstring(xml_data)
+        return StatusData.from_dict(parse_element(xmld))
+    except Exception as ex:
+        print(ex)
+        return None

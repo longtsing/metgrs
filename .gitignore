@@ -167,3 +167,6 @@ cython_debug/
 datas/
 #开发测试目录
 dev/
+
+#docx临时文件
+~$*.docx
