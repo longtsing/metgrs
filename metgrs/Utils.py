@@ -1,6 +1,21 @@
 import numpy as np
 import math
 
+def isInt(istr:str)->bool:
+    try:
+        int(istr)
+        return True
+    except Exception as e:
+        return False
+
+def isFloat(istr:str)->bool:
+    try:
+        isFloat(istr)
+        return True
+    except Exception as e:
+        return False
+
+
 def convert_bytes(size):
     power = 2**10
     n = 0

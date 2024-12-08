@@ -9,6 +9,9 @@ def format_dict(data, indent_level=0):
     indent = indentstr* indent_level  # 根据缩进级别确定缩进空格
     formatted_str = "{\n"
     for key, value in data.items():
+        if(key=='__datas__'):
+            if(len(value)==0):
+                continue
         formatted_str += f'{indent}{indentstr}"{key}": '
         if hasattr(value, '__dict__'):
             formatted_str += format_dict(dict(value.__dict__), indent_level + 1)+',\n'
@@ -28,8 +31,6 @@ def format_dict(data, indent_level=0):
             formatted_str += f'{repr(value)},\n'
     formatted_str = formatted_str.rstrip(",\n") + f'\n{indent}}}'
     return formatted_str
-
-
 
 class originData():
     def __init__(self):

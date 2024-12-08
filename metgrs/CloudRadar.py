@@ -2,12 +2,16 @@ from datetime import datetime,timedelta
 import dateutil.parser
 import dateutil.rrule
 import numpy as np
+import pandas as pd
+import xarray as xr
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import types
 from joblib import Parallel, delayed
 from . import base
+from . import Utils
 originData=base.originData
+isInt=Utils.isInt
 
 #region 绘图参数
 ref_colors=[
@@ -117,7 +121,7 @@ snr_norm = mpl.colors.BoundaryNorm(snr_levels, snr_cmap.N)
 #endregion
 
 #region 元数据配置
-generic_header=np.dtype(
+GenericHeader=np.dtype(
      [
          ('MagicNumber', 'i4'),
          ('MajorVersion', 'i2'),
@@ -127,7 +131,7 @@ generic_header=np.dtype(
      
      ]
 )
-site_config=np.dtype(
+SiteConfig=np.dtype(
      [
          ('Site_Code', 'S8'),
          ('Site_Name', 'S24'),
@@ -143,7 +147,7 @@ site_config=np.dtype(
      
      ]
 )
-radar_config=np.dtype(
+RadarConfig=np.dtype(
      [
          ('Frequency', 'f4'),
          ('Wavelength', 'f4'),
@@ -164,7 +168,7 @@ radar_config=np.dtype(
      
      ]
 )
-task_config=np.dtype(
+TaskConfig=np.dtype(
      [
          ('Task_Name', 'S16'),
          ('Task_Description', 'S96'),
@@ -210,7 +214,7 @@ task_config=np.dtype(
          ('Reserved', 'S20'),
      ]
 )
-cut_config=np.dtype([
+CutConfig=np.dtype([
     ('Process_Mode', 'i2'),  # SHORT
     ('Wave_Form', 'i2'),  # SHORT
     ('PRF_1', 'f4'),  # FLOAT
@@ -254,7 +258,7 @@ cut_config=np.dtype([
     ('Ground_Clutter_Filter_Window', 'i2'),  # SHORT
     ('Reserved', 'S92')  # 92 Bytes
 ])
-radial_header=np.dtype([
+RadialHeader=np.dtype([
     ('Radial_State', 'i2'),  # SHORT
     ('Spot_Blank', 'i2'),  # SHORT
     ('Sequence_Number', 'u2'),  # USHORT
@@ -288,50 +292,54 @@ SingleBaseData=types.new_class('SingleBaseData',(originData,))
 BaseDatas=types.new_class('BaseDatas',(originData,))
 
 unobdata=999999
-nodata=999999
-
-def isInt(istr):
-    try:
-        int(istr)
-        return True
-    except Exception as e:
-        return False
+nodata=np.nan
 
 def readSingleBaseData(fp:str)->SingleBaseData:
     '''    
-    读取云雷达文件    
+    读取云雷达基数据文件（分钟），文件命名格式为：Z_RADA_I_IIiii_yyyyMMddhhmmss_O_YCCR_设备型号_RAW_M.BIN
     Args:
         fp:文件路径
     Returns:
-        dict:云雷达对象    
+        SingleBaseData:云雷达基数据对象
     '''
     with open(fp,'rb') as f:
         bs=f.read()
-    ylddo=SingleBaseData()
-    data=np.frombuffer(bs[:32],generic_header)
-    ylddo['generic_header'] = {name: data[name][0] for name in data.dtype.names}
-    data=np.frombuffer(bs[32:104],site_config)
-    ylddo['site_config']  = {name: data[name][0] for name in data.dtype.names}
-    data=np.frombuffer(bs[104:256],radar_config)
-    ylddo['radar_config'] = {name: data[name][0] for name in data.dtype.names}
-    data=np.frombuffer(bs[256:512],task_config)
-    ylddo['task_config'] = {name: data[name][0] for name in data.dtype.names}
-    ylddo['task_config']['Scan_Start_Time']=ylddo['task_config']['Scan_Start_Time'].astype('datetime64[s]')
-    Cut_Number=ylddo['task_config']['Cut_Number']
-    ylddo['cut_configs']=[]
-    readed_point=512
+    yldbd=SingleBaseData()
+    bsoffset_left=0
+    bsoffset_right=bsoffset_left+GenericHeader.itemsize
+    data=np.frombuffer(bs[bsoffset_left:bsoffset_right], GenericHeader)
+    yldbd['GenericHeader'] = originData.from_dict({name: data[name][0] for name in data.dtype.names})
+    bsoffset_left=bsoffset_right
+    bsoffset_right=bsoffset_left+SiteConfig.itemsize
+    data=np.frombuffer(bs[bsoffset_left:bsoffset_right], SiteConfig)
+    yldbd['SiteConfig']  = originData.from_dict({name: data[name][0] for name in data.dtype.names})
+    bsoffset_left=bsoffset_right
+    bsoffset_right=bsoffset_left+RadarConfig.itemsize
+    data=np.frombuffer(bs[bsoffset_left:bsoffset_right], RadarConfig)
+    yldbd['RadarConfig'] = originData.from_dict({name: data[name][0] for name in data.dtype.names})
+    bsoffset_left=bsoffset_right
+    bsoffset_right=bsoffset_left+TaskConfig.itemsize
+    data=np.frombuffer(bs[bsoffset_left:bsoffset_right], TaskConfig)
+    yldbd['TaskConfig'] = originData.from_dict({name: data[name][0] for name in data.dtype.names})
+    yldbd['TaskConfig']['Scan_Start_Time']=yldbd['TaskConfig']['Scan_Start_Time'].astype('datetime64[s]')
+    Cut_Number=yldbd['TaskConfig']['Cut_Number']
+    yldbd['CutConfigs']=[]
     for i in range(Cut_Number):
-        data=np.frombuffer(bs[readed_point:readed_point+cut_config.itemsize],cut_config)
-        ylddo['cut_configs'].append({name: data[name][0] for name in data.dtype.names})
-        readed_point=readed_point+cut_config.itemsize
-    data=np.frombuffer(bs[readed_point:readed_point+radial_header.itemsize],radial_header)
-    ylddo['radial_header'] = {name: data[name][0] for name in data.dtype.names}
-    readed_point=readed_point+radial_header.itemsize
-    ylddo['datas']=[]
-    ylddo['data_infos']=[]
-    for i in range(ylddo['radial_header']['Moment_Number']):
-        data=np.frombuffer(bs[readed_point:readed_point+data_unit_header.itemsize],data_unit_header)
-        datainfo={name: data[name][0] for name in data.dtype.names}
+        bsoffset_left = bsoffset_right
+        bsoffset_right = bsoffset_left + CutConfig.itemsize
+        data=np.frombuffer(bs[bsoffset_left:bsoffset_right], CutConfig)
+        yldbd['CutConfigs'].append(originData.from_dict({name: data[name][0] for name in data.dtype.names}))
+    bsoffset_left = bsoffset_right
+    bsoffset_right = bsoffset_left + RadialHeader.itemsize
+    data=np.frombuffer(bs[bsoffset_left:bsoffset_right], RadialHeader)
+    yldbd['RadialHeader'] = originData.from_dict({name: data[name][0] for name in data.dtype.names})
+    yldbd['Data']=[]
+    yldbd['DataInfos']=[]
+    for i in range(yldbd['RadialHeader']['Moment_Number']):
+        bsoffset_left = bsoffset_right
+        bsoffset_right = bsoffset_left + data_unit_header.itemsize
+        data=np.frombuffer(bs[bsoffset_left:bsoffset_right],data_unit_header)
+        datainfo=originData.from_dict({name: data[name][0] for name in data.dtype.names})
         data_type_value = datainfo['Data_Type']
         if data_type_value == 1:
             datainfo['Data_Name'] = 'Z1'
@@ -395,18 +403,37 @@ def readSingleBaseData(fp:str)->SingleBaseData:
             datainfo['Data_Name'] = 'IWC'
         elif 51 <= data_type_value <= 64:
             datainfo['Data_Name'] = 'Reserved'
-        # print(datainfo)
-        ylddo['data_infos'].append(datainfo)
+        yldbd['DataInfos'].append(datainfo)
         if(datainfo['Data_Type']>0):
-            readed_point=readed_point+data_unit_header.itemsize
-            data=np.frombuffer(bs[readed_point:readed_point+datainfo['Bin_Bytes']*datainfo['Data_Length']],'i'+str(datainfo['Bin_Bytes']))
+            bsoffset_left = bsoffset_right
+            bsoffset_right = bsoffset_left + datainfo['Bin_Bytes']*datainfo['Data_Length']
+            data=np.frombuffer(bs[bsoffset_left:bsoffset_right],'i'+str(datainfo['Bin_Bytes']))
             data=np.where(data==0,nodata,(data-datainfo['Offset'])/datainfo['Scale'])
-            ylddo['datas'].append(data)
-            readed_point=readed_point+datainfo['Bin_Bytes']*datainfo['Data_Length']
+            yldbd['Data'].append(data)
         else:
-            ylddo['datas'].append(None)
-    ylddo['datas']=np.array(ylddo['datas'])
-    return ylddo
+            yldbd['Data'].append(None)
+    varnames=list(map(lambda x: x['Data_Name'],yldbd.DataInfos))
+    dvar = dict(zip(varnames, yldbd.Data))
+    heights = np.arange(
+        yldbd['CutConfigs'][0]['Start_Range'],
+        yldbd['CutConfigs'][0]['Start_Range'] + yldbd['CutConfigs'][0]['Doppler_Resolution'] * yldbd.DataInfos[0][
+            'Bin_Number'],
+        yldbd['CutConfigs'][0]['Log_Resolution']
+    )
+    yldbd['Data'] = xr.Dataset(
+        data_vars={key: (['time','height'], dvar[key][np.newaxis,:]) for key in dvar.keys()},
+        coords={
+            'time':[yldbd['TaskConfig']['Scan_Start_Time'].astype(datetime)],
+            'height': heights
+        },
+        attrs={
+            'height_count': len(heights),
+            'time_reference': 'UTC',
+            'height_unit': 'meter',
+        }
+    )
+
+    return yldbd
 
 def readBaseDatas(fps:list,use_multiprocess=False,multiproces_corenum=-1)->BaseDatas:
     '''    
@@ -427,16 +454,16 @@ def readBaseDatas(fps:list,use_multiprocess=False,multiproces_corenum=-1)->BaseD
         rbds.append(ld)    
     return rbds
 
-def BaseDatasgetDatas(self, data_name='Z1',fixData_Length='max',unobdata=unobdata):
+def BaseDatasgetDatas(self,fixData_Length='max',unobdata=unobdata)->xr.Dataset:
     '''    
-    获取云雷达数据    
+    获取云雷达基数据集中的数据
     Args:
-        data_name:数据名称
+        fixData_Length:不同时次数据对齐方式，max:最大长度,min:最小长度,或者指定长度
     Returns:
-        list:数据列表    
+        xr.Dataset:数据
     '''
     # 使用列表推导式获取符合条件的数据索引和数据    
-    dataindexs, datas = zip(*[(j, bd['datas'][j]) for bd in self.BaseDatas for j, dis in enumerate(bd['data_infos']) if dis['Data_Name'] == data_name])
+    dataindexs, datas = zip(*[(j, bd['datas'][j]) for bd in self.BaseDatas for j, dis in enumerate(bd['DataInfos']) if dis['Data_Name'] == data_name])
 
     # 直接计算最大长度并在合适的数据结构上扩展数据
     if(fixData_Length=='max'):
@@ -454,11 +481,11 @@ def BaseDatasgetDatas(self, data_name='Z1',fixData_Length='max',unobdata=unobdat
     # 转换为numpy数组
     datas = np.array(datas)
 
-    times=list(map(lambda x:x['task_config']['Scan_Start_Time'].astype(datetime)+timedelta(hours=8),self.BaseDatas))
+    times=list(map(lambda x:x['TaskConfig']['Scan_Start_Time'].astype(datetime)+timedelta(hours=8),self.BaseDatas))
     heights=np.arange(
-        self.BaseDatas[0]['cut_configs'][0]['Start_Range'],
-        self.BaseDatas[0]['cut_configs'][0]['Start_Range']+self.BaseDatas[0]['cut_configs'][0]['Log_Resolution']*maxlendatas,
-        self.BaseDatas[0]['cut_configs'][0]['Log_Resolution']
+        self.BaseDatas[0]['CutConfigs'][0]['Start_Range'],
+        self.BaseDatas[0]['CutConfigs'][0]['Start_Range']+self.BaseDatas[0]['CutConfigs'][0]['Log_Resolution']*maxlendatas,
+        self.BaseDatas[0]['CutConfigs'][0]['Log_Resolution']
     )/1000
 
 
