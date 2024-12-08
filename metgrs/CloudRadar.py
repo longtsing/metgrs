@@ -427,6 +427,7 @@ def readSingleBaseData(fp:str)->SingleBaseData:
             'height': heights
         },
         attrs={
+            'time_count':1,
             'height_count': len(heights),
             'time_reference': 'UTC',
             'height_unit': 'meter',
@@ -435,6 +436,53 @@ def readSingleBaseData(fp:str)->SingleBaseData:
 
     return yldbd
 
+def BaseDatasgetDatas(self,fixData_Length='max',unobdata=unobdata)->xr.Dataset:
+    '''
+    获取云雷达基数据集中的数据
+    Args:
+        fixData_Length:不同时次数据对齐方式，max:最大长度,min:最小长度,或者指定长度
+    Returns:
+        xr.Dataset:数据
+    '''
+    varnames = list(map(lambda di: list(di.Data.data_vars), self.BaseDatas))
+    varnames = list(set([item for sublist in varnames for item in sublist]))
+    hcounts = list(map(lambda di: di.Data.height_count, self.BaseDatas))
+    times = list(map(lambda di: di.Data.time.values[0], self.BaseDatas))
+    if(fixData_Length=='max'):
+        maxlendatas = max(hcounts)
+    if(fixData_Length=='min'):
+        maxlendatas = min(hcounts)
+    if (isInt(fixData_Length)):
+        maxlendatas = int(fixData_Length)
+    heights = np.arange(
+        self.BaseDatas[0]['CutConfigs'][0]['Start_Range'],
+        self.BaseDatas[0]['CutConfigs'][0]['Start_Range'] + self.BaseDatas[0]['CutConfigs'][0][
+            'Doppler_Resolution'] * maxlendatas,
+        self.BaseDatas[0]['CutConfigs'][0]['Log_Resolution']
+    )
+    datavars = {}
+    for key in varnames:
+        dds = list(map(lambda x: np.squeeze(x.Data[key].values).tolist(), filter(lambda x: key in x.Data, self.BaseDatas)))
+        ddas = [list(d)[:maxlendatas] if (len(d) > maxlendatas) else list(d) + [unobdata] * (maxlendatas - len(d)) for d
+                in dds]
+        datavars[key] = (['time', 'height'], np.array(ddas),)
+    Datas = xr.Dataset(
+        data_vars=datavars,
+        coords={
+            'time': times,
+            'height': heights
+        },
+        attrs={
+            'time_count':len(times),
+            'height_count': maxlendatas,
+            'time_reference': 'UTC',
+            'height_unit': 'meter',
+        }
+    )
+    self.Datas=Datas
+    return Datas
+
+BaseDatas.getDatas=BaseDatasgetDatas
 def readBaseDatas(fps:list,use_multiprocess=False,multiproces_corenum=-1)->BaseDatas:
     '''    
     读取云雷达文件列表    
@@ -451,47 +499,11 @@ def readBaseDatas(fps:list,use_multiprocess=False,multiproces_corenum=-1)->BaseD
     else:
         rbds['BaseDatas']=[readSingleBaseData(fp) for fp in fps]
     for i,ld in enumerate(rbds['BaseDatas']):
-        rbds.append(ld)    
+        rbds.append(ld)
+
+    rbds.getDatas()
     return rbds
 
-def BaseDatasgetDatas(self,fixData_Length='max',unobdata=unobdata)->xr.Dataset:
-    '''    
-    获取云雷达基数据集中的数据
-    Args:
-        fixData_Length:不同时次数据对齐方式，max:最大长度,min:最小长度,或者指定长度
-    Returns:
-        xr.Dataset:数据
-    '''
-    # 使用列表推导式获取符合条件的数据索引和数据    
-    dataindexs, datas = zip(*[(j, bd['datas'][j]) for bd in self.BaseDatas for j, dis in enumerate(bd['DataInfos']) if dis['Data_Name'] == data_name])
-
-    # 直接计算最大长度并在合适的数据结构上扩展数据
-    if(fixData_Length=='max'):
-        maxlendatas = max(map(len, datas))
-        datas = [list(d) + [unobdata] * (maxlendatas - len(d)) for d in datas]
-    else:
-        if(fixData_Length=='min'):
-            maxlendatas = min(map(len, datas))
-            datas = [list(d)[:maxlendatas] for d in datas]
-        else:
-            if(isInt(fixData_Length)):
-                maxlendatas = int(fixData_Length)
-                datas = [list(d)[:maxlendatas] if(len(d)>maxlendatas) else list(d) + [unobdata] * (maxlendatas - len(d))  for d in datas]
-    
-    # 转换为numpy数组
-    datas = np.array(datas)
-
-    times=list(map(lambda x:x['TaskConfig']['Scan_Start_Time'].astype(datetime)+timedelta(hours=8),self.BaseDatas))
-    heights=np.arange(
-        self.BaseDatas[0]['CutConfigs'][0]['Start_Range'],
-        self.BaseDatas[0]['CutConfigs'][0]['Start_Range']+self.BaseDatas[0]['CutConfigs'][0]['Log_Resolution']*maxlendatas,
-        self.BaseDatas[0]['CutConfigs'][0]['Log_Resolution']
-    )/1000
-
-
-    return times,heights,datas
-
-BaseDatas.getDatas=BaseDatasgetDatas
 
 def BaseDatasplot(self, plot_type='ref', figsize=(18,12), cmap=None, norm=None,show=True,savepath=None):
     '''    
