@@ -274,7 +274,21 @@ RadialHeader=np.dtype([
     ('Max_FFT_Count', 'u2'),  # USHORT
     ('Reserved', 'S24')  # 24 Bytes
 ])
-data_unit_header=np.dtype([
+FFTData_unit_header = np.dtype([
+    ('Data_Type', 'u2'),  # USHORT
+    ('Scale', 'u2'),  # USHORT
+    ('Offset', 'u2'),  # USHORT
+    ('Bin_Bytes', 'u2'),  # USHORT
+    ('Bin_Number', 'u2'),  # USHORT
+    ('Flags', 'i2'),  # SHORT
+    ('Data_Length', 'i4'),  # INT
+    ('Reserved', 'S16'),  # 16 Bytes
+    ('FFT_Count', 'i2', (1024,)),  # SHORT* L
+    ('Number_of_coherent_accumulation', 'S1', (1024,)),  # CHAR* L
+    ('Waveform_Number', 'S1', (1024,)),  # CHAR* L
+    ('Accumulation_of_power_spectrum', 'S1', (1024,))  # CHAR* L
+])
+BaseData_unit_header=np.dtype([
     ('Data_Type', 'u2'),  # USHORT
     ('Scale', 'u2'),  # USHORT
     ('Offset', 'u2'),  # USHORT
@@ -284,19 +298,60 @@ data_unit_header=np.dtype([
     ('Data_Length', 'i4'),  # INT
     ('Reserved', 'S16')  # 16 Bytes
 ])
-
 #endregion
 
+SingleFFTData=types.new_class('SingleFFTData',(originData,))
 SingleBaseData=types.new_class('SingleBaseData',(originData,))
-
 BaseDatas=types.new_class('BaseDatas',(originData,))
 
 unobdata=999999
 nodata=np.nan
 
+def readSingleFFTData(fp:str)->SingleFFTData:
+    '''
+    读取云雷达FFT数据文件（秒），文件命名格式为：Z_RADA_I_IIiii_yyyyMMddhhmmss_O_YCCR_设备型号_FFT_MM.BIN
+    Args:
+        fp:文件路径
+
+    Returns:
+        singleFFTData:云雷达FFT数据对象
+    '''
+    with open(fp,'rb') as f:
+        bs=f.read()
+    yldbd=SingleFFTData()
+    bsoffset_left=0
+    bsoffset_right=bsoffset_left+GenericHeader.itemsize
+    data=np.frombuffer(bs[bsoffset_left:bsoffset_right], GenericHeader)
+    yldbd['GenericHeader'] = originData.from_dict({name: data[name][0] for name in data.dtype.names})
+    bsoffset_left=bsoffset_right
+    bsoffset_right=bsoffset_left+SiteConfig.itemsize
+    data=np.frombuffer(bs[bsoffset_left:bsoffset_right], SiteConfig)
+    yldbd['SiteConfig']  = originData.from_dict({name: data[name][0] for name in data.dtype.names})
+    bsoffset_left=bsoffset_right
+    bsoffset_right=bsoffset_left+RadarConfig.itemsize
+    data=np.frombuffer(bs[bsoffset_left:bsoffset_right], RadarConfig)
+    yldbd['RadarConfig'] = originData.from_dict({name: data[name][0] for name in data.dtype.names})
+    bsoffset_left=bsoffset_right
+    bsoffset_right=bsoffset_left+TaskConfig.itemsize
+    data=np.frombuffer(bs[bsoffset_left:bsoffset_right], TaskConfig)
+    yldbd['TaskConfig'] = originData.from_dict({name: data[name][0] for name in data.dtype.names})
+    yldbd['TaskConfig']['Scan_Start_Time']=yldbd['TaskConfig']['Scan_Start_Time'].astype('datetime64[s]')
+    Cut_Number=yldbd['TaskConfig']['Cut_Number']
+    yldbd['CutConfigs']=[]
+    for i in range(Cut_Number):
+        bsoffset_left = bsoffset_right
+        bsoffset_right = bsoffset_left + CutConfig.itemsize
+        data=np.frombuffer(bs[bsoffset_left:bsoffset_right], CutConfig)
+        yldbd['CutConfigs'].append(originData.from_dict({name: data[name][0] for name in data.dtype.names}))
+    bsoffset_left = bsoffset_right
+    bsoffset_right = bsoffset_left + RadialHeader.itemsize
+    data=np.frombuffer(bs[bsoffset_left:bsoffset_right], RadialHeader)
+    yldbd['RadialHeader'] = originData.from_dict({name: data[name][0] for name in data.dtype.names})
+    yldbd['Data']=[]
+
 def readSingleBaseData(fp:str)->SingleBaseData:
     '''    
-    读取云雷达基数据文件（分钟），文件命名格式为：Z_RADA_I_IIiii_yyyyMMddhhmmss_O_YCCR_设备型号_RAW_M.BIN
+    读取云雷达基数据文件（分钟），文件命名格式为：Z_RADA_I_IIiii_yyyyMMddhhmmss_O_YCCR_设备型号_RAW_MM.BIN
     Args:
         fp:文件路径
     Returns:
@@ -337,8 +392,8 @@ def readSingleBaseData(fp:str)->SingleBaseData:
     yldbd['DataInfos']=[]
     for i in range(yldbd['RadialHeader']['Moment_Number']):
         bsoffset_left = bsoffset_right
-        bsoffset_right = bsoffset_left + data_unit_header.itemsize
-        data=np.frombuffer(bs[bsoffset_left:bsoffset_right],data_unit_header)
+        bsoffset_right = bsoffset_left + BaseData_unit_header.itemsize
+        data=np.frombuffer(bs[bsoffset_left:bsoffset_right], BaseData_unit_header)
         datainfo=originData.from_dict({name: data[name][0] for name in data.dtype.names})
         data_type_value = datainfo['Data_Type']
         if data_type_value == 1:
@@ -481,7 +536,6 @@ def BaseDatasgetDatas(self,fixData_Length='max',unobdata=unobdata)->xr.Dataset:
     )
     self.Datas=Datas
     return Datas
-
 BaseDatas.getDatas=BaseDatasgetDatas
 def readBaseDatas(fps:list,use_multiprocess=False,multiproces_corenum=-1)->BaseDatas:
     '''    
@@ -504,8 +558,7 @@ def readBaseDatas(fps:list,use_multiprocess=False,multiproces_corenum=-1)->BaseD
     rbds.getDatas()
     return rbds
 
-
-def BaseDatasplot(self, plot_type='ref', figsize=(18,12), cmap=None, norm=None,show=True,savepath=None):
+def BaseDatasplot(self, data_name='Z1', figsize=(18,12), cmap=None, norm=None,show=True,savepath=None):
     '''    
     绘制云雷达数据    
     Args:
@@ -514,45 +567,57 @@ def BaseDatasplot(self, plot_type='ref', figsize=(18,12), cmap=None, norm=None,s
         cmap:颜色映射
         norm:归一化    
     '''
-    if plot_type.lower()=='ref':
-        data_name='Z1'
-        unitstr='dbZ'
+    if(data_name not in self.Datas.data_vars):
+        raise ValueError('data_name not in Datas')
+
+    if data_name=='Z1' or data_name=='Z2':
         if(cmap is None):
             cmap=ref_cmap
         if(norm is None):
             norm=ref_norm
-    elif plot_type.lower()=='velocity':
-        data_name='V1'
+    elif data_name=='V1' or data_name=='V2':
         unitstr='m/s'
         if(cmap is None):
             cmap=velocity_cmap
         if(norm is None):
             norm=velocity_norm
-    elif plot_type.lower()=='spectrumwith':
-        data_name='W1'
+    elif data_name=='W1' or data_name=='W2':
         unitstr='m/s'
         if(cmap is None):
             cmap=spectrumwith_cmap
         if(norm is None):
             norm=spectrumwith_norm
-    elif plot_type.lower()=='snr':
-        data_name='SNR1'
+    elif data_name=='SNR1' or data_name=='SNR2':
         unitstr='db'
         if(cmap is None):
             cmap=snr_cmap
         if(norm is None):
             norm=snr_norm
-    else:
-        raise ValueError('plot_type must be ref,velocity,spectrumwith or snr')
 
-    times,heights,datas=self.getDatas(data_name)
+    else:
+        unitstr='db'
+        if(cmap is None):
+            cmap=ref_cmap
+        if(norm is None):
+            norm=ref_norm
 
     fig,ax=plt.subplots(figsize=figsize)
-    im = ax.pcolormesh(times, heights, datas.T, cmap=cmap,norm=norm)
-    cbar = plt.colorbar(im, orientation='horizontal', extend='max', extendrect=True, extendfrac='auto', pad=0.08, aspect=35)
-    cbar.set_label(plot_type+' ('+unitstr+')')
-    ax.set_ylabel("Height (km)")
-    ax.set_xlabel("Time (BJT)")
+    self.Datas.Z1.plot(
+        ax=ax,
+        x='time',
+        cmap=cmap,
+        norm=norm,
+        cbar_kwargs=dict(
+            orientation='horizontal',
+            extend='max',
+            extendrect=True,
+            extendfrac='auto',
+            pad=0.08,
+            aspect=35
+        )
+    )
+    ax.set_ylabel("Height (m)")
+    ax.set_xlabel("Time (UTC)")
     if(show):
         plt.show()
     else:
