@@ -7,11 +7,12 @@ import xarray as xr
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import types
+import xml.etree.ElementTree as ET
 from joblib import Parallel, delayed
-from . import base
-from . import Utils
+from . import base,Utils
 originData=base.originData
 isInt=Utils.isInt
+parse_element=Utils.parse_element
 
 #region 绘图参数
 ref_colors=[
@@ -274,21 +275,7 @@ RadialHeader=np.dtype([
     ('Max_FFT_Count', 'u2'),  # USHORT
     ('Reserved', 'S24')  # 24 Bytes
 ])
-FFTData_unit_header = np.dtype([
-    ('Data_Type', 'u2'),  # USHORT
-    ('Scale', 'u2'),  # USHORT
-    ('Offset', 'u2'),  # USHORT
-    ('Bin_Bytes', 'u2'),  # USHORT
-    ('Bin_Number', 'u2'),  # USHORT
-    ('Flags', 'i2'),  # SHORT
-    ('Data_Length', 'i4'),  # INT
-    ('Reserved', 'S16'),  # 16 Bytes
-    ('FFT_Count', 'i2', (1024,)),  # SHORT* L
-    ('Number_of_coherent_accumulation', 'S1', (1024,)),  # CHAR* L
-    ('Waveform_Number', 'S1', (1024,)),  # CHAR* L
-    ('Accumulation_of_power_spectrum', 'S1', (1024,))  # CHAR* L
-])
-BaseData_unit_header=np.dtype([
+data_unit_header=np.dtype([
     ('Data_Type', 'u2'),  # USHORT
     ('Scale', 'u2'),  # USHORT
     ('Offset', 'u2'),  # USHORT
@@ -298,11 +285,20 @@ BaseData_unit_header=np.dtype([
     ('Data_Length', 'i4'),  # INT
     ('Reserved', 'S16')  # 16 Bytes
 ])
+FFT_extra_unit_header = [
+    ['FFT_Count', 'u2', [1024,]],  # SHORT* L
+    ['Number_of_coherent_accumulation', 'u1', [1024,]],  # CHAR* L
+    ['Waveform_Number', 'u1', [1024,]],  # CHAR* L
+    ['Accumulation_of_power_spectrum', 'u1', [1024,]]  # CHAR* L
+]
 #endregion
 
 SingleFFTData=types.new_class('SingleFFTData',(originData,))
+FFTDatas=types.new_class('FFTDatas',(originData,))
 SingleBaseData=types.new_class('SingleBaseData',(originData,))
 BaseDatas=types.new_class('BaseDatas',(originData,))
+StatusData=types.new_class('StatusData',(originData,))
+CalibrationData=types.new_class('CalibrationData',(originData,))
 
 unobdata=999999
 nodata=np.nan
@@ -316,38 +312,157 @@ def readSingleFFTData(fp:str)->SingleFFTData:
     Returns:
         singleFFTData:云雷达FFT数据对象
     '''
+    FFTScale=100.0
+    FFTOffset=32002.0
     with open(fp,'rb') as f:
         bs=f.read()
-    yldbd=SingleFFTData()
+    yldfft=SingleFFTData()
     bsoffset_left=0
     bsoffset_right=bsoffset_left+GenericHeader.itemsize
     data=np.frombuffer(bs[bsoffset_left:bsoffset_right], GenericHeader)
-    yldbd['GenericHeader'] = originData.from_dict({name: data[name][0] for name in data.dtype.names})
+    yldfft['GenericHeader'] = originData.from_dict({name: data[name][0] for name in data.dtype.names})
     bsoffset_left=bsoffset_right
     bsoffset_right=bsoffset_left+SiteConfig.itemsize
     data=np.frombuffer(bs[bsoffset_left:bsoffset_right], SiteConfig)
-    yldbd['SiteConfig']  = originData.from_dict({name: data[name][0] for name in data.dtype.names})
+    yldfft['SiteConfig']  = originData.from_dict({name: data[name][0] for name in data.dtype.names})
     bsoffset_left=bsoffset_right
     bsoffset_right=bsoffset_left+RadarConfig.itemsize
     data=np.frombuffer(bs[bsoffset_left:bsoffset_right], RadarConfig)
-    yldbd['RadarConfig'] = originData.from_dict({name: data[name][0] for name in data.dtype.names})
+    yldfft['RadarConfig'] = originData.from_dict({name: data[name][0] for name in data.dtype.names})
     bsoffset_left=bsoffset_right
     bsoffset_right=bsoffset_left+TaskConfig.itemsize
     data=np.frombuffer(bs[bsoffset_left:bsoffset_right], TaskConfig)
-    yldbd['TaskConfig'] = originData.from_dict({name: data[name][0] for name in data.dtype.names})
-    yldbd['TaskConfig']['Scan_Start_Time']=yldbd['TaskConfig']['Scan_Start_Time'].astype('datetime64[s]')
-    Cut_Number=yldbd['TaskConfig']['Cut_Number']
-    yldbd['CutConfigs']=[]
+    yldfft['TaskConfig'] = originData.from_dict({name: data[name][0] for name in data.dtype.names})
+    yldfft['TaskConfig']['Scan_Start_Time']=yldfft['TaskConfig']['Scan_Start_Time'].astype('datetime64[s]')
+    Cut_Number=yldfft['TaskConfig']['Cut_Number']
+    yldfft['CutConfigs']=[]
     for i in range(Cut_Number):
         bsoffset_left = bsoffset_right
         bsoffset_right = bsoffset_left + CutConfig.itemsize
         data=np.frombuffer(bs[bsoffset_left:bsoffset_right], CutConfig)
-        yldbd['CutConfigs'].append(originData.from_dict({name: data[name][0] for name in data.dtype.names}))
+        yldfft['CutConfigs'].append(originData.from_dict({name: data[name][0] for name in data.dtype.names}))
     bsoffset_left = bsoffset_right
     bsoffset_right = bsoffset_left + RadialHeader.itemsize
     data=np.frombuffer(bs[bsoffset_left:bsoffset_right], RadialHeader)
-    yldbd['RadialHeader'] = originData.from_dict({name: data[name][0] for name in data.dtype.names})
-    yldbd['Data']=[]
+    yldfft['RadialHeader'] = originData.from_dict({name: data[name][0] for name in data.dtype.names})
+    yldfft['DataInfos']=[]
+    yldfft['Data']=[]
+    for i in range(yldfft['RadialHeader']['Moment_Number']):
+        bsoffset_left = bsoffset_right
+        bsoffset_right = bsoffset_left + data_unit_header.itemsize
+        data=np.frombuffer(bs[bsoffset_left:bsoffset_right], data_unit_header)
+        RadialDatai=originData.from_dict({name: data[name][0] for name in data.dtype.names})
+        FFT_extra_unit_headeri=FFT_extra_unit_header.copy()
+        for i in range(len(FFT_extra_unit_headeri)):
+            FFT_extra_unit_headeri[i][2]=RadialDatai['Bin_Number']
+            FFT_extra_unit_headeri[i]=tuple(FFT_extra_unit_headeri[i])
+        FFT_extra_unit_headeri=np.dtype(FFT_extra_unit_headeri)
+        bsoffset_left = bsoffset_right
+        bsoffset_right = bsoffset_left + FFT_extra_unit_headeri.itemsize
+        data=np.frombuffer(bs[bsoffset_left:bsoffset_right], FFT_extra_unit_headeri)
+        RadialDatai.update({name: data[name][0] for name in data.dtype.names})
+        yldfft['DataInfos'].append(RadialDatai)
+        bsoffset_left = bsoffset_right
+        bsoffset_right = bsoffset_left +int(RadialDatai['Bin_Bytes'])*int(RadialDatai['Bin_Number'])
+        yldfft['Data'].append((np.frombuffer(
+            bs[bsoffset_left:bsoffset_right],
+            dtype='u2',count=2*int(yldfft.RadialHeader.Max_FFT_Count)*int(RadialDatai.Bin_Number)
+        ).reshape((int(RadialDatai.Bin_Number),int(yldfft.RadialHeader.Max_FFT_Count),2))-FFTOffset)/FFTScale)
+    data=np.array(yldfft['Data'])
+    data=np.expand_dims(data,1)
+    heights = np.arange(
+        yldfft['CutConfigs'][0]['Start_Range'],
+        yldfft['CutConfigs'][0]['Start_Range'] + yldfft['CutConfigs'][0]['Doppler_Resolution'] * yldfft.DataInfos[0][
+            'Bin_Number'],
+        yldfft['CutConfigs'][0]['Log_Resolution']
+    )
+    yldfft['Data']=xr.Dataset(
+        data_vars={f'FFT{i}':(['time','height','FFT_index','dtype'],data[i]) for i in range(yldfft['RadialHeader']['Moment_Number'])},
+        coords={
+            'time':[yldfft['TaskConfig']['Scan_Start_Time'].astype(datetime)],
+            'height': heights,
+            'index':range(yldfft['RadialHeader']['Max_FFT_Count']),
+            'dtype':['flag','value']
+        },
+        attrs={
+            'time_count':1,
+            'height_count': len(heights),
+            'time_reference': 'UTC',
+            'height_unit': 'meter',
+        }
+    )
+    return yldfft
+
+def FFTDatas_getDatas(self,fixData_Length='max',unobdata=unobdata)->xr.Dataset:
+    '''
+    获取云雷达基数据集中的数据
+    Args:
+        fixData_Length:不同时次数据对齐方式，max:最大长度,min:最小长度,或者指定长度
+    Returns:
+        xr.Dataset:数据
+    '''
+    varnames = list(map(lambda di: list(di.Data.data_vars), self.FFTDatas))
+    varnames = list(set([item for sublist in varnames for item in sublist]))
+    hcounts = list(map(lambda di: di.Data.height_count, self.FFTDatas))
+    times = list(map(lambda di: di.Data.time.values[0], self.FFTDatas))
+    if(fixData_Length=='max'):
+        maxlendatas = max(hcounts)
+    if(fixData_Length=='min'):
+        maxlendatas = min(hcounts)
+    if (isInt(fixData_Length)):
+        maxlendatas = int(fixData_Length)
+    heights = np.arange(
+        self.FFTDatas[0]['CutConfigs'][0]['Start_Range'],
+        self.FFTDatas[0]['CutConfigs'][0]['Start_Range'] + self.FFTDatas[0]['CutConfigs'][0][
+            'Doppler_Resolution'] * maxlendatas,
+        self.FFTDatas[0]['CutConfigs'][0]['Log_Resolution']
+    )
+    indexs=range(self.FFTDatas[0]['RadialHeader']['Max_FFT_Count'])
+    datavars = {}
+    for key in varnames:
+        dds = list(map(lambda x: np.squeeze(x.Data[key].values).tolist(), filter(lambda x: key in x.Data, self.FFTDatas)))
+        ddas = [
+            list(d)[:maxlendatas] if (len(d) > maxlendatas) else list(d) + [unobdata] * (maxlendatas - len(d))
+            for d in dds
+        ]
+        datavars[key] = (['time','height','FFT_index','dtype'], np.array(ddas),)
+    Datas = xr.Dataset(
+        data_vars=datavars,
+        coords={
+            'time': times,
+            'height': heights,
+            'index':indexs,
+            'dtype':['flag','value']
+        },
+        attrs={
+            'time_count':len(times),
+            'height_count': maxlendatas,
+            'time_reference': 'UTC',
+            'height_unit': 'meter',
+        }
+    )
+    self.Datas=Datas
+FFTDatas.getDatas=FFTDatas_getDatas
+
+def readFFTDatas(fps:list,use_multiprocess=False,multiproces_corenum=-1)->FFTDatas:
+    '''
+    读取云雷达谱数据文件列表
+    Args:
+        fps:文件路径列表
+        use_multiprocess:是否使用多进程读取（速度较快但默认不使用）
+        multiproces_corenum:多进程核心数（默认为-1，使用全部核心）
+    Returns:
+        list:云雷达对象列表
+    '''
+    rbds=FFTDatas()
+    if(use_multiprocess):
+        rbds['FFTDatas']=Parallel(n_jobs=multiproces_corenum)(delayed(readSingleFFTData)(fp) for fp in fps)
+    else:
+        rbds['FFTDatas']=[readSingleFFTData(fp) for fp in fps]
+    rbds.__datas__=rbds['FFTDatas']
+
+    rbds.getDatas()
+    return rbds
 
 def readSingleBaseData(fp:str)->SingleBaseData:
     '''    
@@ -392,8 +507,8 @@ def readSingleBaseData(fp:str)->SingleBaseData:
     yldbd['DataInfos']=[]
     for i in range(yldbd['RadialHeader']['Moment_Number']):
         bsoffset_left = bsoffset_right
-        bsoffset_right = bsoffset_left + BaseData_unit_header.itemsize
-        data=np.frombuffer(bs[bsoffset_left:bsoffset_right], BaseData_unit_header)
+        bsoffset_right = bsoffset_left + data_unit_header.itemsize
+        data=np.frombuffer(bs[bsoffset_left:bsoffset_right], data_unit_header)
         datainfo=originData.from_dict({name: data[name][0] for name in data.dtype.names})
         data_type_value = datainfo['Data_Type']
         if data_type_value == 1:
@@ -491,7 +606,7 @@ def readSingleBaseData(fp:str)->SingleBaseData:
 
     return yldbd
 
-def BaseDatasgetDatas(self,fixData_Length='max',unobdata=unobdata)->xr.Dataset:
+def BaseDatas_getDatas(self,fixData_Length='max',unobdata=unobdata)->xr.Dataset:
     '''
     获取云雷达基数据集中的数据
     Args:
@@ -535,11 +650,11 @@ def BaseDatasgetDatas(self,fixData_Length='max',unobdata=unobdata)->xr.Dataset:
         }
     )
     self.Datas=Datas
-    return Datas
-BaseDatas.getDatas=BaseDatasgetDatas
+BaseDatas.getDatas=BaseDatas_getDatas
+
 def readBaseDatas(fps:list,use_multiprocess=False,multiproces_corenum=-1)->BaseDatas:
     '''    
-    读取云雷达文件列表    
+    读取云雷达基数据文件列表
     Args:
         fps:文件路径列表
         use_multiprocess:是否使用多进程读取（速度较快但默认不使用）
@@ -552,13 +667,12 @@ def readBaseDatas(fps:list,use_multiprocess=False,multiproces_corenum=-1)->BaseD
         rbds['BaseDatas']=Parallel(n_jobs=multiproces_corenum)(delayed(readSingleBaseData)(fp) for fp in fps)
     else:
         rbds['BaseDatas']=[readSingleBaseData(fp) for fp in fps]
-    for i,ld in enumerate(rbds['BaseDatas']):
-        rbds.append(ld)
+    rbds.__datas__=rbds['BaseDatas']
 
     rbds.getDatas()
     return rbds
 
-def BaseDatasplot(self, data_name='Z1', figsize=(18,12), cmap=None, norm=None,show=True,savepath=None):
+def BaseDatas_plot(self, data_name='Z1', figsize=(18,12), cmap=None, norm=None,show=True,savepath=None):
     '''    
     绘制云雷达数据    
     Args:
@@ -624,5 +738,58 @@ def BaseDatasplot(self, data_name='Z1', figsize=(18,12), cmap=None, norm=None,sh
         plt.close(fig)
     if(savepath is not None):
         fig.savefig(savepath,bbox_inches='tight')
+BaseDatas.plot=BaseDatas_plot
 
-BaseDatas.plot=BaseDatasplot
+def readStatuXMLfile(fp:str)->StatusData:
+    '''
+    读取毫米波云雷达雷达单个状态数据xml格式文件；
+    支持 Z_RADA_I_IIiii_yyyyMMddhhmmss_R_YCCR_设备型号_STA_M.XML
+    args:
+        fp:单个状态数据xml格式文件
+    return:
+        StatusData对象
+    '''
+    try:
+        with open(fp, 'r', encoding='utf8') as f:
+            xml_data = f.read()
+        xmld = ET.fromstring(xml_data)
+        return StatusData.from_dict(parse_element(xmld))
+    except Exception as ex:
+        print(ex)
+        return None
+
+def readSingleStatuXMLfile(fp:str)->StatusData:
+    '''
+    读取毫米波云雷达雷达单个状态数据xml格式文件；
+    支持 Z_RADA_I_IIiii_yyyyMMddhhmmss_R_YCCR_设备型号_STA_MM.XML
+    args:
+        fp:单个状态数据xml格式文件
+    return:
+        StatusData对象
+    '''
+    try:
+        with open(fp, 'r', encoding='utf8') as f:
+            xml_data = f.read()
+        xmld = ET.fromstring(xml_data)
+        return StatusData.from_dict(parse_element(xmld))
+    except Exception as ex:
+        print(ex)
+        return None
+
+def readSingleCalibrationXMLfile(fp:str)->CalibrationData:
+    '''
+    读取毫米波云雷达雷达单个标校数据xml格式文件；
+    支持 Z_RADA_I_IIiii_yyyyMMddhhmmss_C_YCCR_设备型号_CAL.XML
+    args:
+        fp:单个标校数据xml格式文件
+    return:
+        CalibrationData对象
+    '''
+    try:
+        with open(fp, 'r', encoding='utf8') as f:
+            xml_data = f.read()
+        xmld = ET.fromstring(xml_data)
+        return CalibrationData.from_dict(parse_element(xmld))
+    except Exception as ex:
+        print(ex)
+        return None

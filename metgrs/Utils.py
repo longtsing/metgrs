@@ -41,6 +41,25 @@ def w2uv(wdir, wspd):
     v = -wspd*math.cos(wdir/180*math.pi)
     return u, v
 
+def parse_element(element):
+    if(len(element)>0):
+        tags=list(map(lambda x:x.tag,element))
+        # print(len(set(tags))==len(element))
+        if(len(set(tags))==len(element)):
+            parsed_data = {}
+            for child in element:
+                parsed_data[child.tag]=parse_element(child)
+        else:
+            parsed_data = []
+            for child in element:
+                parsed_data.append(parse_element(child))
+    else:
+        if(len(element.keys())>0):
+            parsed_data= {attr: element.get(attr) for attr in element.keys()}
+        else:
+            parsed_data= element.text.strip()
+    return parsed_data
+
 vdtryfloat=np.vectorize(dtryfloat)
 vw2uv=np.vectorize(w2uv)
 vuv2w=np.vectorize(uv2w)

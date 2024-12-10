@@ -13,8 +13,9 @@ import types
 import matplotlib as mpl
 from joblib import Parallel,delayed
 import xml.etree.ElementTree as ET
-from . import base
+from . import base,Utils
 originData=base.originData
+parse_element=Utils.parse_element
 
 #region 绘图参数
 velocity_colors=[
@@ -570,27 +571,7 @@ def readL3files(fps:list,use_multiprocess=False,multiproces_corenum=-1)->L3Datas
         rbds.append(ld)    
     return rbds
 
-def parse_element(element):
-    # print(element.tag,len(element))
-    if(len(element)>0):
-        tags=list(map(lambda x:x.tag,element))
-        # print(len(set(tags))==len(element))
-        if(len(set(tags))==len(element)):
-            parsed_data = {}
-            for child in element:
-                parsed_data[child.tag]=parse_element(child)
-        else:
-            parsed_data = []
-            for child in element:
-                parsed_data.append(parse_element(child))
-    else:
-        if(len(element.keys())>0):
-            parsed_data= {attr: element.get(attr) for attr in element.keys()}
-        else:
-            parsed_data= element.text.strip()
-    return parsed_data
-
-def readCalibrationXMLfile(fp:str)->CalibrationData:
+def readSingleCalibrationXMLfile(fp:str)->CalibrationData:
     '''
     读取风廓线雷达单个标校数据xml格式文件；
     支持 Z_RADA_I _IIiii_yyyyMMddhhmmss_C_WPRD_雷达型号_CAL.XML
@@ -608,7 +589,7 @@ def readCalibrationXMLfile(fp:str)->CalibrationData:
         print(ex)
         return None
 
-def readStatuXMLfile(fp:str)->StatusData:
+def readSingleStatuXMLfile(fp:str)->StatusData:
     '''
     读取风廓线雷达单个状态数据xml格式文件；
     支持 Z_RADA_I_IIiii_yyyyMMddhhmmss_R_WPRD_雷达型号_STA.XML

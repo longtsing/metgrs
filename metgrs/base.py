@@ -85,3 +85,7 @@ class originData():
         for key, value in input_dict.items():
             origin_obj[key] = value
         return origin_obj
+    
+    def update(self,input_dict):
+        for key, value in input_dict.items():
+            self[key] = value
