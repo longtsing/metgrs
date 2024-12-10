@@ -66,14 +66,13 @@ def readL0Files(fps:list,use_multiprocess=False,multiproces_corenum=-1)->L0Datas
         rbds['L0Datas']=Parallel(n_jobs=multiproces_corenum)(delayed(readSingleL0File)(fp) for fp in fps)
     else:
         rbds['L0Datas']=[readSingleL0File(fp) for fp in fps]
-    for i,ld in enumerate(rbds['L0Datas']):
-        rbds.append(ld)
+    rbds.__datas__=rbds['L0Datas']
     return rbds
 
 
 #region 导出成厂家的DAT格式
 def L0DataFileToManufactoryDat(l0file,outPath=None):
-    l0da=readL0File(l0file)
+    l0da=readSingleL0File(l0file)
     data=l0da['Data']
     dts=l0da['Observe_Time']
     params=l0da['Channel_Metas']
