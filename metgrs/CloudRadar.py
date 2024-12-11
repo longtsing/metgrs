@@ -716,7 +716,7 @@ def BaseDatas_plot(self, data_name='Z1', figsize=(18,12), cmap=None, norm=None,s
             norm=ref_norm
 
     fig,ax=plt.subplots(figsize=figsize)
-    self.Datas.Z1.plot(
+    self.Datas[data_name].plot(
         ax=ax,
         x='time',
         cmap=cmap,
