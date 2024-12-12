@@ -10,11 +10,10 @@ def isInt(istr:str)->bool:
 
 def isFloat(istr:str)->bool:
     try:
-        isFloat(istr)
+        float(istr)
         return True
     except Exception as e:
         return False
-
 
 def convert_bytes(size):
     power = 2**10
@@ -32,14 +31,21 @@ def dtryfloat(strf:str):
         return np.nan  
     
 def uv2w(u, v):
-    wdir = (180+math.atan2(u, v)/math.pi*180.0) % 360
-    wspd = math.sqrt(u*u+v*v)
-    return wdir, wspd
+    if(isFloat(u) and isFloat(v) and not np.isnan(u) and not np.isnan(v)):
+        wdir = (180+math.atan2(u, v)/math.pi*180.0) % 360
+        wspd = math.sqrt(u*u+v*v)
+        return wdir, wspd
+    else:
+        return np.nan,np.nan
 
 def w2uv(wdir, wspd):
-    u = -wspd*math.sin(wdir/180*math.pi)
-    v = -wspd*math.cos(wdir/180*math.pi)
-    return u, v
+    if(isFloat(wdir) and isFloat(wspd) and not np.isnan(wdir) and not np.isnan(wdir)):
+        u = -wspd*math.sin(wdir/180*math.pi)
+        v = -wspd*math.cos(wdir/180*math.pi)
+        return u, v
+    else:
+        return np.nan,np.nan
+
 
 def parse_element(element):
     if(len(element)>0):

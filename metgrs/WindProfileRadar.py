@@ -369,7 +369,7 @@ def readSingleL2file(fp:str)->L2Data:
                 dfleveli=pd.read_csv(io.StringIO('\n'.join([' '.join(x) for x in list(dfleveli)])),sep=' ',header=None,names=dlevelcolumnnames)
                 dfleveli=dfleveli.rename(columns={sscolumnnames[0]:sscolumnnames[0][2:]}).drop(sscolumnnames[1:],axis=1)
                 dfleveli=dfleveli.apply(lambda x:pd.to_numeric(x,errors='coerce'))   
-                leveli['data']=dfleveli
+                leveli['Data']=dfleveli
                 fkxL2obj['levels'].append(leveli)
 
         
@@ -407,7 +407,7 @@ def CalcL2toL3(fkxL2obj,qcw=3,interp=False,rollmean=True,rollmeancout=5):
 
     Calc_L2_data=[]
     for j,levelj in enumerate(fkxL2obj.levels):
-        dlevelj=levelj.data    
+        dlevelj=levelj.Data
         qcindexs=dlevelj[dlevelj['E_Radial_Velocity']+dlevelj['W_Radial_Velocity']>qcw].index
         dlevelj.loc[qcindexs,'E_Radial_Velocity']=np.nan
         dlevelj.loc[qcindexs,'W_Radial_Velocity']=np.nan
@@ -494,7 +494,7 @@ def CalcL2toL3(fkxL2obj,qcw=3,interp=False,rollmean=True,rollmeancout=5):
             fkxL3obj[key]=fkxL2obj.levels[0]['Observation_End_Time']     
         else:
             fkxL3obj[key]=fkxL2obj[key]      
-    fkxL3obj['data']=Calc_L3Data
+    fkxL3obj['Data']=Calc_L3Data
     
     return fkxL3obj
 
@@ -543,7 +543,7 @@ def readSingleL3file(fp:str)->L3Data:
         uvs = Utils.vw2uv(da['Wind_Direction'].values, da['Wind_Speed'].values)
         da['U_Wind_Speed']=uvs[0]
         da['V_Wind_Speed']=uvs[1]
-        fkxL3obj['data']=da
+        fkxL3obj['Data']=da
         return fkxL3obj
     except Exception as ex:
         print(ex)
