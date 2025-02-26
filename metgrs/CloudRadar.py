@@ -573,10 +573,12 @@ def readSingleBaseData(fp:str)->SingleBaseData:
             datainfo['Data_Name'] = 'IWC'
         elif 51 <= data_type_value <= 64:
             datainfo['Data_Name'] = 'Reserved'
+        else:
+            datainfo['Data_Name'] = 'Other'
         yldbd['DataInfos'].append(datainfo)
         if(datainfo['Data_Type']>0):
             bsoffset_left = bsoffset_right
-            bsoffset_right = bsoffset_left + datainfo['Bin_Bytes']*datainfo['Data_Length']
+            bsoffset_right = bsoffset_left + datainfo['Data_Length']
             data=np.frombuffer(bs[bsoffset_left:bsoffset_right],'i'+str(datainfo['Bin_Bytes']))
             data=np.where(data==0,nodata,(data-datainfo['Offset'])/datainfo['Scale'])
             yldbd['Data'].append(data)
@@ -584,11 +586,14 @@ def readSingleBaseData(fp:str)->SingleBaseData:
             yldbd['Data'].append(None)
     varnames=list(map(lambda x: x['Data_Name'],yldbd.DataInfos))
     dvar = dict(zip(varnames, yldbd.Data))
+    Doppler_Resolution=yldbd['CutConfigs'][0]['Doppler_Resolution']
+    if(Doppler_Resolution<=0):
+        Doppler_Resolution=1
     heights = np.arange(
         yldbd['CutConfigs'][0]['Start_Range'],
-        yldbd['CutConfigs'][0]['Start_Range'] + yldbd['CutConfigs'][0]['Doppler_Resolution'] * yldbd.DataInfos[0][
-            'Bin_Number'],
-        yldbd['CutConfigs'][0]['Log_Resolution']
+        yldbd['CutConfigs'][0]['Start_Range'] +
+            Doppler_Resolution * yldbd.DataInfos[0]['Bin_Number'],
+        Doppler_Resolution
     )
     yldbd['Data'] = xr.Dataset(
         data_vars={key: (['time','height'], dvar[key][np.newaxis,:]) for key in dvar.keys()},

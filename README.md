@@ -1,9 +1,11 @@
-# metgrs
+# about
 The Python Package work for The Ground-based Remote Sensing Data Operation.
 
 The Python Package mainly work for China Ground-based Remote Sensing Data Operation System.
 
 But It will suit for the Europen or USA instruments in future.
+
+#
 
 # Main features
 1. Read microwave radiometer, millimeter wave cloud radar, wind profile radar, lidar data
@@ -44,7 +46,7 @@ mamba create -n metgrs python==3.9 numpy pandas xarray matplotlib joblib python-
 ## jupyter lab 运行环境安装
 
 ```shell
-mamba create -n runtime python==3.12 jupyterlab==4.2.6  jupyterlab-lsp python-lsp-server jupyterlab-language-pack-zh-cn nb_conda -c conda-forge -y
+mamba create -n runtime python==3.12 jupyterlab==4.2.6  jupyterlab-lsp python-lsp-server jupyterlab-language-pack-zh-cn jupyterlab-git nb_conda -c conda-forge -y
 ```
 ## 开发环境安装
 
