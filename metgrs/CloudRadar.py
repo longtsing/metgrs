@@ -629,11 +629,13 @@ def BaseDatas_getDatas(self,fixData_Length='max',unobdata=unobdata)->xr.Dataset:
         maxlendatas = min(hcounts)
     if (isInt(fixData_Length)):
         maxlendatas = int(fixData_Length)
+    Doppler_Resolution = self.BaseDatas[0]['CutConfigs'][0]['Log_Resolution']
+    if (Doppler_Resolution <= 0):
+        Doppler_Resolution = 1
     heights = np.arange(
         self.BaseDatas[0]['CutConfigs'][0]['Start_Range'],
-        self.BaseDatas[0]['CutConfigs'][0]['Start_Range'] + self.BaseDatas[0]['CutConfigs'][0][
-            'Doppler_Resolution'] * maxlendatas,
-        self.BaseDatas[0]['CutConfigs'][0]['Log_Resolution']
+        self.BaseDatas[0]['CutConfigs'][0]['Start_Range'] + Doppler_Resolution * maxlendatas,
+        Doppler_Resolution
     )
     datavars = {}
     for key in varnames:
