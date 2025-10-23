@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 import matplotlib as mpl
+import matplotlib.colors as colors
 import matplotlib.pyplot as plt
 import types
 import xml.etree.ElementTree as ET
@@ -33,8 +34,8 @@ ref_colors=[
     '#FFFFFF'
 ]
 ref_levels=[-30,-20,-10,-5,0,5,10,15,20,25,30,35,40]
-ref_cmap = (mpl.colors.ListedColormap(ref_colors[1:-1]).with_extremes(over=ref_colors[-1], under=ref_colors[0]))
-ref_norm = mpl.colors.BoundaryNorm(ref_levels, ref_cmap.N)
+ref_cmap = (colors.ListedColormap(ref_colors[1:-1]).with_extremes(over=ref_colors[-1], under=ref_colors[0]))
+ref_norm = colors.BoundaryNorm(ref_levels, ref_cmap.N)
 
 velocity_colors=[
     '#FFFFFF',
@@ -73,8 +74,8 @@ velocity_colors=[
     "#FFFFFF",
 ]
 velocity_levels=[-18,-16,-15,-14,-13,-12,-11,-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-velocity_cmap = (mpl.colors.ListedColormap(velocity_colors[1:-1]).with_extremes(over=velocity_colors[-1], under=velocity_colors[0]))
-velocity_norm = mpl.colors.BoundaryNorm(velocity_levels, velocity_cmap.N)
+velocity_cmap = (colors.ListedColormap(velocity_colors[1:-1]).with_extremes(over=velocity_colors[-1], under=velocity_colors[0]))
+velocity_norm = colors.BoundaryNorm(velocity_levels, velocity_cmap.N)
 
 spectrumwith_colors=[
     "#FFFFFF",
@@ -94,8 +95,8 @@ spectrumwith_colors=[
     "#FFFFFF",
 ]
 spectrumwith_levels=[0,0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6]
-spectrumwith_cmap = (mpl.colors.ListedColormap(spectrumwith_colors[1:-1]).with_extremes(over=spectrumwith_colors[-1], under=spectrumwith_colors[0]))
-spectrumwith_norm = mpl.colors.BoundaryNorm(spectrumwith_levels, spectrumwith_cmap.N)
+spectrumwith_cmap = (colors.ListedColormap(spectrumwith_colors[1:-1]).with_extremes(over=spectrumwith_colors[-1], under=spectrumwith_colors[0]))
+spectrumwith_norm = colors.BoundaryNorm(spectrumwith_levels, spectrumwith_cmap.N)
 
 snr_colors=[
     "#FFFFFF",
@@ -116,8 +117,8 @@ snr_colors=[
     "#FFFFFF",
 ]
 snr_levels=[-30,-25,-20,-15,-10,-5,0,5,10,15,20,25,30,35,40]
-snr_cmap = (mpl.colors.ListedColormap(snr_colors[1:-1]).with_extremes(over=snr_colors[-1], under=snr_colors[0]))
-snr_norm = mpl.colors.BoundaryNorm(snr_levels, snr_cmap.N)
+snr_cmap = (colors.ListedColormap(snr_colors[1:-1]).with_extremes(over=snr_colors[-1], under=snr_colors[0]))
+snr_norm = colors.BoundaryNorm(snr_levels, snr_cmap.N)
 
 #endregion
 
@@ -393,7 +394,7 @@ def readSingleFFTData(fp:str)->SingleFFTData:
     )
     return yldfft
 
-def FFTDatas_getDatas(self,fixData_Length='max',unobdata=unobdata)->xr.Dataset:
+def FFTDatas_getDatas(self,fixData_Length='max',unobdata=unobdata):
     '''
     获取云雷达基数据集中的数据
     Args:
@@ -611,7 +612,7 @@ def readSingleBaseData(fp:str)->SingleBaseData:
 
     return yldbd
 
-def BaseDatas_getDatas(self,fixData_Length='max',unobdata=unobdata)->xr.Dataset:
+def BaseDatas_getDatas(self,fixData_Length='max',unobdata=unobdata):
     '''
     获取云雷达基数据集中的数据
     Args:
