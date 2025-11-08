@@ -436,7 +436,7 @@ error: Microsoft Visual C++ 14.0 or greater is required.
 
 当你尝试使用 `pip install` 安装包时，如果看到类似以下错误，说明需要安装 MSVC 编译器：
 
-![缺少 MSVC 无法安装包的示例](./images/缺少msvc无法安装包的示例.png)
+![缺少 MSVC 无法安装包的示例](./Images/msvc-error-example.png)
 
 **典型错误信息：**
 ```
@@ -450,7 +450,7 @@ Get it with "Microsoft C++ Build Tools": https://visualstudio.microsoft.com/visu
 - **官方链接**：https://visualstudio.microsoft.com/visual-cpp-build-tools/
 - **直接下载**：https://aka.ms/vs/17/release/vs_BuildTools.exe
 
-![MSVC 下载地方](./images/msvs下载地方.png)
+![MSVC 下载地方](./Images/msvc-download-page.png)
 
 > **注意**：我们只需要安装 Build Tools，不需要完整的 Visual Studio IDE。这样可以节省大量磁盘空间（约 6-8 GB vs 30+ GB）。
 
@@ -458,7 +458,7 @@ Get it with "Microsoft C++ Build Tools": https://visualstudio.microsoft.com/visu
 
 双击下载的 `vs_BuildTools.exe` 安装程序后，**务必选择以下组件**：
 
-![下载后运行安装需要选择的内容](./images/下载后运行安装需要选择内容.png)
+![下载后运行安装需要选择的内容](./Images/msvc-install-components.png)
 
 #### 必选组件
 
@@ -477,7 +477,7 @@ Get it with "Microsoft C++ Build Tools": https://visualstudio.microsoft.com/visu
 
 ### 4. 选择安装位置
 
-![MSVC 保存位置](./images/msvc保存位置.png)
+![MSVC 保存位置](./Images/msvc-install-location.png)
 
 **安装位置建议：**
 - 默认安装路径：`C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools`
@@ -514,7 +514,7 @@ usage: cl [ option... ] filename... [ /link linkoption... ]
 pip install <package-name>
 ```
 
-![安装 MSVC 后成功安装包](./images/安装msvc后成功安装包.png)
+![安装 MSVC 后成功安装包](./Images/msvc-install-success.png)
 
 **示例：**
 ```cmd
