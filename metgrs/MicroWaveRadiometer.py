@@ -14,8 +14,8 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 
-def readMWRFile(filename):
-    ds = pd.read_csv(filename, encoding='gbk', skiprows=2)
+def readMWRFile(filename, encoding='gbk'):
+    ds = pd.read_csv(filename, encoding=encoding, skiprows=2)
     ds['DateTime'] = pd.to_datetime(ds['DateTime'])
     ds['10'] = ds['10'].astype(str).replace(
         '11',

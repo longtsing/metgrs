@@ -51,7 +51,7 @@ mamba create -n runtime python==3.12.9 jupyterlab jupyterlab-lsp python-lsp-serv
 ## 开发环境安装
 
 ```shell
-mamba create -n devmetgrs python==3.9 numpy xarray pandas geopandas scipy dask metpy matplotlib cartopy cnmaps sympy  nb_conda scikit-learn pytest pytest-cov pytest-xdist flake8 black pre-commit build twine -c conda-forge -y
+mamba create -n devmetgrs python==3.9 numpy xarray pandas geopandas scipy dask metpy matplotlib cartopy cnmaps sympy  nb_conda scikit-learn pytest pytest-cov seaborn pytest-xdist flake8 black pre-commit build twine -c conda-forge -y
 ```
 ## 特别说明
 在国内使用清华源安装metgrs及依赖库时，可能会出现403错误，这是因为清华源的问题，切换到其他源即可。

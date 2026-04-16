@@ -5,6 +5,7 @@ import os
 import os.path
 import glob
 import math
+import re
 from datetime import datetime,timedelta
 import dateutil.parser
 import struct
@@ -15,6 +16,105 @@ originData=base.originData
 
 L0Data=types.new_class('L0Data',(originData,))
 L0Datas=types.new_class('L0Datas',(originData,))
+CDWLData=types.new_class('CDWLData',(originData,))
+CDWLDatas=types.new_class('CDWLDatas',(originData,))
+
+
+def _decode_zero_terminated_ascii(buf:bytes)->str:
+    return buf.split(b'\x00',1)[0].decode('ascii',errors='ignore').strip()
+
+
+def _parse_cdwl_observe_time_from_filename(fp:str):
+    m=re.search(r'_(\d{14})_[BP]_',os.path.basename(fp))
+    if(m is None):
+        return None
+    return datetime.strptime(m.group(1),'%Y%m%d%H%M%S')
+
+
+def _parse_cdwl_product_text_block(ds:bytes):
+    m=re.search(rb'\r\n(\d{3})\r\n',ds)
+    if(m is None):
+        raise ValueError('无法在文件中找到产品号与数据体起始标记（\\r\\nNNN\\r\\n）。')
+    product_number=int(m.group(1).decode('ascii'))
+    rows=[]
+    for line_b in ds[m.end():].splitlines():
+        line=line_b.decode('ascii',errors='ignore').strip()
+        if(line==''):
+            continue
+        if(line=='NNNN'):
+            break
+        parts=line.split()
+        if(len(parts)<4):
+            continue
+        if(re.fullmatch(r'\d{5}',parts[0]) is None):
+            continue
+
+        def _to_float(v:str):
+            if('/' in v):
+                return np.nan
+            return float(v)
+
+        rows.append({
+            'Height':float(parts[0]),
+            'WindDirection':_to_float(parts[1]),
+            'HorizontalWindSpeed':_to_float(parts[2]),
+            'VerticalWindSpeed':_to_float(parts[3]),
+        })
+    data=pd.DataFrame(rows,columns=['Height','WindDirection','HorizontalWindSpeed','VerticalWindSpeed'])
+    return product_number,m.start(),data
+
+
+def readSingleCDWLBinFile(binfile:str):
+    '''
+    读取单个相干多普勒测风激光雷达 BIN 文件（当前支持产品体为文本表格的文件，如 MR_096）。
+    Args:
+        binfile: CDWL BIN 文件路径
+
+    Returns:
+        CDWLData: 包含基础头信息与解析后的产品数据表
+    '''
+    cda=CDWLData()
+    with open(binfile,'rb') as f:
+        ds=f.read()
+    if(ds[:4]!=b'CDWL'):
+        raise ValueError(f'文件头标识不是 CDWL: {binfile}')
+
+    cda['File_Path']=binfile
+    cda['File_Size']=len(ds)
+    cda['Magic']='CDWL'
+    cda['Version_Raw']=ds[4:8].hex()
+    cda['Station_Code']=_decode_zero_terminated_ascii(ds[32:40])
+    cda['Station_Name']=_decode_zero_terminated_ascii(ds[48:80])
+    cda['Latitude_deg']=struct.unpack('<f',ds[72:76])[0]
+    cda['Longitude_deg']=struct.unpack('<f',ds[76:80])[0]
+    cda['Station_Height_m']=struct.unpack('<f',ds[80:84])[0]
+    cda['Observe_Time']=_parse_cdwl_observe_time_from_filename(binfile)
+
+    product_number,text_offset,data=_parse_cdwl_product_text_block(ds)
+    cda['Product_Number']=product_number
+    cda['Text_Block_Offset']=text_offset
+    cda['Data']=data
+    cda.__datas__=data
+    return cda
+
+
+def readCDWLBinFiles(fps:list,use_multiprocess=False,multiproces_corenum=-1):
+    '''
+    批量读取相干多普勒测风激光雷达 BIN 文件（文本产品体）。
+    Args:
+        fps: 文件路径列表
+        use_multiprocess: 是否使用多进程读取
+        multiproces_corenum: 多进程核心数（-1 为全部核心）
+    Returns:
+        CDWLDatas: CDWL 解析结果列表对象
+    '''
+    rbds=CDWLDatas()
+    if(use_multiprocess):
+        rbds['CDWLDatas']=Parallel(n_jobs=multiproces_corenum)(delayed(readSingleCDWLBinFile)(fp) for fp in fps)
+    else:
+        rbds['CDWLDatas']=[readSingleCDWLBinFile(fp) for fp in fps]
+    rbds.__datas__=rbds['CDWLDatas']
+    return rbds
 
 def readSingleL0File(l0file:str)->L0Data:
     '''
