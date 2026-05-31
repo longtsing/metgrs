@@ -19,6 +19,42 @@ The Python Package for The Ground-based Remote Sensing Data Operation.
 3. **数据可视化**：基于 xarray + matplotlib 的专业气象绘图
 4. **标准输出**：所有数据以 `xarray.Dataset` 标准对象输出，完全兼容 xarray 生态
 
+## 环境要求
+
+### Python 版本要求
+
+| 版本 | 状态 | 说明 |
+|------|------|------|
+| Python 3.8 | ⚠️ 最低支持 | 可运行，但部分新特性不可用 |
+| Python 3.9 | ✅ 推荐开发版本 | 开发和测试主要版本 |
+| Python 3.10 | ✅ 完全支持 | |
+| Python 3.11 | ✅ 完全支持 | 推荐运行环境 |
+| Python 3.12 | ✅ 完全支持 | 推荐运行环境 |
+| Python 3.13 | ⚠️ 实验性支持 | 部分依赖库可能尚未完全兼容 |
+
+> **推荐**：开发使用 Python 3.9，运行环境使用 Python 3.11 或 3.12
+
+### 操作系统支持
+
+| 操作系统 | 状态 |
+|----------|------|
+| Windows 10/11 | ✅ 完全支持 |
+| Linux (Ubuntu 20.04+, CentOS 7+) | ✅ 完全支持 |
+| macOS 11+ (Intel/Apple Silicon) | ✅ 完全支持 |
+
+### 依赖库要求
+
+| 库 | 最低版本 | 推荐版本 | 用途 |
+|---|----------|----------|------|
+| numpy | >=1.20 | 1.24+ | 数值计算 |
+| pandas | >=1.3 | 2.0+ | 数据处理 |
+| xarray | >=0.19 | 2024.1+ | 多维数据集 |
+| matplotlib | >=3.4 | 3.8+ | 数据可视化 |
+| joblib | >=1.0 | 1.3+ | 多进程并行 |
+| python-dateutil | >=2.8 | 2.8+ | 日期解析 |
+
+---
+
 ## 相关链接
 
 - 开源代码：[metgrs GitHub](https://github.com/longtsing/metgrs)

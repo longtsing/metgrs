@@ -1,3 +1,9 @@
+---
+layout: default
+title: Matplotlib 中文显示配置教程
+description: 在 Windows、Linux、macOS 上配置 Matplotlib 显示中文的完整教程
+---
+
 # Matplotlib 中文显示配置教程（Windows / Linux / macOS）
 
 ## 1. 问题描述

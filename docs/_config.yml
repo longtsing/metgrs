@@ -1,0 +1,25 @@
+title: metgrs
+description: 地基遥感垂直观测数据处理 Python 库
+baseurl: /metgrs
+url: https://longtsing.github.io
+
+theme: jekyll-theme-cayman
+
+markdown: kramdown
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+exclude:
+  - "*.js"
+  - "*.css"
+  - "assets/"
+
+collections:
+  docs:
+    output: true
+    permalink: /:path/

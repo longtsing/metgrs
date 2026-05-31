@@ -1,3 +1,9 @@
+---
+layout: default
+title: MSVC 编译器安装教程
+description: Windows 上安装 MSVC 编译器（C/C++ Build Tools）的详细教程
+---
+
 # 如何安装 MSVC 编译器（Windows C/C++ Build Tools）
 
 ## 1. 为什么需要 MSVC 编译器？
