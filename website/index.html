@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>metgrs - 地基遥感垂直观测数据处理工具</title>
+    <meta name="description" content="metgrs 是一个用于中国地基遥感垂直观测系统数据处理的 Python 库，支持风廓线仪、毫米波测云仪、微波辐射计、激光雷达等设备。">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="#" class="logo">
+                <span class="logo-icon">📡</span>
+                <span class="logo-text">metgrs</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="#features">特性</a></li>
+                <li><a href="#devices">设备支持</a></li>
+                <li><a href="#quickstart">快速开始</a></li>
+                <li><a href="#docs">文档</a></li>
+                <li><a href="#author">关于</a></li>
+                <li><a href="https://github.com/longtsing/metgrs" target="_blank" class="github-link">
+                    <svg height="20" width="20" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+                    </svg>
+                    GitHub
+                </a></li>
+            </ul>
+            <button class="mobile-menu-btn" aria-label="菜单">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">v0.5.3</div>
+                <h1>metgrs</h1>
+                <p class="hero-subtitle">地基遥感垂直观测数据处理 Python 库</p>
+                <p class="hero-description">
+                    支持风廓线仪、毫米波测云仪、微波辐射计、气溶胶激光观测仪等设备数据的读取、处理和可视化。
+                    基于 xarray 标准对象，完全兼容 Python 科学计算生态。
+                </p>
+                <div class="hero-buttons">
+                    <a href="#quickstart" class="btn btn-primary">快速开始</a>
+                    <a href="https://github.com/longtsing/metgrs" target="_blank" class="btn btn-secondary">
+                        <svg height="18" width="18" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+                        </svg>
+                        查看源码
+                    </a>
+                </div>
+                <div class="hero-install">
+                    <code>pip install metgrs</code>
+                    <button class="copy-btn" onclick="copyInstallCmd()" aria-label="复制">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="code-window">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                        <span class="code-title">example.py</span>
+                    </div>
+                    <pre class="code-content"><code><span class="keyword">import</span> metgrs
+
+<span class="comment"># 读取风廓线雷达 L1 数据</span>
+ds_l1 = metgrs.WindProfileRadar.<span class="function">readSingleL1file</span>(<span class="string">'FFT.BIN'</span>)
+
+<span class="comment"># L1 → L2 谱矩法处理</span>
+ds_l2 = ds_l1.wpr.<span class="function">calc_l1_to_l2</span>()
+
+<span class="comment"># L2 → L3 风分量合成</span>
+ds_l3 = ds_l2.wpr.<span class="function">calc_l2_to_l3</span>()
+
+<span class="comment"># 绘制风场</span>
+ds_l3.wpr.<span class="function">plot_l3_wind</span>()</code></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title">核心特性</h2>
+            <p class="section-subtitle">为气象数据处理而生的强大工具</p>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>多设备数据读取</h3>
+                    <p>支持风廓线仪、毫米波测云仪、微波辐射计、激光雷达等多种地基遥感设备的数据读取，兼容国内外主流数据格式。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔬</div>
+                    <h3>L1→L2→L3 逐级反演</h3>
+                    <p>内置谱矩法、杂波抑制、风分量合成等算法，支持从原始功率谱数据到产品数据的完整处理流程。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📈</div>
+                    <h3>专业气象绘图</h3>
+                    <p>基于 matplotlib 的专业气象可视化，支持反射率、径向速度、谱宽、风场等多种产品的高质量绘图。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔧</div>
+                    <h3>xarray 标准对象</h3>
+                    <p>所有数据以 xarray.Dataset 标准对象输出，完全兼容 xarray 生态系统，支持切片、合并、导出 NetCDF 等操作。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>多进程并行</h3>
+                    <p>支持多进程批量读取数据文件，充分利用多核 CPU 性能，大幅提升数据处理效率。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🧩</div>
+                    <h3>Accessor 扩展</h3>
+                    <p>通过 xarray accessor 机制提供领域特定方法，如 ds.wpr.calc_l2_to_l3()，代码简洁易读。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Devices Section -->
+    <section id="devices" class="devices">
+        <div class="container">
+            <h2 class="section-title">支持的设备</h2>
+            <p class="section-subtitle">覆盖中国地基遥感垂直观测系统主要设备</p>
+            <div class="devices-grid">
+                <div class="device-card">
+                    <div class="device-icon">🗼</div>
+                    <h3>风廓线仪</h3>
+                    <p>Wind Profile Radar</p>
+                    <div class="device-formats">
+                        <span class="format-tag">FFT.BIN</span>
+                        <span class="format-tag">RAD.TXT</span>
+                        <span class="format-tag">OBS.TXT</span>
+                        <span class="format-tag">ROBS/HOBS/OOBS</span>
+                        <span class="format-tag">CAL.XML</span>
+                        <span class="format-tag">STA.XML</span>
+                    </div>
+                    <div class="device-levels">
+                        <span class="level">L1 功率谱</span>
+                        <span class="level">L2 径向数据</span>
+                        <span class="level">L3 产品数据</span>
+                    </div>
+                </div>
+                <div class="device-card">
+                    <div class="device-icon">☁️</div>
+                    <h3>毫米波测云仪</h3>
+                    <p>Cloud Radar</p>
+                    <div class="device-formats">
+                        <span class="format-tag">FFT_M.BIN</span>
+                        <span class="format-tag">RAW_M.BIN</span>
+                        <span class="format-tag">CP_M.TXT</span>
+                        <span class="format-tag">STA_M.XML</span>
+                        <span class="format-tag">CAL_D.XML</span>
+                    </div>
+                    <div class="device-levels">
+                        <span class="level">FFT 谱数据</span>
+                        <span class="level">基数据</span>
+                        <span class="level">产品数据</span>
+                    </div>
+                </div>
+                <div class="device-card">
+                    <div class="device-icon">🌡️</div>
+                    <h3>微波辐射计</h3>
+                    <p>Microwave Radiometer</p>
+                    <div class="device-formats">
+                        <span class="format-tag">CSV</span>
+                    </div>
+                    <div class="device-levels">
+                        <span class="level">温湿廓线</span>
+                        <span class="level">水汽密度</span>
+                        <span class="level">液态水</span>
+                    </div>
+                </div>
+                <div class="device-card">
+                    <div class="device-icon">💫</div>
+                    <h3>气溶胶激光观测仪</h3>
+                    <p>Lidar</p>
+                    <div class="device-formats">
+                        <span class="format-tag">L0.BIN</span>
+                        <span class="format-tag">L1_*.BIN</span>
+                        <span class="format-tag">L2_*.TXT</span>
+                        <span class="format-tag">CDWL.BIN</span>
+                        <span class="format-tag">STA.XML</span>
+                        <span class="format-tag">CAL.XML</span>
+                    </div>
+                    <div class="device-levels">
+                        <span class="level">L0 原始数据</span>
+                        <span class="level">L1 产品</span>
+                        <span class="level">L2 产品</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Start Section -->
+    <section id="quickstart" class="quickstart">
+        <div class="container">
+            <h2 class="section-title">快速开始</h2>
+            <p class="section-subtitle">几分钟内开始处理气象数据</p>
+            
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>安装 metgrs</h3>
+                        <div class="code-block">
+                            <pre><code>pip install metgrs</code></pre>
+                            <button class="copy-btn" onclick="copyCode(this)" aria-label="复制">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>读取数据</h3>
+                        <div class="code-block">
+                            <pre><code><span class="keyword">import</span> metgrs
+
+<span class="comment"># 读取云雷达基数据</span>
+ds = metgrs.CloudRadar.<span class="function">readSingleBaseData</span>(<span class="string">'RAW.BIN'</span>)
+
+<span class="comment"># 查看数据结构</span>
+<span class="keyword">print</span>(ds)</code></pre>
+                            <button class="copy-btn" onclick="copyCode(this)" aria-label="复制">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>处理与可视化</h3>
+                        <div class="code-block">
+                            <pre><code><span class="comment"># 绘制反射率</span>
+ds.cld.<span class="function">plot</span>(data_name=<span class="string">'Z1'</span>, savepath=<span class="string">'reflectivity.png'</span>)
+
+<span class="comment"># 风廓线雷达 L1→L2→L3 处理</span>
+ds_l1 = metgrs.WindProfileRadar.<span class="function">readSingleL1file</span>(<span class="string">'FFT.BIN'</span>)
+ds_l3 = ds_l1.wpr.<span class="function">calc_l1_to_l2</span>().wpr.<span class="function">calc_l2_to_l3</span>()
+ds_l3.wpr.<span class="function">plot_l3_wind</span>()</code></pre>
+                            <button class="copy-btn" onclick="copyCode(this)" aria-label="复制">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- API Preview Section -->
+    <section id="docs" class="api-preview">
+        <div class="container">
+            <h2 class="section-title">Accessor API</h2>
+            <p class="section-subtitle">通过 xarray accessor 提供领域特定方法</p>
+            
+            <div class="api-grid">
+                <div class="api-card">
+                    <div class="api-header">
+                        <code class="api-name">ds.wpr</code>
+                        <span class="api-badge">风廓线雷达</span>
+                    </div>
+                    <div class="api-methods">
+                        <div class="api-method">
+                            <code>calc_l1_to_l2()</code>
+                            <span>L1 功率谱 → L2 径向数据</span>
+                        </div>
+                        <div class="api-method">
+                            <code>calc_l2_to_l3()</code>
+                            <span>L2 径向数据 → L3 产品数据</span>
+                        </div>
+                        <div class="api-method">
+                            <code>plot_l3_wind()</code>
+                            <span>绘制 L3 风场</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="api-card">
+                    <div class="api-header">
+                        <code class="api-name">ds.cld</code>
+                        <span class="api-badge">云雷达</span>
+                    </div>
+                    <div class="api-methods">
+                        <div class="api-method">
+                            <code>plot(data_name)</code>
+                            <span>绘制云雷达数据</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="api-card">
+                    <div class="api-header">
+                        <code class="api-name">ds.lidar</code>
+                        <span class="api-badge">激光雷达</span>
+                    </div>
+                    <div class="api-methods">
+                        <div class="api-method">
+                            <code>channel_metas</code>
+                            <span>获取通道元数据</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="docs-link">
+                <a href="docs/metgrs接口参考文档.md" class="btn btn-outline">查看完整文档 →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ecosystem Section -->
+    <section class="ecosystem">
+        <div class="container">
+            <h2 class="section-title">生态兼容</h2>
+            <p class="section-subtitle">基于 Python 科学计算生态构建</p>
+            <div class="ecosystem-logos">
+                <div class="eco-item">
+                    <span class="eco-icon">🔢</span>
+                    <span>NumPy</span>
+                </div>
+                <div class="eco-item">
+                    <span class="eco-icon">🐼</span>
+                    <span>Pandas</span>
+                </div>
+                <div class="eco-item">
+                    <span class="eco-icon">📦</span>
+                    <span>xarray</span>
+                </div>
+                <div class="eco-item">
+                    <span class="eco-icon">📊</span>
+                    <span>Matplotlib</span>
+                </div>
+                <div class="eco-item">
+                    <span class="eco-icon">⚡</span>
+                    <span>Joblib</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Author Section -->
+    <section id="author" class="author">
+        <div class="container">
+            <h2 class="section-title">关于作者</h2>
+            <p class="section-subtitle">metgrs 的核心开发者</p>
+            <div class="author-card">
+                <div class="author-avatar">
+                    <img src="assets/imgs/2.jpg" alt="龙清 (longtsing)" class="avatar-img">
+                </div>
+                <div class="author-info">
+                    <h3 class="author-name">龙清 <span class="author-alias">(longtsing)</span></h3>
+                    <p class="author-title">气象开发者 · 开源贡献者</p>
+                    <p class="author-bio">
+                        国内气象领域开发者，长期从事气象数据处理与观测技术研究工作。活跃于 GitHub 开源社区，参与多个气象相关开源项目的开发与维护。
+                    </p>
+                    <ul class="author-research">
+                        <li>
+                            <span class="research-icon">📡</span>
+                            <div>
+                                <strong>地基遥感数据处理</strong>
+                                <span>开发 metgrs 库，支持风廓线仪、毫米波测云仪、微波辐射计、激光雷达等设备数据的读取、处理和可视化</span>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="research-icon">🌤️</span>
+                            <div>
+                                <strong>气象数据与评估</strong>
+                                <span>参与 nmc_met_io（气象数据读写）、MetEva（天气预报产品评估验证）等国家级气象项目开发</span>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="research-icon">🛰️</span>
+                            <div>
+                                <strong>卫星与遥感应用</strong>
+                                <span>参与 climetlab（气象气候数据访问）、satpy（卫星数据处理）、cloudnetpy（云雷达数据处理与云分类）等国际开源项目贡献</span>
+                            </div>
+                        </li>
+                    </ul>
+                    <div class="author-links">
+                        <a href="https://github.com/longtsing" target="_blank" class="author-link">
+                            <svg height="18" width="18" viewBox="0 0 16 16" fill="currentColor">
+                                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+                            </svg>
+                            @longtsing
+                        </a>
+                        <a href="https://github.com/longtsing/metgrs" target="_blank" class="author-link">
+                            <svg height="18" width="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                                <path d="M2 17l10 5 10-5"></path>
+                                <path d="M2 12l10 5 10-5"></path>
+                            </svg>
+                            metgrs
+                        </a>
+                        <a href="https://www.heywhale.com/home/user/profile/5f58c0de1530dc003773590c" target="_blank" class="author-link">
+                            <svg height="18" width="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                            和鲸社区
+                        </a>
+                        <a href="mailto:longtsing@cug.edu.cn" class="author-link">
+                            <svg height="18" width="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                <polyline points="22,6 12,13 2,6"></polyline>
+                            </svg>
+                            longtsing@cug.edu.cn
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="#" class="logo">
+                        <span class="logo-icon">📡</span>
+                        <span class="logo-text">metgrs</span>
+                    </a>
+                    <p>地基遥感垂直观测数据处理 Python 库</p>
+                </div>
+                <div class="footer-links">
+                    <h4>资源</h4>
+                    <ul>
+                        <li><a href="docs/metgrs接口参考文档.md">API 文档</a></li>
+                        <li><a href="docs/Python环境管理与编译工具教程.md">环境配置</a></li>
+                        <li><a href="docs/Python包分发与安装机制详解.md">包分发机制</a></li>
+                        <li><a href="docs/matplotlib中文字体配置教程.md">中文字体</a></li>
+                        <li><a href="docs/msvc编译器安装教程.md">编译器安装</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>社区</h4>
+                    <ul>
+                        <li><a href="https://github.com/longtsing/metgrs" target="_blank">GitHub</a></li>
+                        <li><a href="https://github.com/longtsing/metgrs/issues" target="_blank">问题反馈</a></li>
+                        <li><a href="https://pypi.org/project/metgrs/" target="_blank">PyPI</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>更多</h4>
+                    <ul>
+                        <li><a href="https://pycinrad.cn/" target="_blank">PyCINRAD</a></li>
+                        <li><a href="https://xarray.dev/" target="_blank">xarray</a></li>
+                        <li><a href="https://matplotlib.org/" target="_blank">Matplotlib</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 metgrs. Released under the MIT License.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

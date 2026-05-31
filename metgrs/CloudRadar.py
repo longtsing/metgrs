@@ -7,13 +7,24 @@ import xarray as xr
 import matplotlib as mpl
 import matplotlib.colors as colors
 import matplotlib.pyplot as plt
-import types
 import xml.etree.ElementTree as ET
 from joblib import Parallel, delayed
 from . import base,Utils
-originData=base.originData
+
 isInt=Utils.isInt
 parse_element=Utils.parse_element
+
+def _decode_bytes(val, encoding='gbk'):
+    if isinstance(val, bytes):
+        return val.split(b'\x00')[0].decode(encoding, errors='ignore')
+    return val
+
+def _dict_from_struct(data, dtype, encoding='ascii'):
+    result = {}
+    for name in dtype.names:
+        val = data[name][0]
+        result[name] = _decode_bytes(val, encoding)
+    return result
 
 #region 绘图参数
 ref_colors=[
@@ -294,510 +305,404 @@ FFT_extra_unit_header = [
 ]
 #endregion
 
-SingleFFTData=types.new_class('SingleFFTData',(originData,))
-FFTDatas=types.new_class('FFTDatas',(originData,))
-SingleBaseData=types.new_class('SingleBaseData',(originData,))
-BaseDatas=types.new_class('BaseDatas',(originData,))
-StatusData=types.new_class('StatusData',(originData,))
-CalibrationData=types.new_class('CalibrationData',(originData,))
-
 unobdata=999999
 nodata=np.nan
 
-def readSingleFFTData(fp:str)->SingleFFTData:
-    '''
-    读取云雷达FFT数据文件（秒），文件命名格式为：Z_RADA_I_IIiii_yyyyMMddhhmmss_O_YCCR_设备型号_FFT_MM.BIN
-    Args:
-        fp:文件路径
-
-    Returns:
-        singleFFTData:云雷达FFT数据对象
-    '''
+def readSingleFFTData(fp:str):
     FFTScale=100.0
     FFTOffset=32002.0
     with open(fp,'rb') as f:
         bs=f.read()
-    yldfft=SingleFFTData()
     bsoffset_left=0
     bsoffset_right=bsoffset_left+GenericHeader.itemsize
     data=np.frombuffer(bs[bsoffset_left:bsoffset_right], GenericHeader)
-    yldfft['GenericHeader'] = originData.from_dict({name: data[name][0] for name in data.dtype.names})
+    generic_header=_dict_from_struct(data, GenericHeader)
     bsoffset_left=bsoffset_right
     bsoffset_right=bsoffset_left+SiteConfig.itemsize
     data=np.frombuffer(bs[bsoffset_left:bsoffset_right], SiteConfig)
-    yldfft['SiteConfig']  = originData.from_dict({name: data[name][0] for name in data.dtype.names})
+    site_config=_dict_from_struct(data, SiteConfig)
     bsoffset_left=bsoffset_right
     bsoffset_right=bsoffset_left+RadarConfig.itemsize
     data=np.frombuffer(bs[bsoffset_left:bsoffset_right], RadarConfig)
-    yldfft['RadarConfig'] = originData.from_dict({name: data[name][0] for name in data.dtype.names})
+    radar_config=_dict_from_struct(data, RadarConfig)
     bsoffset_left=bsoffset_right
     bsoffset_right=bsoffset_left+TaskConfig.itemsize
     data=np.frombuffer(bs[bsoffset_left:bsoffset_right], TaskConfig)
-    yldfft['TaskConfig'] = originData.from_dict({name: data[name][0] for name in data.dtype.names})
-    yldfft['TaskConfig']['Scan_Start_Time']=yldfft['TaskConfig']['Scan_Start_Time'].astype('datetime64[s]')
-    Cut_Number=yldfft['TaskConfig']['Cut_Number']
-    yldfft['CutConfigs']=[]
+    task_config=_dict_from_struct(data, TaskConfig)
+    task_config['Scan_Start_Time']=task_config['Scan_Start_Time'].astype('datetime64[s]')
+    Cut_Number=task_config['Cut_Number']
+    cut_configs=[]
     for i in range(Cut_Number):
         bsoffset_left = bsoffset_right
         bsoffset_right = bsoffset_left + CutConfig.itemsize
         data=np.frombuffer(bs[bsoffset_left:bsoffset_right], CutConfig)
-        yldfft['CutConfigs'].append(originData.from_dict({name: data[name][0] for name in data.dtype.names}))
+        cut_configs.append(_dict_from_struct(data, CutConfig))
     bsoffset_left = bsoffset_right
     bsoffset_right = bsoffset_left + RadialHeader.itemsize
     data=np.frombuffer(bs[bsoffset_left:bsoffset_right], RadialHeader)
-    yldfft['RadialHeader'] = originData.from_dict({name: data[name][0] for name in data.dtype.names})
-    yldfft['DataInfos']=[]
-    yldfft['Data']=[]
-    for i in range(yldfft['RadialHeader']['Moment_Number']):
+    radial_header=_dict_from_struct(data, RadialHeader)
+    data_infos=[]
+    raw_data=[]
+    for i in range(radial_header['Moment_Number']):
         bsoffset_left = bsoffset_right
         bsoffset_right = bsoffset_left + data_unit_header.itemsize
         data=np.frombuffer(bs[bsoffset_left:bsoffset_right], data_unit_header)
-        RadialDatai=originData.from_dict({name: data[name][0] for name in data.dtype.names})
+        datainfo=_dict_from_struct(data, data_unit_header)
         FFT_extra_unit_headeri=FFT_extra_unit_header.copy()
-        for i in range(len(FFT_extra_unit_headeri)):
-            FFT_extra_unit_headeri[i][2]=RadialDatai['Bin_Number']
-            FFT_extra_unit_headeri[i]=tuple(FFT_extra_unit_headeri[i])
+        for k in range(len(FFT_extra_unit_headeri)):
+            FFT_extra_unit_headeri[k][2]=datainfo['Bin_Number']
+            FFT_extra_unit_headeri[k]=tuple(FFT_extra_unit_headeri[k])
         FFT_extra_unit_headeri=np.dtype(FFT_extra_unit_headeri)
         bsoffset_left = bsoffset_right
         bsoffset_right = bsoffset_left + FFT_extra_unit_headeri.itemsize
         data=np.frombuffer(bs[bsoffset_left:bsoffset_right], FFT_extra_unit_headeri)
-        RadialDatai.update({name: data[name][0] for name in data.dtype.names})
-        yldfft['DataInfos'].append(RadialDatai)
+        datainfo.update({name: data[name][0] for name in data.dtype.names})
+        data_infos.append(datainfo)
         bsoffset_left = bsoffset_right
-        bsoffset_right = bsoffset_left +int(RadialDatai['Bin_Bytes'])*int(RadialDatai['Bin_Number'])
-        yldfft['Data'].append((np.frombuffer(
+        bsoffset_right = bsoffset_left +int(datainfo['Bin_Bytes'])*int(datainfo['Bin_Number'])
+        raw_data.append((np.frombuffer(
             bs[bsoffset_left:bsoffset_right],
-            dtype='u2',count=2*int(yldfft.RadialHeader.Max_FFT_Count)*int(RadialDatai.Bin_Number)
-        ).reshape((int(RadialDatai.Bin_Number),int(yldfft.RadialHeader.Max_FFT_Count),2))-FFTOffset)/FFTScale)
-    data=np.array(yldfft['Data'])
-    data=np.expand_dims(data,1)
+            dtype='u2',count=2*int(radial_header['Max_FFT_Count'])*int(datainfo['Bin_Number'])
+        ).reshape((int(datainfo['Bin_Number']),int(radial_header['Max_FFT_Count']),2))-FFTOffset)/FFTScale)
+    arr=np.array(raw_data)
+    arr=np.expand_dims(arr,1)
     heights = np.arange(
-        yldfft['CutConfigs'][0]['Start_Range'],
-        yldfft['CutConfigs'][0]['Start_Range'] + yldfft['CutConfigs'][0]['Doppler_Resolution'] * yldfft.DataInfos[0][
-            'Bin_Number'],
-        yldfft['CutConfigs'][0]['Log_Resolution']
+        cut_configs[0]['Start_Range'],
+        cut_configs[0]['Start_Range'] + cut_configs[0]['Doppler_Resolution'] * data_infos[0]['Bin_Number'],
+        cut_configs[0]['Log_Resolution']
     )
-    yldfft['Data']=xr.Dataset(
-        data_vars={f'FFT{i}':(['time','height','FFT_index','dtype'],data[i]) for i in range(yldfft['RadialHeader']['Moment_Number'])},
+    ds=xr.Dataset(
+        data_vars={f'FFT{i}':(['time','height','FFT_index','dtype'],arr[i]) for i in range(radial_header['Moment_Number'])},
         coords={
-            'time':[yldfft['TaskConfig']['Scan_Start_Time'].astype(datetime)],
+            'time':[task_config['Scan_Start_Time'].astype(datetime)],
             'height': heights,
-            'index':range(yldfft['RadialHeader']['Max_FFT_Count']),
+            'index':range(radial_header['Max_FFT_Count']),
             'dtype':['flag','value']
         },
         attrs={
+            'GenericHeader': generic_header,
+            'SiteConfig': site_config,
+            'RadarConfig': radar_config,
+            'TaskConfig': task_config,
+            'CutConfigs': cut_configs,
+            'RadialHeader': radial_header,
+            'DataInfos': data_infos,
             'time_count':1,
             'height_count': len(heights),
             'time_reference': 'UTC',
             'height_unit': 'meter',
         }
     )
-    return yldfft
+    return ds
 
-def FFTDatas_getDatas(self,fixData_Length='max',unobdata=unobdata):
-    '''
-    获取云雷达基数据集中的数据
-    Args:
-        fixData_Length:不同时次数据对齐方式，max:最大长度,min:最小长度,或者指定长度
-    Returns:
-        xr.Dataset:数据
-    '''
-    varnames = list(map(lambda di: list(di.Data.data_vars), self.FFTDatas))
-    varnames = list(set([item for sublist in varnames for item in sublist]))
-    hcounts = list(map(lambda di: di.Data.height_count, self.FFTDatas))
-    times = list(map(lambda di: di.Data.time.values[0], self.FFTDatas))
-    if(fixData_Length=='max'):
-        maxlendatas = max(hcounts)
-    if(fixData_Length=='min'):
-        maxlendatas = min(hcounts)
-    if (isInt(fixData_Length)):
-        maxlendatas = int(fixData_Length)
-    heights = np.arange(
-        self.FFTDatas[0]['CutConfigs'][0]['Start_Range'],
-        self.FFTDatas[0]['CutConfigs'][0]['Start_Range'] + self.FFTDatas[0]['CutConfigs'][0][
-            'Doppler_Resolution'] * maxlendatas,
-        self.FFTDatas[0]['CutConfigs'][0]['Log_Resolution']
-    )
-    indexs=range(self.FFTDatas[0]['RadialHeader']['Max_FFT_Count'])
-    datavars = {}
-    for key in varnames:
-        dds = list(map(lambda x: np.squeeze(x.Data[key].values).tolist(), filter(lambda x: key in x.Data, self.FFTDatas)))
-        ddas = [
-            list(d)[:maxlendatas] if (len(d) > maxlendatas) else list(d) + [unobdata] * (maxlendatas - len(d))
-            for d in dds
-        ]
-        datavars[key] = (['time','height','FFT_index','dtype'], np.array(ddas),)
-    Datas = xr.Dataset(
-        data_vars=datavars,
-        coords={
-            'time': times,
-            'height': heights,
-            'index':indexs,
-            'dtype':['flag','value']
-        },
-        attrs={
-            'time_count':len(times),
-            'height_count': maxlendatas,
-            'time_reference': 'UTC',
-            'height_unit': 'meter',
-        }
-    )
-    self.Datas=Datas
-FFTDatas.getDatas=FFTDatas_getDatas
-
-def readFFTDatas(fps:list,use_multiprocess=False,multiproces_corenum=-1)->FFTDatas:
-    '''
-    读取云雷达谱数据文件列表
-    Args:
-        fps:文件路径列表
-        use_multiprocess:是否使用多进程读取（速度较快但默认不使用）
-        multiproces_corenum:多进程核心数（默认为-1，使用全部核心）
-    Returns:
-        list:云雷达对象列表
-    '''
-    rbds=FFTDatas()
-    if(use_multiprocess):
-        rbds['FFTDatas']=Parallel(n_jobs=multiproces_corenum)(delayed(readSingleFFTData)(fp) for fp in fps)
+def readFFTDatas(fps:list, use_multiprocess=False, multiproces_corenum=-1):
+    if use_multiprocess:
+        datasets = Parallel(n_jobs=multiproces_corenum)(delayed(readSingleFFTData)(fp) for fp in fps)
     else:
-        rbds['FFTDatas']=[readSingleFFTData(fp) for fp in fps]
-    rbds.__datas__=rbds['FFTDatas']
+        datasets = [readSingleFFTData(fp) for fp in fps]
+    valid = [ds for ds in datasets if ds is not None]
+    if not valid:
+        return None
+    return base.concat_datasets(valid, dim='time')
 
-    rbds.getDatas()
-    return rbds
 
-def readSingleBaseData(fp:str)->SingleBaseData:
-    '''    
-    读取云雷达基数据文件（分钟），文件命名格式为：Z_RADA_I_IIiii_yyyyMMddhhmmss_O_YCCR_设备型号_RAW_MM.BIN
-    Args:
-        fp:文件路径
-    Returns:
-        SingleBaseData:云雷达基数据对象
-    '''
+def _map_data_type(data_type_value):
+    mapping = {
+        1: 'Z1', 2: 'V1', 3: 'W1', 4: 'SNR1', 5: 'FFT1', 6: 'Zc1',
+        17: 'Z2', 18: 'V2', 19: 'W2', 20: 'SNR2', 21: 'FFT2', 22: 'Zc2',
+        33: 'ZDR', 34: 'LDR', 35: 'CC', 36: 'DP', 37: 'KDP',
+        38: 'Re', 39: 'VIL', 40: 'HCL', 41: 'SQI', 42: 'CPA',
+        43: 'CF', 44: 'CP', 45: 'BB', 46: 'Cn2', 50: 'IWC',
+    }
+    if data_type_value in mapping:
+        return mapping[data_type_value]
+    if 7 <= data_type_value <= 16 or 23 <= data_type_value <= 32 or 47 <= data_type_value <= 49 or 51 <= data_type_value <= 64:
+        return 'Reserved'
+    return 'Other'
+
+
+def readSingleBaseData(fp:str):
     with open(fp,'rb') as f:
         bs=f.read()
-    yldbd=SingleBaseData()
     bsoffset_left=0
     bsoffset_right=bsoffset_left+GenericHeader.itemsize
     data=np.frombuffer(bs[bsoffset_left:bsoffset_right], GenericHeader)
-    yldbd['GenericHeader'] = originData.from_dict({name: data[name][0] for name in data.dtype.names})
+    generic_header=_dict_from_struct(data, GenericHeader)
     bsoffset_left=bsoffset_right
     bsoffset_right=bsoffset_left+SiteConfig.itemsize
     data=np.frombuffer(bs[bsoffset_left:bsoffset_right], SiteConfig)
-    yldbd['SiteConfig']  = originData.from_dict({name: data[name][0] for name in data.dtype.names})
+    site_config=_dict_from_struct(data, SiteConfig)
     bsoffset_left=bsoffset_right
     bsoffset_right=bsoffset_left+RadarConfig.itemsize
     data=np.frombuffer(bs[bsoffset_left:bsoffset_right], RadarConfig)
-    yldbd['RadarConfig'] = originData.from_dict({name: data[name][0] for name in data.dtype.names})
+    radar_config=_dict_from_struct(data, RadarConfig)
     bsoffset_left=bsoffset_right
     bsoffset_right=bsoffset_left+TaskConfig.itemsize
     data=np.frombuffer(bs[bsoffset_left:bsoffset_right], TaskConfig)
-    yldbd['TaskConfig'] = originData.from_dict({name: data[name][0] for name in data.dtype.names})
-    yldbd['TaskConfig']['Scan_Start_Time']=yldbd['TaskConfig']['Scan_Start_Time'].astype('datetime64[s]')
-    Cut_Number=yldbd['TaskConfig']['Cut_Number']
-    yldbd['CutConfigs']=[]
+    task_config=_dict_from_struct(data, TaskConfig)
+    task_config['Scan_Start_Time']=task_config['Scan_Start_Time'].astype('datetime64[s]')
+    Cut_Number=task_config['Cut_Number']
+    cut_configs=[]
     for i in range(Cut_Number):
         bsoffset_left = bsoffset_right
         bsoffset_right = bsoffset_left + CutConfig.itemsize
         data=np.frombuffer(bs[bsoffset_left:bsoffset_right], CutConfig)
-        yldbd['CutConfigs'].append(originData.from_dict({name: data[name][0] for name in data.dtype.names}))
+        cut_configs.append(_dict_from_struct(data, CutConfig))
     bsoffset_left = bsoffset_right
     bsoffset_right = bsoffset_left + RadialHeader.itemsize
     data=np.frombuffer(bs[bsoffset_left:bsoffset_right], RadialHeader)
-    yldbd['RadialHeader'] = originData.from_dict({name: data[name][0] for name in data.dtype.names})
-    yldbd['Data']=[]
-    yldbd['DataInfos']=[]
-    for i in range(yldbd['RadialHeader']['Moment_Number']):
+    radial_header=_dict_from_struct(data, RadialHeader)
+    data_arrays=[]
+    data_infos=[]
+    for i in range(radial_header['Moment_Number']):
         bsoffset_left = bsoffset_right
         bsoffset_right = bsoffset_left + data_unit_header.itemsize
         data=np.frombuffer(bs[bsoffset_left:bsoffset_right], data_unit_header)
-        datainfo=originData.from_dict({name: data[name][0] for name in data.dtype.names})
-        data_type_value = datainfo['Data_Type']
-        if data_type_value == 1:
-            datainfo['Data_Name'] = 'Z1'
-        elif data_type_value == 2:
-            datainfo['Data_Name'] = 'V1'
-        elif data_type_value == 3:
-            datainfo['Data_Name'] = 'W1'
-        elif data_type_value == 4:
-            datainfo['Data_Name'] = 'SNR1'
-        elif data_type_value == 5:
-            datainfo['Data_Name'] = 'FFT1'
-        elif data_type_value == 6:
-            datainfo['Data_Name'] = 'Zc1'
-        elif 6 <= data_type_value <= 16:
-            datainfo['Data_Name'] = 'Reserved'
-        elif data_type_value == 17:
-            datainfo['Data_Name'] = 'Z2'
-        elif data_type_value == 18:
-            datainfo['Data_Name'] = 'V2'
-        elif data_type_value == 19:
-            datainfo['Data_Name'] = 'W2'
-        elif data_type_value == 20:
-            datainfo['Data_Name'] = 'SNR2'
-        elif data_type_value == 21:
-            datainfo['Data_Name'] = 'FFT2'
-        elif data_type_value == 22:
-            datainfo['Data_Name'] = 'Zc2'
-        elif 22 <= data_type_value <= 32:
-            datainfo['Data_Name'] = 'Reserved'
-        elif data_type_value == 33:
-            datainfo['Data_Name'] = 'ZDR'
-        elif data_type_value == 34:
-            datainfo['Data_Name'] = 'LDR'
-        elif data_type_value == 35:
-            datainfo['Data_Name'] = 'CC'
-        elif data_type_value == 36:
-            datainfo['Data_Name'] = 'DP'# ΦDP
-        elif data_type_value == 37:
-            datainfo['Data_Name'] = 'KDP'
-        elif data_type_value == 38:
-            datainfo['Data_Name'] = 'Re'
-        elif data_type_value == 39:
-            datainfo['Data_Name'] = 'VIL'
-        elif data_type_value == 40:
-            datainfo['Data_Name'] = 'HCL'
-        elif data_type_value == 41:
-            datainfo['Data_Name'] = 'SQI'
-        elif data_type_value == 42:
-            datainfo['Data_Name'] = 'CPA'
-        elif data_type_value == 43:
-            datainfo['Data_Name'] = 'CF'
-        elif data_type_value == 44:
-            datainfo['Data_Name'] = 'CP'
-        elif data_type_value == 45:
-            datainfo['Data_Name'] = 'BB'
-        elif data_type_value == 46:
-            datainfo['Data_Name'] = 'Cn2'
-        elif 47 <= data_type_value <= 49:
-            datainfo['Data_Name'] = 'Reserved'
-        elif data_type_value == 50:
-            datainfo['Data_Name'] = 'IWC'
-        elif 51 <= data_type_value <= 64:
-            datainfo['Data_Name'] = 'Reserved'
-        else:
-            datainfo['Data_Name'] = 'Other'
-        yldbd['DataInfos'].append(datainfo)
-        if(datainfo['Data_Type']>0):
+        datainfo=_dict_from_struct(data, data_unit_header)
+        datainfo['Data_Name'] = _map_data_type(datainfo['Data_Type'])
+        data_infos.append(datainfo)
+        if datainfo['Data_Type'] > 0:
             bsoffset_left = bsoffset_right
             bsoffset_right = bsoffset_left + datainfo['Data_Length']
-            data=np.frombuffer(bs[bsoffset_left:bsoffset_right],'i'+str(datainfo['Bin_Bytes']))
-            data=np.where(data==0,nodata,(data-datainfo['Offset'])/datainfo['Scale'])
-            yldbd['Data'].append(data)
+            raw=np.frombuffer(bs[bsoffset_left:bsoffset_right],'i'+str(datainfo['Bin_Bytes']))
+            data_arrays.append(np.where(raw==0, nodata, (raw-datainfo['Offset'])/datainfo['Scale']))
         else:
-            yldbd['Data'].append(None)
-    varnames=list(map(lambda x: x['Data_Name'],yldbd.DataInfos))
-    dvar = dict(zip(varnames, yldbd.Data))
-    Doppler_Resolution=yldbd['CutConfigs'][0]['Doppler_Resolution']
-    if(Doppler_Resolution<=0):
+            data_arrays.append(None)
+    varnames=[di['Data_Name'] for di in data_infos]
+    dvar = {k: v for k, v in zip(varnames, data_arrays) if v is not None}
+    Doppler_Resolution=cut_configs[0]['Doppler_Resolution']
+    if Doppler_Resolution<=0:
         Doppler_Resolution=1
     heights = np.arange(
-        yldbd['CutConfigs'][0]['Start_Range'],
-        yldbd['CutConfigs'][0]['Start_Range'] +
-            Doppler_Resolution * yldbd.DataInfos[0]['Bin_Number'],
+        cut_configs[0]['Start_Range'],
+        cut_configs[0]['Start_Range'] + Doppler_Resolution * data_infos[0]['Bin_Number'],
         Doppler_Resolution
     )
-    yldbd['Data'] = xr.Dataset(
+    ds = xr.Dataset(
         data_vars={key: (['time','height'], dvar[key][np.newaxis,:]) for key in dvar.keys()},
         coords={
-            'time':[yldbd['TaskConfig']['Scan_Start_Time'].astype(datetime)],
+            'time':[task_config['Scan_Start_Time'].astype(datetime)],
             'height': heights
         },
         attrs={
+            'GenericHeader': generic_header,
+            'SiteConfig': site_config,
+            'RadarConfig': radar_config,
+            'TaskConfig': task_config,
+            'CutConfigs': cut_configs,
+            'RadialHeader': radial_header,
+            'DataInfos': data_infos,
             'time_count':1,
             'height_count': len(heights),
             'time_reference': 'UTC',
             'height_unit': 'meter',
         }
     )
+    return ds
 
-    return yldbd
 
-def BaseDatas_getDatas(self,fixData_Length='max',unobdata=unobdata):
-    '''
-    获取云雷达基数据集中的数据
-    Args:
-        fixData_Length:不同时次数据对齐方式，max:最大长度,min:最小长度,或者指定长度
-    Returns:
-        xr.Dataset:数据
-    '''
-    varnames = list(map(lambda di: list(di.Data.data_vars), self.BaseDatas))
-    varnames = list(set([item for sublist in varnames for item in sublist]))
-    hcounts = list(map(lambda di: di.Data.height_count, self.BaseDatas))
-    times = list(map(lambda di: di.Data.time.values[0], self.BaseDatas))
-    if(fixData_Length=='max'):
-        maxlendatas = max(hcounts)
-    if(fixData_Length=='min'):
-        maxlendatas = min(hcounts)
-    if (isInt(fixData_Length)):
+def readBaseDatas(fps:list, use_multiprocess=False, multiproces_corenum=-1, fixData_Length='max'):
+    if use_multiprocess:
+        datasets = Parallel(n_jobs=multiproces_corenum)(delayed(readSingleBaseData)(fp) for fp in fps)
+    else:
+        datasets = [readSingleBaseData(fp) for fp in fps]
+    valid = [ds for ds in datasets if ds is not None]
+    if not valid:
+        return None
+    if fixData_Length == 'max':
+        maxlendatas = max(ds.height_count for ds in valid)
+    elif fixData_Length == 'min':
+        maxlendatas = min(ds.height_count for ds in valid)
+    elif isInt(fixData_Length):
         maxlendatas = int(fixData_Length)
-    Doppler_Resolution = self.BaseDatas[0]['CutConfigs'][0]['Log_Resolution']
-    if (Doppler_Resolution <= 0):
+    else:
+        maxlendatas = max(ds.height_count for ds in valid)
+    Doppler_Resolution = valid[0].attrs['CutConfigs'][0]['Log_Resolution']
+    if Doppler_Resolution <= 0:
         Doppler_Resolution = 1
     heights = np.arange(
-        self.BaseDatas[0]['CutConfigs'][0]['Start_Range'],
-        self.BaseDatas[0]['CutConfigs'][0]['Start_Range'] + Doppler_Resolution * maxlendatas,
+        valid[0].attrs['CutConfigs'][0]['Start_Range'],
+        valid[0].attrs['CutConfigs'][0]['Start_Range'] + Doppler_Resolution * maxlendatas,
         Doppler_Resolution
     )
+    varnames = list(set(vn for ds in valid for vn in ds.data_vars))
+    times = [ds.coords['time'].values[0] for ds in valid]
     datavars = {}
     for key in varnames:
-        dds = list(map(lambda x: np.squeeze(x.Data[key].values).tolist(), filter(lambda x: key in x.Data, self.BaseDatas)))
-        ddas = [list(d)[:maxlendatas] if (len(d) > maxlendatas) else list(d) + [unobdata] * (maxlendatas - len(d)) for d
-                in dds]
-        datavars[key] = (['time', 'height'], np.array(ddas),)
-    Datas = xr.Dataset(
+        dds = [np.squeeze(ds[key].values).tolist() if key in ds else [unobdata]*valid[0].attrs['height_count'] for ds in valid]
+        ddas = [list(d)[:maxlendatas] if len(d) > maxlendatas else list(d) + [unobdata] * (maxlendatas - len(d)) for d in dds]
+        datavars[key] = (['time', 'height'], np.array(ddas))
+    merged = xr.Dataset(
         data_vars=datavars,
-        coords={
-            'time': times,
-            'height': heights
-        },
+        coords={'time': times, 'height': heights},
         attrs={
-            'time_count':len(times),
+            'time_count': len(times),
             'height_count': maxlendatas,
             'time_reference': 'UTC',
             'height_unit': 'meter',
         }
     )
-    self.Datas=Datas
-BaseDatas.getDatas=BaseDatas_getDatas
+    return merged
 
-def readBaseDatas(fps:list,use_multiprocess=False,multiproces_corenum=-1)->BaseDatas:
-    '''    
-    读取云雷达基数据文件列表
-    Args:
-        fps:文件路径列表
-        use_multiprocess:是否使用多进程读取（速度较快但默认不使用）
-        multiproces_corenum:多进程核心数（默认为-1，使用全部核心）
-    Returns:
-        list:云雷达对象列表    
-    '''
-    rbds=BaseDatas()
-    if(use_multiprocess):
-        rbds['BaseDatas']=Parallel(n_jobs=multiproces_corenum)(delayed(readSingleBaseData)(fp) for fp in fps)
-    else:
-        rbds['BaseDatas']=[readSingleBaseData(fp) for fp in fps]
-    rbds.__datas__=rbds['BaseDatas']
 
-    rbds.getDatas()
-    return rbds
+def readStatuXMLfile(fp:str):
+    try:
+        with open(fp, 'r', encoding='utf8') as f:
+            xml_data = f.read()
+        xmld = ET.fromstring(xml_data)
+        return parse_element(xmld)
+    except Exception as ex:
+        print(ex)
+        return None
 
-def BaseDatas_plot(self, data_name='Z1', figsize=(18,12), cmap=None, norm=None,show=True,savepath=None):
-    '''    
-    绘制云雷达数据    
-    Args:
-        plot_type:绘图类型,ref:反射率,velocity:速度,spectrumwith:谱宽,snr:信噪比
-        figsize:图像尺寸
-        cmap:颜色映射
-        norm:归一化    
-    '''
-    if(data_name not in self.Datas.data_vars):
-        raise ValueError('data_name not in Datas')
 
-    if data_name=='Z1' or data_name=='Z2':
-        if(cmap is None):
-            cmap=ref_cmap
-        if(norm is None):
-            norm=ref_norm
-    elif data_name=='V1' or data_name=='V2':
-        unitstr='m/s'
-        if(cmap is None):
-            cmap=velocity_cmap
-        if(norm is None):
-            norm=velocity_norm
-    elif data_name=='W1' or data_name=='W2':
-        unitstr='m/s'
-        if(cmap is None):
-            cmap=spectrumwith_cmap
-        if(norm is None):
-            norm=spectrumwith_norm
-    elif data_name=='SNR1' or data_name=='SNR2':
-        unitstr='db'
-        if(cmap is None):
-            cmap=snr_cmap
-        if(norm is None):
-            norm=snr_norm
+def readSingleStatuXMLfile(fp:str):
+    try:
+        with open(fp, 'r', encoding='utf8') as f:
+            xml_data = f.read()
+        xmld = ET.fromstring(xml_data)
+        return parse_element(xmld)
+    except Exception as ex:
+        print(ex)
+        return None
 
-    else:
-        unitstr='db'
-        if(cmap is None):
-            cmap=ref_cmap
-        if(norm is None):
-            norm=ref_norm
 
-    fig,ax=plt.subplots(figsize=figsize)
-    self.Datas[data_name].plot(
-        ax=ax,
-        x='time',
-        cmap=cmap,
-        norm=norm,
-        cbar_kwargs=dict(
-            orientation='horizontal',
-            extend='max',
-            extendrect=True,
-            extendfrac='auto',
-            pad=0.08,
-            aspect=35
+def readSingleCalibrationXMLfile(fp:str):
+    try:
+        with open(fp, 'r', encoding='utf8') as f:
+            xml_data = f.read()
+        xmld = ET.fromstring(xml_data)
+        return parse_element(xmld)
+    except Exception as ex:
+        print(ex)
+        return None
+
+
+def readSingleProductFile(fp: str):
+    try:
+        with open(fp, 'r', encoding='utf-8') as f:
+            lines = [line.strip() for line in f]
+
+        header_line = None
+        data_start = None
+        for i, line in enumerate(lines):
+            if line.startswith('Record,') or line.startswith('DateTime,'):
+                header_line = i
+                data_start = i + 1
+                break
+
+        if header_line is None:
+            for i, line in enumerate(lines):
+                if ',' in line and any(c.isdigit() for c in line):
+                    data_start = i
+                    break
+
+        if data_start is None:
+            return None
+
+        columns = lines[header_line].split(',') if header_line is not None else None
+        data_lines = lines[data_start:]
+        data_list = []
+        for line in data_lines:
+            if line == '' or line == 'NNNN':
+                continue
+            parts = line.split(',')
+            if len(parts) >= 3:
+                data_list.append(parts)
+
+        if not data_list:
+            return None
+
+        if columns and len(columns) >= len(data_list[0]):
+            columns = columns[:len(data_list[0])]
+        else:
+            columns = [f'col_{i}' for i in range(len(data_list[0]))]
+
+        df = pd.DataFrame(data_list, columns=columns)
+        for col in df.columns:
+            if col not in ('DateTime', 'DataType'):
+                df[col] = pd.to_numeric(df[col], errors='coerce')
+
+        time_col = None
+        for col in ['DateTime', 'datetime', 'Time', 'time']:
+            if col in df.columns:
+                time_col = col
+                break
+
+        if time_col:
+            try:
+                times = pd.to_datetime(df[time_col])
+            except:
+                times = pd.to_datetime(df[time_col], format='%Y%m%d%H%M%S', errors='coerce')
+        else:
+            times = pd.date_range(start='2000-01-01', periods=len(df), freq='1min')
+
+        numeric_cols = [col for col in df.columns if col not in (time_col, 'DataType', 'Record')]
+        data_vars = {}
+        for col in numeric_cols:
+            data_vars[col] = (['time'], df[col].values)
+
+        ds = xr.Dataset(
+            data_vars=data_vars,
+            coords={'time': times},
+            attrs={
+                'File_Path': fp,
+                'columns': numeric_cols,
+            }
         )
-    )
-    ax.set_ylabel("Height (m)")
-    ax.set_xlabel("Time (UTC)")
-    if(show):
-        plt.show()
+        return ds
+    except Exception as ex:
+        print(ex)
+        return None
+
+
+def readProductFiles(fps: list, use_multiprocess=False, multiproces_corenum=-1):
+    if use_multiprocess:
+        datasets = Parallel(n_jobs=multiproces_corenum)(delayed(readSingleProductFile)(fp) for fp in fps)
     else:
-        plt.close(fig)
-    if(savepath is not None):
-        fig.savefig(savepath,bbox_inches='tight')
-BaseDatas.plot=BaseDatas_plot
-
-def readStatuXMLfile(fp:str)->StatusData:
-    '''
-    读取毫米波云雷达雷达单个状态数据xml格式文件；
-    支持 Z_RADA_I_IIiii_yyyyMMddhhmmss_R_YCCR_设备型号_STA_M.XML
-    args:
-        fp:单个状态数据xml格式文件
-    return:
-        StatusData对象
-    '''
-    try:
-        with open(fp, 'r', encoding='utf8') as f:
-            xml_data = f.read()
-        xmld = ET.fromstring(xml_data)
-        return StatusData.from_dict(parse_element(xmld))
-    except Exception as ex:
-        print(ex)
+        datasets = [readSingleProductFile(fp) for fp in fps]
+    valid = [ds for ds in datasets if ds is not None]
+    if not valid:
         return None
+    return base.concat_datasets(valid, dim='time')
 
-def readSingleStatuXMLfile(fp:str)->StatusData:
-    '''
-    读取毫米波云雷达雷达单个状态数据xml格式文件；
-    支持 Z_RADA_I_IIiii_yyyyMMddhhmmss_R_YCCR_设备型号_STA_MM.XML
-    args:
-        fp:单个状态数据xml格式文件
-    return:
-        StatusData对象
-    '''
-    try:
-        with open(fp, 'r', encoding='utf8') as f:
-            xml_data = f.read()
-        xmld = ET.fromstring(xml_data)
-        return StatusData.from_dict(parse_element(xmld))
-    except Exception as ex:
-        print(ex)
-        return None
 
-def readSingleCalibrationXMLfile(fp:str)->CalibrationData:
-    '''
-    读取毫米波云雷达雷达单个标校数据xml格式文件；
-    支持 Z_RADA_I_IIiii_yyyyMMddhhmmss_C_YCCR_设备型号_CAL.XML
-    args:
-        fp:单个标校数据xml格式文件
-    return:
-        CalibrationData对象
-    '''
-    try:
-        with open(fp, 'r', encoding='utf8') as f:
-            xml_data = f.read()
-        xmld = ET.fromstring(xml_data)
-        return CalibrationData.from_dict(parse_element(xmld))
-    except Exception as ex:
-        print(ex)
-        return None
+@xr.register_dataset_accessor("cld")
+class CLDDatasetAccessor:
+    def __init__(self, xarray_obj):
+        self._obj = xarray_obj
+
+    def plot(self, data_name='Z1', figsize=(18,12), cmap=None, norm=None, show=True, savepath=None):
+        if data_name not in self._obj.data_vars:
+            raise ValueError(f'{data_name} not in dataset')
+        if data_name in ('Z1', 'Z2'):
+            if cmap is None: cmap = ref_cmap
+            if norm is None: norm = ref_norm
+        elif data_name in ('V1', 'V2'):
+            if cmap is None: cmap = velocity_cmap
+            if norm is None: norm = velocity_norm
+        elif data_name in ('W1', 'W2'):
+            if cmap is None: cmap = spectrumwith_cmap
+            if norm is None: norm = spectrumwith_norm
+        elif data_name in ('SNR1', 'SNR2'):
+            if cmap is None: cmap = snr_cmap
+            if norm is None: norm = snr_norm
+        else:
+            if cmap is None: cmap = ref_cmap
+            if norm is None: norm = ref_norm
+        fig, ax = plt.subplots(figsize=figsize)
+        self._obj[data_name].plot(
+            ax=ax, x='time', cmap=cmap, norm=norm,
+            cbar_kwargs=dict(
+                orientation='horizontal', extend='max',
+                extendrect=True, extendfrac='auto', pad=0.08, aspect=35
+            )
+        )
+        ax.set_ylabel("Height (m)")
+        ax.set_xlabel("Time (UTC)")
+        if show:
+            plt.show()
+        else:
+            plt.close(fig)
+        if savepath is not None:
+            fig.savefig(savepath, bbox_inches='tight')

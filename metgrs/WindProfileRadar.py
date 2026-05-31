@@ -1,6 +1,6 @@
 import os
 import json
-from datetime import datetime,timedelta
+from datetime import datetime, timedelta
 import dateutil.parser
 import dateutil.rrule
 import numpy as np
@@ -9,65 +9,41 @@ import xarray as xr
 from . import Utils
 import io
 import math
-import types
 import matplotlib as mpl
-from joblib import Parallel,delayed
+from joblib import Parallel, delayed
 import xml.etree.ElementTree as ET
-from . import base,Utils
-originData=base.originData
-parse_element=Utils.parse_element
+from . import base, Utils
+
+parse_element = Utils.parse_element
 
 #region 绘图参数
-velocity_colors=[
-    '#951262',
-    '#ED2226',
-    '#EB3E22',
-    '#EF6A26',
-    '#F58324',
-    '#F3A122',
-    '#FDB52A',
-    '#FDD31E',
-    '#F9EF1A',
-    '#F7FD1C',
-    '#D9E9F1',
-    '#C7D7F1',
-    '#B1C7EB',
-    '#99B5E7',
-    '#83A5DD',
-    '#6E93D3',
-    '#6089CB',
-    '#4C7CC3',
-    '#4870BB',
-    '#406AB9',
-    '#2A42AB',
-    '#242681',
-    '#242074',
-    '#22206A',
-    '#1C622C',
-    '#067E42',
-    '#0C8B42',
-    '#30BD4C',
-    '#4EC14A',
-    '#58C546',
-    '#87742E'
+velocity_colors = [
+    '#951262', '#ED2226', '#EB3E22', '#EF6A26', '#F58324',
+    '#F3A122', '#FDB52A', '#FDD31E', '#F9EF1A', '#F7FD1C',
+    '#D9E9F1', '#C7D7F1', '#B1C7EB', '#99B5E7', '#83A5DD',
+    '#6E93D3', '#6089CB', '#4C7CC3', '#4870BB', '#406AB9',
+    '#2A42AB', '#242681', '#242074', '#22206A', '#1C622C',
+    '#067E42', '#0C8B42', '#30BD4C', '#4EC14A', '#58C546', '#87742E'
 ]
-velocity_levels=[-1,-0.9,-0.8,-0.7,-0.6,-0.5,-0.4,-0.3,-0.1,0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,2,2.5,3,4,5,6,7,8,9,10]
-velocity_cmap = (mpl.colors.ListedColormap(velocity_colors).with_extremes(over=velocity_colors[-1], under=velocity_colors[0]))
+velocity_levels = [-1, -0.9, -0.8, -0.7, -0.6, -0.5, -0.4, -0.3, -0.1, 0,
+                   0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0,
+                   2, 2.5, 3, 4, 5, 6, 7, 8, 9, 10]
+velocity_cmap = mpl.colors.ListedColormap(velocity_colors).with_extremes(
+    over=velocity_colors[-1], under=velocity_colors[0])
 velocity_norm = mpl.colors.BoundaryNorm(velocity_levels, velocity_cmap.N)
 #endregion
 
 #region 风廓线雷达数据文件元数据
-# 定义变量名字典
 line0_variables = {
-    'WNDRAD':'风廓线雷达数据文件标识',
-    'File_version':'文件版本号'
+    'WNDRAD': '风廓线雷达数据文件标识',
+    'File_version': '文件版本号'
 }
 line1_variables = {
-    'Station_Id':'站号',
-    'Longitude':'经度',
-    'Latitude':'纬度',
-    'Altitude':'海拔高度',
-    'Machine_Type':'风廓线仪型号',
+    'Station_Id': '站号',
+    'Longitude': '经度',
+    'Latitude': '纬度',
+    'Altitude': '海拔高度',
+    'Machine_Type': '风廓线仪型号',
 }
 line2_variables = {
     'Antenna_Gain': '天线增益',
@@ -105,13 +81,13 @@ line3_variables = {
     'South_Beam_Azimuth_Correction': '南波束方位角修正值',
     'North_Beam_Azimuth_Correction': '北波束方位角修正值'
 }
-L2data_variables={
+L2data_variables = {
     'Sampling_Height': '采样高度',
     'Velocity_Spectrum_Width': '速度谱宽',
     'Signal_To_Noise_Ratio': '信噪比',
     'Radial_Velocity': '径向速度'
 }
-L3meta_variables={
+L3meta_variables = {
     "Station_Id": "区站号",
     "Longitude": "经度",
     "Latitude": "纬度",
@@ -127,11 +103,11 @@ L3data_variables = {
     "Horizontal_Confidence": "水平方向可信度",
     "Vertical_Confidence": "垂直方向可信度",
     "Cn2": "Cn2"
-} 
+}
 L1Struct_FileTag = np.dtype([
-    ('FileID', 'S8'),   # 字符类型数组，用于存储文件标识，字节数为8，这里固定值为WNDFFT
-    ('VersionNo', 'f4'),  # 单精度浮点数类型，用于表示数据格式版本号，字节数为4，格式为两位整数两位小数，示例值如01.20
-    ('FileHeaderLength', 'i4') # 32位整数类型，用于表示文件头的长度，字节数为4，是4位整数
+    ('FileID', 'S8'),
+    ('VersionNo', 'f4'),
+    ('FileHeaderLength', 'i4')
 ])
 L1Struct_SiteInfo = np.dtype([
     ('Country', 'S16'),
@@ -200,409 +176,654 @@ L1Struct_ObservationInfo = np.dtype([
 #endregion
 
 
-L1Data=types.new_class('L1Data',(originData,))
-L1ObData=types.new_class('L1ObData',(originData,))
-L2Data=types.new_class('L2Data',(originData,))
-L2LevelData=types.new_class('L2LevelData',(originData,))
-L3Data=types.new_class('L3Data',(originData,))
-L3Datas=types.new_class('L3Datas',(originData,))
-CalibrationData=types.new_class('CalibrationDatas',(originData,))
-StatusData=types.new_class('StatusData',(originData,))
+def _decode_bytes(val, encoding='gbk'):
+    if isinstance(val, bytes):
+        return val.split(b'\x00')[0].decode(encoding, errors='ignore')
+    return val
 
 
-def readSingleL1file(fp:str)->L1Data:
-    '''
-    读取风廓线雷达单个L1功率谱文件，文件命名格式为：Z_RADA_I_IIiii_yyyyMMddhhmmss_O_WPRD_雷达型号_FFT.BIN
-    args:
-        fp:L1功率谱文件路径
-    return:
-        L1Data对象
-    '''
+def _dict_from_struct(data, dtype, encoding='gbk'):
+    result = {}
+    for name in dtype.names:
+        val = data[name][0]
+        result[name] = _decode_bytes(val, encoding)
+    return result
+
+
+def readSingleL1file(fp: str):
     try:
         with open(fp, 'rb') as f:
-            bs=f.read()
-        fkxL1obj=L1Data()
+            bs = f.read()
         bsoffset = 0
+
         data = np.frombuffer(bs[bsoffset:bsoffset + L1Struct_FileTag.itemsize], L1Struct_FileTag)
-        bsoffset = bsoffset + L1Struct_FileTag.itemsize
-        fkxL1obj['FileTag'] = originData.from_dict({name: data[name][0] for name in data.dtype.names})
-        fkxL1obj.FileTag['FileID'] = fkxL1obj.FileTag['FileID'].split(b'\x00')[0].decode('gbk')
+        bsoffset += L1Struct_FileTag.itemsize
+        file_tag = _dict_from_struct(data, L1Struct_FileTag)
+
         data = np.frombuffer(bs[bsoffset:bsoffset + L1Struct_SiteInfo.itemsize], L1Struct_SiteInfo)
-        bsoffset = bsoffset + L1Struct_SiteInfo.itemsize
-        fkxL1obj['SiteInfo'] = originData.from_dict(
-            {name: data[name][0].split(b'\x00')[0].decode('gbk') for name in data.dtype.names}
-        )
-        fkxL1obj['Datas'] = []
-        while (bsoffset < len(bs)):
-            L1ObDatai = L1ObData()
+        bsoffset += L1Struct_SiteInfo.itemsize
+        site_info = _dict_from_struct(data, L1Struct_SiteInfo)
+
+        obs_list = []
+        perf_infos = []
+        obs_infos = []
+        speeds = []
+
+        while bsoffset < len(bs):
             data = np.frombuffer(bs[bsoffset:bsoffset + L1Struct_PerformanceInfo.itemsize], L1Struct_PerformanceInfo)
-            bsoffset = bsoffset + L1Struct_PerformanceInfo.itemsize
-            L1ObDatai['PerformanceInfo'] = originData.from_dict({name: data[name][0] for name in data.dtype.names})
-            L1ObDatai.PerformanceInfo['Temp'] = L1ObDatai.PerformanceInfo['Temp'].split(b'\x00')[0].decode('gbk')
+            bsoffset += L1Struct_PerformanceInfo.itemsize
+            perf_info = _dict_from_struct(data, L1Struct_PerformanceInfo)
+
             data = np.frombuffer(bs[bsoffset:bsoffset + L1Struct_ObservationInfo.itemsize], L1Struct_ObservationInfo)
-            bsoffset = bsoffset + L1Struct_ObservationInfo.itemsize
-            L1ObDatai['ObservationInfo'] = originData.from_dict({name: data[name][0] for name in data.dtype.names})
-            L1ObDatai.ObservationInfo.BeamDir = L1ObDatai.ObservationInfo['BeamDir'].decode('gbk')
-            L1ObDatai.ObservationInfo.Temp = L1ObDatai.ObservationInfo['Temp'].decode('gbk')
-            L1ObDatai.Speed_per_FFT_point = L1ObDatai.PerformanceInfo.Prp / 2 / L1ObDatai.ObservationInfo.Fft * L1ObDatai.PerformanceInfo.WaveLength * 1e-5
-            data_len = L1ObDatai.ObservationInfo.Fft * L1ObDatai.PerformanceInfo.BinNum * L1ObDatai.PerformanceInfo.ScanBeamN
-            data = np.frombuffer(
-                bs[bsoffset:bsoffset + 4 * data_len],
-                'f4',
-                count=data_len
-            ).reshape(L1ObDatai.PerformanceInfo.ScanBeamN, L1ObDatai.PerformanceInfo.BinNum,
-                      L1ObDatai.ObservationInfo.Fft)
-            bsoffset = bsoffset + 4 * data_len
-            da = xr.DataArray(
-                data,
-                dims=['Beam', 'height', 'Fft'],
-                coords={
-                    'Beam': list(L1ObDatai.ObservationInfo.BeamDir),
-                    'height': np.arange(
-                        L1ObDatai.PerformanceInfo.BinNum) * L1ObDatai.PerformanceInfo.BinLength + L1ObDatai.PerformanceInfo.StartSamplBin,
-                    'Fft': np.arange(L1ObDatai.ObservationInfo.Fft)
-                },
-                attrs={
-                    'WaveLength': L1ObDatai.PerformanceInfo.WaveLength,
-                    'Prp': L1ObDatai.PerformanceInfo.Prp,
-                    'ObStarTime': datetime(
-                        L1ObDatai.ObservationInfo.SYear,
-                        L1ObDatai.ObservationInfo.SMonth,
-                        L1ObDatai.ObservationInfo.SDay,
-                        L1ObDatai.ObservationInfo.SHour,
-                        L1ObDatai.ObservationInfo.SMinute,
-                        L1ObDatai.ObservationInfo.SSecond,
-                    ),
-                    'ObEndTime': datetime(
-                        L1ObDatai.ObservationInfo.EYear,
-                        L1ObDatai.ObservationInfo.EMonth,
-                        L1ObDatai.ObservationInfo.EDay,
-                        L1ObDatai.ObservationInfo.EHour,
-                        L1ObDatai.ObservationInfo.EMinute,
-                        L1ObDatai.ObservationInfo.ESecond,
-                    ),
-                    'Speed_per_FFT_point': L1ObDatai.Speed_per_FFT_point,
-                    'WaveLength_unit': '1e-5 meter',
-                    'Prp_unit': 'Hz',
-                    'Speed_per_FFT_point_unit': 'm/s',
-                    'height_unit': 'meter',
-                }
-            )
-            L1ObDatai['DspToDpDat'] = da
-            fkxL1obj['Datas'].append(L1ObDatai)
-        return fkxL1obj
+            bsoffset += L1Struct_ObservationInfo.itemsize
+            obs_info = _dict_from_struct(data, L1Struct_ObservationInfo)
+
+            speed_per_fft = perf_info['Prp'] / 2 / obs_info['Fft'] * perf_info['WaveLength'] * 1e-5
+
+            data_len = obs_info['Fft'] * perf_info['BinNum'] * perf_info['ScanBeamN']
+            fft_data = np.frombuffer(
+                bs[bsoffset:bsoffset + 4 * data_len], 'f4', count=data_len
+            ).reshape(perf_info['ScanBeamN'], perf_info['BinNum'], obs_info['Fft'])
+            bsoffset += 4 * data_len
+
+            obs_list.append(fft_data)
+            perf_infos.append(perf_info)
+            obs_infos.append(obs_info)
+            speeds.append(speed_per_fft)
+
+        beam_dir = obs_infos[0]['BeamDir']
+        heights = np.arange(perf_infos[0]['BinNum']) * perf_infos[0]['BinLength'] + perf_infos[0]['StartSamplBin']
+        times = [
+            datetime(oi['SYear'], oi['SMonth'], oi['SDay'], oi['SHour'], oi['SMinute'], oi['SSecond'])
+            for oi in obs_infos
+        ]
+
+        ds = xr.Dataset(
+            data_vars={
+                'FFT_data': (['time', 'Beam', 'height', 'Fft'], np.array(obs_list))
+            },
+            coords={
+                'time': times,
+                'Beam': list(beam_dir),
+                'height': heights,
+                'Fft': np.arange(obs_infos[0]['Fft'])
+            },
+            attrs={
+                'FileTag': file_tag,
+                'SiteInfo': site_info,
+                'PerformanceInfo': perf_infos,
+                'ObservationInfo': obs_infos,
+                'Speed_per_FFT_point': speeds,
+                'WaveLength_unit': '1e-5 meter',
+                'Prp_unit': 'Hz',
+                'Speed_per_FFT_point_unit': 'm/s',
+                'height_unit': 'meter',
+            }
+        )
+        return ds
     except Exception as ex:
         print(ex)
         return None
 
-def readSingleL2file(fp:str)->L2Data:
-    '''
-    读取风廓线雷达单个L2径向数据文件，文件命名格式为：Z_RADA_I_IIiii_yyyyMMddhhmmss_O_WPRD_雷达型号_RAD.TXT
-    args:
-        fp:L2产品径向数据文件路径
-    return:
-        L2Data对象
-    '''
-    try:
-        with open(fp, 'r') as f:
-            lines = [line.strip() for line in f]        
-        fkxL2obj=L2Data()
 
-        lineds=lines[0].split(' ')    
-        keys=list(line0_variables.keys())    
-        for i, key in enumerate(keys):
-            fkxL2obj[key] = lineds[i]
+def _estimate_noise_floor(spectrum, n_noise_bins=10):
+    sorted_spec = np.sort(spectrum)
+    noise = np.mean(sorted_spec[:n_noise_bins])
+    return noise
 
-        lineds=lines[1].split(' ')
-        keys=list(line1_variables.keys())
-        for i, key in enumerate(keys):
-            fkxL2obj[key] = lineds[i] if i == 0 or i == 4 else Utils.dtryfloat(lineds[i])
 
-        fkxL2obj['levels']=[]
+def _clutter_filter(spectrum, velocity_axis, clutter_width=0.5):
+    clutter_mask = np.abs(velocity_axis) < clutter_width
+    filtered = spectrum.copy()
+    filtered[clutter_mask] = 0
+    return filtered
 
-        tsplitlineis = [1] + [i for i in range(5, len(lines)) if lines[i] == 'NNNN']
 
-        columnnames=list(L2data_variables.keys())
-        leveli=None
-        beamj=0
-        Beam_Count=1
-        dfleveli=[]
-        for i in range(len(tsplitlineis)-1):
-            lineStart=tsplitlineis[i]
-            lineEnd=tsplitlineis[i+1]  
-            if(i%Beam_Count==0):
-                leveli=L2LevelData()
-                dfleveli=[]
-                beamj=0
-                lineStart=lineStart+1
-                lineds=lines[lineStart].split(' ')
-                keys=list(line2_variables.keys())
-                for j in range(len(keys)):
-                    key=keys[j]
-                    leveli[key]=Utils.dtryfloat(lineds[j])
+def _spectral_moments(spectrum, velocity_axis):
+    total_power = np.sum(spectrum)
+    if total_power <= 0:
+        return np.nan, np.nan, np.nan
+    
+    mean_velocity = np.sum(velocity_axis * spectrum) / total_power
+    
+    velocity_deviation = velocity_axis - mean_velocity
+    spectral_width = np.sqrt(np.sum(velocity_deviation**2 * spectrum) / total_power)
+    
+    return total_power, mean_velocity, spectral_width
 
-                lineStart=lineStart+1
-                lineds=lines[lineStart].split(' ')
-                keys=list(line3_variables.keys())
-                for j, key in enumerate(keys):
-                    if(key=='Beam_Order_Flag'):
-                        leveli[key]=lineds[j].replace('/','')
-                        leveli['Beam_Order_Flags']=list(map(lambda bi:leveli['Beam_Order_Flag'][bi],range(len(leveli['Beam_Order_Flag']))))
-                        leveli['Beam_Count']=len(leveli['Beam_Order_Flag'])
-                    else:
-                        if(key=='Observation_Start_Time' or key=='Observation_End_Time'):
-                            leveli[key]=dateutil.parser.parse(lineds[j])
-                        else:           
-                            leveli[key]=Utils.dtryfloat(lineds[j])
-                Beam_Count=leveli['Beam_Count']
 
-            dfleveli.append(lines[lineStart+2:lineEnd])
-            beamj=beamj+1
-            
-            if(beamj==Beam_Count):            
-                # 顺序逐层添加（不包含末尾层）
-                dlevelcolumnnames = [
-                    f"{beam_order_flag}_{key}" for beam_order_flag in leveli['Beam_Order_Flags'] for key in columnnames  
-                ] 
-                sscolumnnames=[dlevelcolumnnames[i] for i in range(0,len(dlevelcolumnnames),len(columnnames))]
-                dfleveli=np.array(dfleveli).T
-                dfleveli=pd.read_csv(io.StringIO('\n'.join([' '.join(x) for x in list(dfleveli)])),sep=' ',header=None,names=dlevelcolumnnames)
-                dfleveli=dfleveli.rename(columns={sscolumnnames[0]:sscolumnnames[0][2:]}).drop(sscolumnnames[1:],axis=1)
-                dfleveli=dfleveli.apply(lambda x:pd.to_numeric(x,errors='coerce'))   
-                leveli['Data']=dfleveli
-                fkxL2obj['levels'].append(leveli)
-
+def CalcL1toL2(ds_l1, clutter_filter=True, clutter_width=0.5, snr_threshold=-20, n_noise_bins=10):
+    if ds_l1 is None:
+        return None
+    
+    fft_data = ds_l1['FFT_data'].values
+    beam_dirs = ds_l1.coords['Beam'].values
+    heights = ds_l1.coords['height'].values
+    times = ds_l1.coords['time'].values
+    
+    speed_per_fft = ds_l1.attrs['Speed_per_FFT_point'][0]
+    n_fft = fft_data.shape[3]
+    velocity_axis = (np.arange(n_fft) - n_fft/2) * speed_per_fft
+    
+    results = {}
+    for beam_idx, beam_name in enumerate(beam_dirs):
+        beam_results = {
+            'Radial_Velocity': [],
+            'Velocity_Spectrum_Width': [],
+            'Signal_To_Noise_Ratio': [],
+            'Sampling_Height': []
+        }
         
-        fkxL2obj['Beam_Order_Flags']=fkxL2obj['levels'][0]['Beam_Order_Flags']
-        fkxL2obj['Beam_Count']=fkxL2obj['levels'][0]['Beam_Count']
-        levels_count=len(fkxL2obj['levels'])
-        fkxL2obj['levels_count']=levels_count
-        if(levels_count==1):
-            dlevels=['low']
-        else:
-            if(levels_count==2):
-                dlevels=['low','high']
-            else:
-                dlevels=['low','middle','high']
-        fkxL2obj['dlevels']=dlevels
+        for time_idx in range(len(times)):
+            rv_list = []
+            sw_list = []
+            snr_list = []
+            
+            for height_idx in range(len(heights)):
+                spectrum = fft_data[time_idx, beam_idx, height_idx, :]
+                
+                noise_floor = _estimate_noise_floor(spectrum, n_noise_bins)
+                
+                signal_spectrum = spectrum - noise_floor
+                signal_spectrum = np.maximum(signal_spectrum, 0)
+                
+                if clutter_filter:
+                    signal_spectrum = _clutter_filter(signal_spectrum, velocity_axis, clutter_width)
+                
+                total_power, mean_vel, spec_width = _spectral_moments(signal_spectrum, velocity_axis)
+                
+                if noise_floor > 0:
+                    snr = 10 * np.log10(total_power / noise_floor) if total_power > 0 else -999
+                else:
+                    snr = -999
+                
+                rv_list.append(mean_vel)
+                sw_list.append(spec_width)
+                snr_list.append(snr)
+            
+            beam_results['Radial_Velocity'].append(rv_list)
+            beam_results['Velocity_Spectrum_Width'].append(sw_list)
+            beam_results['Signal_To_Noise_Ratio'].append(snr_list)
+        
+        beam_results['Radial_Velocity'] = np.array(beam_results['Radial_Velocity'])
+        beam_results['Velocity_Spectrum_Width'] = np.array(beam_results['Velocity_Spectrum_Width'])
+        beam_results['Signal_To_Noise_Ratio'] = np.array(beam_results['Signal_To_Noise_Ratio'])
+        beam_results['Sampling_Height'] = heights
+        
+        results[beam_name] = beam_results
+    
+    data_vars = {}
+    for beam_name in beam_dirs:
+        beam_data = results[beam_name]
+        prefix = beam_name
+        data_vars[f'{prefix}_Radial_Velocity'] = (['time', 'height'], beam_data['Radial_Velocity'])
+        data_vars[f'{prefix}_Velocity_Spectrum_Width'] = (['time', 'height'], beam_data['Velocity_Spectrum_Width'])
+        data_vars[f'{prefix}_Signal_To_Noise_Ratio'] = (['time', 'height'], beam_data['Signal_To_Noise_Ratio'])
+    
+    data_vars['Sampling_Height'] = (['height'], heights)
+    
+    ds_l2 = xr.Dataset(
+        data_vars=data_vars,
+        coords={
+            'time': times,
+            'height': heights
+        },
+        attrs={
+            'FileTag': ds_l1.attrs.get('FileTag'),
+            'SiteInfo': ds_l1.attrs.get('SiteInfo'),
+            'Beam_Order_Flags': list(beam_dirs),
+            'Beam_Count': len(beam_dirs),
+            'levels_count': 1,
+            'level_metas': [{
+                'Beam_Order_Flags': list(beam_dirs),
+                'Beam_Count': len(beam_dirs),
+                'Observation_Start_Time': pd.Timestamp(times[0]).to_pydatetime() if len(times) > 0 else None,
+                'Observation_End_Time': pd.Timestamp(times[-1]).to_pydatetime() if len(times) > 0 else None,
+            }],
+            'processing_params': {
+                'clutter_filter': clutter_filter,
+                'clutter_width': clutter_width,
+                'snr_threshold': snr_threshold,
+                'n_noise_bins': n_noise_bins
+            },
+            'data_type': 'L2_radial'
+        }
+    )
+    
+    return ds_l2
 
-        return fkxL2obj
-    except Exception as ex:
-        print(ex)
-        # raise ex
-        return None
 
-def CalcL2toL3(fkxL2obj,qcw=3,interp=False,rollmean=True,rollmeancout=5):
-    '''
-    基于L2数据数学计算L3数据
-    args:
-        fkxL2obj:L2Data对象
-        qcw:质控阈值
-        interp:是否插值
-        rollmean:是否滚动平均
-        rollmeancout:滚动平均窗口大小
-    return:
-        L3Data对象
-    '''
+def CalcL2toL3(ds_l2, qcw=3, interp=False, rollmean=True, rollmeancout=5):
+    level_metas = ds_l2.attrs['level_metas']
+    calc_data = []
 
-    Calc_L2_data=[]
-    for j,levelj in enumerate(fkxL2obj.levels):
-        dlevelj=levelj.Data
-        qcindexs=dlevelj[dlevelj['E_Radial_Velocity']+dlevelj['W_Radial_Velocity']>qcw].index
-        dlevelj.loc[qcindexs,'E_Radial_Velocity']=np.nan
-        dlevelj.loc[qcindexs,'W_Radial_Velocity']=np.nan
-        qcindexs=dlevelj[dlevelj['N_Radial_Velocity']+dlevelj['S_Radial_Velocity']>qcw].index
-        dlevelj.loc[qcindexs,'N_Radial_Velocity']=np.nan
-        dlevelj.loc[qcindexs,'S_Radial_Velocity']=np.nan
+    for j, level_name in enumerate(ds_l2.coords['level'].values):
+        level_meta = level_metas[j]
+        sh = ds_l2['Sampling_Height'].sel(level=level_name).values
+        valid = ~np.isnan(sh)
+        h = sh[valid]
 
-        h=dlevelj['Sampling_Height'].values
-        Vre=dlevelj['E_Radial_Velocity'].values
-        # Wre=dlevelj['E_Signal_To_Noise_Ratio'].values/np.exp(dlevelj['E_Velocity_Spectrum_Width'].values*20)
-        Wre=1/np.exp(dlevelj['E_Velocity_Spectrum_Width'].values)
-        Vrn=dlevelj['N_Radial_Velocity'].values
-        # Wrn=dlevelj['N_Signal_To_Noise_Ratio'].values/np.exp(dlevelj['N_Velocity_Spectrum_Width'].values*20)
-        Wrn=1/np.exp(dlevelj['N_Velocity_Spectrum_Width'].values)
-        Vw=dlevelj['R_Radial_Velocity'].values
-        # Ww=dlevelj['R_Signal_To_Noise_Ratio'].values/np.exp(dlevelj['R_Velocity_Spectrum_Width'].values*20)
-        Ww=1/np.exp(dlevelj['R_Velocity_Spectrum_Width'].values)
-        Vrw=dlevelj['W_Radial_Velocity'].values
-        # Wrw=dlevelj['W_Signal_To_Noise_Ratio'].values/np.exp(dlevelj['W_Velocity_Spectrum_Width'].values*20)
-        Wrw=1/np.exp(dlevelj['W_Velocity_Spectrum_Width'].values)
-        Vrs=dlevelj['S_Radial_Velocity'].values
-        # Wrs=dlevelj['S_Signal_To_Noise_Ratio'].values/np.exp(dlevelj['S_Velocity_Spectrum_Width'].values*20)
-        Wrs=1/np.exp(dlevelj['S_Velocity_Spectrum_Width'].values)
-        Vs=np.array([Vre,Vrw,Vrs,Vrn,Vw])
-        Ws=np.array([Wre,Wrw,Wrs,Wrn,Ww])
+        def _get(col):
+            return ds_l2[col].sel(level=level_name).values[valid]
 
-        Vsw=np.array([
-            np.where(np.isnan(Vrw),np.nan,Vre),np.where(np.isnan(Vre),np.nan,Vrw),
-            np.where(np.isnan(Vrn),np.nan,Vrs),np.where(np.isnan(Vrs),np.nan,Vrn),
+        Vre = _get('E_Radial_Velocity')
+        Wre = 1 / np.exp(_get('E_Velocity_Spectrum_Width'))
+        Vrn = _get('N_Radial_Velocity')
+        Wrn = 1 / np.exp(_get('N_Velocity_Spectrum_Width'))
+        Vw = _get('R_Radial_Velocity')
+        Ww = 1 / np.exp(_get('R_Velocity_Spectrum_Width'))
+        Vrw = _get('W_Radial_Velocity')
+        Wrw = 1 / np.exp(_get('W_Velocity_Spectrum_Width'))
+        Vrs = _get('S_Radial_Velocity')
+        Wrs = 1 / np.exp(_get('S_Velocity_Spectrum_Width'))
+
+        Ws = np.array([Wre, Wrw, Wrs, Wrn, Ww])
+
+        qc_ew = np.abs(Vre + Vrw) > qcw
+        Vre = np.where(qc_ew, np.nan, Vre)
+        Vrw = np.where(qc_ew, np.nan, Vrw)
+        qc_ns = np.abs(Vrn + Vrs) > qcw
+        Vrn = np.where(qc_ns, np.nan, Vrn)
+        Vrs = np.where(qc_ns, np.nan, Vrs)
+
+        Vsw = np.array([
+            np.where(np.isnan(Vrw), np.nan, Vre),
+            np.where(np.isnan(Vre), np.nan, Vrw),
+            np.where(np.isnan(Vrn), np.nan, Vrs),
+            np.where(np.isnan(Vrs), np.nan, Vrn),
             Vw
         ])
-        w=np.sum(((Vsw*Ws)/np.nansum(Ws,axis=0)),axis=0)
-        # w=np.nanmean(Vsw,axis=0)
+        w = np.nansum(Vsw * Ws, axis=0) / np.nansum(Ws, axis=0)
 
-        a_e=levelj['East_Beam_Angle']+levelj['East_Beam_Azimuth_Correction']
-        o_e=90-a_e
-        po_e=math.radians(o_e)
-        u_e=(w*math.sin(po_e)-Vre)/math.cos(po_e)
-        a_w=levelj['West_Beam_Angle']+levelj['West_Beam_Azimuth_Correction']
-        o_w=90-a_w
-        po_w=math.radians(o_w)
-        u_w=(Vrw-w*math.sin(po_w))/math.cos(po_w)    
-        u=np.sum((np.array([u_e,u_w])*Ws[:2])/np.nansum(Ws[:2],axis=0),axis=0) 
+        a_e = level_meta['East_Beam_Angle'] + level_meta['East_Beam_Azimuth_Correction']
+        po_e = math.radians(90 - a_e)
+        u_e = (w * math.sin(po_e) - Vre) / math.cos(po_e)
+        a_w = level_meta['West_Beam_Angle'] + level_meta['West_Beam_Azimuth_Correction']
+        po_w = math.radians(90 - a_w)
+        u_w = (Vrw - w * math.sin(po_w)) / math.cos(po_w)
+        u = np.nansum(np.array([u_e, u_w]) * Ws[:2], axis=0) / np.nansum(Ws[:2], axis=0)
 
-        a_s=levelj['South_Beam_Angle']+levelj['South_Beam_Azimuth_Correction']
-        o_s=90-a_s
-        po_s=math.radians(o_s)
-        v_s=(Vrs-w*math.sin(po_s))/math.cos(po_s)
-        a_n=levelj['North_Beam_Angle']+levelj['North_Beam_Azimuth_Correction']
-        o_n=90-a_n
-        po_n=math.radians(o_n)
-        v_n=(w*math.sin(po_n)-Vrn)/math.cos(po_n)   
-        v=np.sum((np.array([v_s,v_n])*Ws[2:4])/np.nansum(Ws[2:4],axis=0),axis=0)    
+        a_s = level_meta['South_Beam_Angle'] + level_meta['South_Beam_Azimuth_Correction']
+        po_s = math.radians(90 - a_s)
+        v_s = (Vrs - w * math.sin(po_s)) / math.cos(po_s)
+        a_n = level_meta['North_Beam_Angle'] + level_meta['North_Beam_Azimuth_Correction']
+        po_n = math.radians(90 - a_n)
+        v_n = (w * math.sin(po_n) - Vrn) / math.cos(po_n)
+        v = np.nansum(np.array([v_s, v_n]) * Ws[2:4], axis=0) / np.nansum(Ws[2:4], axis=0)
 
-        calcdfi=pd.DataFrame({
-            'Sampling_Height':h,
-            'Vertical_Wind_Speed':w,
-            'U_Wind_Speed':u,
-            # 'U_Wind_Speede':u_e,
-            # 'U_Wind_Speedw':u_w,
-            'V_Wind_Speed':v,
-            # 'V_Wind_Speedn':v_n,
-            # 'V_Wind_Speeds':v_s
-        })
-        Calc_L2_data.append(calcdfi)  
-    Calc_L3Data=pd.concat(Calc_L2_data).reset_index(drop=True).groupby('Sampling_Height').mean().reset_index()
-    if(interp):
-        Calc_L3Data=Calc_L3Data.set_index('Sampling_Height').interpolate(method='linear').reset_index()
-    if(rollmean):        
-        Calc_L3Data=Calc_L3Data.set_index('Sampling_Height').sort_index().rolling(window=rollmeancout, min_periods=1).mean().reset_index()
-    wdir,wspd=Utils.vuv2w(Calc_L3Data['U_Wind_Speed'].values,Calc_L3Data['V_Wind_Speed'].values)
-    Calc_L3Data['Wind_Direction']=wdir
-    Calc_L3Data['Wind_Speed']=wspd
-    Calc_L3Data=Calc_L3Data[['Sampling_Height', 'Wind_Direction', 'Wind_Speed', 'Vertical_Wind_Speed', 'U_Wind_Speed','V_Wind_Speed']]
-    Calc_L3Data.dropna(inplace=True)   
-    
-    fkxL3obj=L3Data()
-    keys=list(line0_variables.keys())    
-    for key in keys:
-        fkxL3obj[key]=fkxL2obj[key]
-    keys=list(L3meta_variables.keys())    
-    for key in keys:
-        if(key=='Observation_Time'):
-            fkxL3obj[key]=fkxL2obj.levels[0]['Observation_End_Time']     
-        else:
-            fkxL3obj[key]=fkxL2obj[key]      
-    fkxL3obj['Data']=Calc_L3Data
-    
-    return fkxL3obj
+        calc_data.append(pd.DataFrame({
+            'Sampling_Height': h,
+            'Vertical_Wind_Speed': w,
+            'U_Wind_Speed': u,
+            'V_Wind_Speed': v,
+        }))
 
-def readSingleL3file(fp:str)->L3Data:
-    '''
-    读取风廓线雷达单个L3产品数据文件；
-    支持
-    ROBS：Z_RADA_I_IIiii_yyyyMMddhhmmss_P_WPRD_雷达型号_ROBS.TXT
-    HOBS：Z_RADA_I_IIiii_yyyyMMddhhmmss_P_WPRD_雷达型号_HOBS.TXT
-    OOBS：Z_RADA_I_IIiii_yyyyMMddhhmmss_P_WPRD_雷达型号_OOBS.TXT
-    args:
-        fp:L3产品文件路径
-    return:
-        L3Data对象
-    '''
+    Calc_L3Data = pd.concat(calc_data).reset_index(drop=True).groupby('Sampling_Height').mean().reset_index()
+    if interp:
+        Calc_L3Data = Calc_L3Data.set_index('Sampling_Height').interpolate(method='linear').reset_index()
+    if rollmean:
+        Calc_L3Data = Calc_L3Data.set_index('Sampling_Height').sort_index().rolling(window=rollmeancout, min_periods=1).mean().reset_index()
+
+    wdir, wspd = Utils.vuv2w(Calc_L3Data['U_Wind_Speed'].values, Calc_L3Data['V_Wind_Speed'].values)
+    Calc_L3Data['Wind_Direction'] = wdir
+    Calc_L3Data['Wind_Speed'] = wspd
+    Calc_L3Data.dropna(inplace=True)
+
+    obs_time = ds_l2.attrs['level_metas'][0].get('Observation_End_Time')
+
+    ds_l3 = xr.Dataset(
+        data_vars={
+            'Wind_Direction': ('height', Calc_L3Data['Wind_Direction'].values),
+            'Wind_Speed': ('height', Calc_L3Data['Wind_Speed'].values),
+            'Vertical_Wind_Speed': ('height', Calc_L3Data['Vertical_Wind_Speed'].values),
+            'U_Wind_Speed': ('height', Calc_L3Data['U_Wind_Speed'].values),
+            'V_Wind_Speed': ('height', Calc_L3Data['V_Wind_Speed'].values),
+        },
+        coords={'height': Calc_L3Data['Sampling_Height'].values},
+        attrs={
+            'WNDRAD': ds_l2.attrs.get('WNDRAD'),
+            'File_version': ds_l2.attrs.get('File_version'),
+            'Station_Id': ds_l2.attrs.get('Station_Id'),
+            'Longitude': ds_l2.attrs.get('Longitude'),
+            'Latitude': ds_l2.attrs.get('Latitude'),
+            'Altitude': ds_l2.attrs.get('Altitude'),
+            'Machine_Type': ds_l2.attrs.get('Machine_Type'),
+            'Observation_Time': obs_time,
+            'height_unit': 'meter',
+        }
+    )
+    return ds_l3
+
+
+def readSingleL3file(fp: str):
     try:
         with open(fp, 'r') as f:
-            lines = [line.strip() for line in f]      
+            lines = [line.strip() for line in f]
 
-        fkxL3obj=L3Data()    
-        lineds=lines[0].split(' ')    
-        keys=list(line0_variables.keys())    
-        for i, key in enumerate(keys):
-            fkxL3obj[key] = lineds[i]
+        lineds = lines[0].split(' ')
+        keys = list(line0_variables.keys())
+        attrs = {key: lineds[i] for i, key in enumerate(keys)}
 
-        lineds=lines[1].split(' ')
-        keys=list(L3meta_variables.keys())
+        lineds = lines[1].split(' ')
+        keys = list(L3meta_variables.keys())
         for i, key in enumerate(keys):
-            if(key=='Station_Id' or key=='Machine_Type'):            
-                fkxL3obj[key]=lineds[i]
+            if key in ('Station_Id', 'Machine_Type'):
+                attrs[key] = lineds[i]
+            elif key == 'Observation_Time':
+                attrs[key] = dateutil.parser.parse(lineds[i])
             else:
-                if(key=='Observation_Time'):
-                    fkxL3obj[key]=dateutil.parser.parse(lineds[i])
-                else:
-                    fkxL3obj[key]=float(lineds[i])
+                attrs[key] = float(lineds[i])
 
-        da=pd.read_fwf(
-            io.StringIO('\n'.join(lines[3:-1])), 
+        da = pd.read_fwf(
+            io.StringIO('\n'.join(lines[3:-1])),
             widths=[5, 6, 6, 7, 4, 4, 9],
             encoding='gbk',
             names=list(L3data_variables.keys()),
             dtype=str
         )
-        # 之前定义各列使用 str 类型存储，后续需要把 //// 表示的缺失值用 numpy.nan 进行替换
-        da=da.apply(lambda x:pd.to_numeric(x,errors='coerce'))  
+        da = da.apply(lambda x: pd.to_numeric(x, errors='coerce'))
         uvs = Utils.vw2uv(da['Wind_Direction'].values, da['Wind_Speed'].values)
-        da['U_Wind_Speed']=uvs[0]
-        da['V_Wind_Speed']=uvs[1]
-        fkxL3obj['Data']=da
-        return fkxL3obj
+        da['U_Wind_Speed'] = uvs[0]
+        da['V_Wind_Speed'] = uvs[1]
+
+        ds = xr.Dataset(
+            data_vars={
+                'Wind_Direction': ('height', da['Wind_Direction'].values),
+                'Wind_Speed': ('height', da['Wind_Speed'].values),
+                'Vertical_Wind_Speed': ('height', da['Vertical_Wind_Speed'].values),
+                'Horizontal_Confidence': ('height', da['Horizontal_Confidence'].values),
+                'Vertical_Confidence': ('height', da['Vertical_Confidence'].values),
+                'Cn2': ('height', da['Cn2'].values),
+                'U_Wind_Speed': ('height', da['U_Wind_Speed'].values),
+                'V_Wind_Speed': ('height', da['V_Wind_Speed'].values),
+            },
+            coords={'height': da['Sampling_Height'].values},
+            attrs=attrs
+        )
+        return ds
     except Exception as ex:
         print(ex)
-        # raise ex
         return None
 
-def readL3files(fps:list,use_multiprocess=False,multiproces_corenum=-1)->L3Datas:
-    """
-    读取多个L3产品文件，并返回L3Datas对象。
 
-    参数:
-        fps (list): L3产品文件路径列表。
-        use_multiprocess (bool): 是否使用多进程读取文件，默认为False。
-        multiproces_corenum (int): 多进程核心数量，默认为-1表示使用所有可用核心。
-
-    返回:
-        L3Datas: 包含所有读取的L3Data对象的L3Datas实例。
-    """
-    rbds=L3Datas()
-    if(use_multiprocess):
-        rbds['L3Datas']=Parallel(n_jobs=multiproces_corenum)(delayed(readSingleL3file)(fp) for fp in fps)
+def readL3files(fps: list, use_multiprocess=False, multiproces_corenum=-1):
+    if use_multiprocess:
+        datasets = Parallel(n_jobs=multiproces_corenum)(delayed(readSingleL3file)(fp) for fp in fps)
     else:
-        rbds['L3Datas']=[readSingleL3file(fp) for fp in fps]
-    for i,ld in enumerate(rbds['L3Datas']):
-        rbds.append(ld)    
-    return rbds
+        datasets = [readSingleL3file(fp) for fp in fps]
+    valid = [ds.expand_dims('time') for ds in datasets if ds is not None]
+    if not valid:
+        return None
+    return xr.concat(valid, dim='time')
 
-def readSingleCalibrationXMLfile(fp:str)->CalibrationData:
-    '''
-    读取风廓线雷达单个标校数据xml格式文件；
-    支持 Z_RADA_I _IIiii_yyyyMMddhhmmss_C_WPRD_雷达型号_CAL.XML
-    args:
-        fp:单个标校数据xml格式文件
-    return:
-        CalibrationData对象
-    '''
+
+def readSingleProductFile(fp: str, product_type='ROBS'):
     try:
-        with open(fp, 'r', encoding='utf8') as f:
-            xml_data = f.read()
-        xmld = ET.fromstring(xml_data)
-        return CalibrationData.from_dict(parse_element(xmld))
+        with open(fp, 'r') as f:
+            lines = [line.strip() for line in f]
+
+        header_keys = {
+            'ROBS': 'WNDROBS',
+            'HOBS': 'WNDHOBS',
+            'OOBS': 'WNDOOBS'
+        }
+        expected_header = header_keys.get(product_type, 'WNDROBS')
+
+        if lines[0] != expected_header:
+            pass
+
+        lineds = lines[1].split(' ')
+        keys = list(L3meta_variables.keys())
+        attrs = {}
+        for i, key in enumerate(keys):
+            if key in ('Station_Id', 'Machine_Type'):
+                attrs[key] = lineds[i] if i < len(lineds) else ''
+            elif key == 'Observation_Time':
+                attrs[key] = dateutil.parser.parse(lineds[i]) if i < len(lineds) else None
+            else:
+                attrs[key] = float(lineds[i]) if i < len(lineds) else np.nan
+
+        data_start = None
+        data_end = None
+        for i, line in enumerate(lines):
+            if line == product_type:
+                data_start = i + 1
+            elif line == 'NNNN' and data_start is not None:
+                data_end = i
+                break
+
+        if data_start is None or data_end is None:
+            return None
+
+        data_lines = lines[data_start:data_end]
+        data_list = []
+        for line in data_lines:
+            parts = line.split()
+            if len(parts) >= 7:
+                data_list.append({
+                    'Sampling_Height': float(parts[0]),
+                    'Wind_Direction': float(parts[1]) if '/' not in parts[1] else np.nan,
+                    'Wind_Speed': float(parts[2]) if '/' not in parts[2] else np.nan,
+                    'Vertical_Wind_Speed': float(parts[3]) if '/' not in parts[3] else np.nan,
+                    'Horizontal_Confidence': float(parts[4]) if '/' not in parts[4] else np.nan,
+                    'Vertical_Confidence': float(parts[5]) if '/' not in parts[5] else np.nan,
+                    'Cn2': float(parts[6]) if '/' not in parts[6] else np.nan,
+                })
+
+        if not data_list:
+            return None
+
+        da = pd.DataFrame(data_list)
+        uvs = Utils.vw2uv(da['Wind_Direction'].values, da['Wind_Speed'].values)
+        da['U_Wind_Speed'] = uvs[0]
+        da['V_Wind_Speed'] = uvs[1]
+
+        attrs['product_type'] = product_type
+
+        ds = xr.Dataset(
+            data_vars={
+                'Wind_Direction': ('height', da['Wind_Direction'].values),
+                'Wind_Speed': ('height', da['Wind_Speed'].values),
+                'Vertical_Wind_Speed': ('height', da['Vertical_Wind_Speed'].values),
+                'Horizontal_Confidence': ('height', da['Horizontal_Confidence'].values),
+                'Vertical_Confidence': ('height', da['Vertical_Confidence'].values),
+                'Cn2': ('height', da['Cn2'].values),
+                'U_Wind_Speed': ('height', da['U_Wind_Speed'].values),
+                'V_Wind_Speed': ('height', da['V_Wind_Speed'].values),
+            },
+            coords={'height': da['Sampling_Height'].values},
+            attrs=attrs
+        )
+        return ds
     except Exception as ex:
         print(ex)
         return None
 
-def readSingleStatuXMLfile(fp:str)->StatusData:
-    '''
-    读取风廓线雷达单个状态数据xml格式文件；
-    支持 Z_RADA_I_IIiii_yyyyMMddhhmmss_R_WPRD_雷达型号_STA.XML
-    args:
-        fp:单个状态数据xml格式文件
-    return:
-        StatusData对象
-    '''
+
+def readSingleROBSfile(fp: str):
+    return readSingleProductFile(fp, 'ROBS')
+
+
+def readSingleHOBSfile(fp: str):
+    return readSingleProductFile(fp, 'HOBS')
+
+
+def readSingleOOBSfile(fp: str):
+    return readSingleProductFile(fp, 'OOBS')
+
+
+def readSingleCalibrationXMLfile(fp: str):
     try:
         with open(fp, 'r', encoding='utf8') as f:
             xml_data = f.read()
         xmld = ET.fromstring(xml_data)
-        return StatusData.from_dict(parse_element(xmld))
+        return parse_element(xmld)
+    except Exception as ex:
+        print(ex)
+        return None
+
+
+def readSingleStatuXMLfile(fp: str):
+    try:
+        with open(fp, 'r', encoding='utf8') as f:
+            xml_data = f.read()
+        xmld = ET.fromstring(xml_data)
+        return parse_element(xmld)
+    except Exception as ex:
+        print(ex)
+        return None
+
+
+@xr.register_dataset_accessor("wpr")
+class WPRDatasetAccessor:
+    def __init__(self, xarray_obj):
+        self._obj = xarray_obj
+
+    def calc_l1_to_l2(self, clutter_filter=True, clutter_width=0.5, snr_threshold=-20, n_noise_bins=10):
+        return CalcL1toL2(self._obj, clutter_filter, clutter_width, snr_threshold, n_noise_bins)
+
+    def calc_l2_to_l3(self, qcw=3, interp=False, rollmean=True, rollmeancout=5):
+        return CalcL2toL3(self._obj, qcw, interp, rollmean, rollmeancout)
+
+    def plot_l3_wind(self, figsize=(18, 12), cmap=None, norm=None, show=True, savepath=None):
+        import matplotlib.pyplot as plt
+        if cmap is None:
+            cmap = velocity_cmap
+        if norm is None:
+            norm = velocity_norm
+        fig, ax = plt.subplots(figsize=figsize)
+        if 'time' in self._obj.dims:
+            data_var = self._obj['Wind_Speed'].isel(time=0)
+            heights = self._obj.coords['height'].values
+            if len(data_var.dims) == 1:
+                ax.plot(data_var.values, heights)
+                ax.set_xlabel('Wind Speed (m/s)')
+                ax.set_ylabel('Height (m)')
+            else:
+                data_var.plot(ax=ax, cmap=cmap, norm=norm)
+        else:
+            data_var = self._obj['Wind_Speed']
+            heights = self._obj.coords['height'].values
+            ax.plot(data_var.values, heights)
+            ax.set_xlabel('Wind Speed (m/s)')
+            ax.set_ylabel('Height (m)')
+        if show:
+            plt.show()
+        else:
+            plt.close(fig)
+        if savepath is not None:
+            fig.savefig(savepath, bbox_inches='tight')
+
+
+def readSingleL2file(fp: str):
+    try:
+        with open(fp, 'r') as f:
+            lines = [line.strip() for line in f]
+
+        lineds = lines[0].split(' ')
+        keys = list(line0_variables.keys())
+        header0 = {key: lineds[i] for i, key in enumerate(keys)}
+
+        lineds = lines[1].split(' ')
+        keys = list(line1_variables.keys())
+        header1 = {}
+        for i, key in enumerate(keys):
+            header1[key] = lineds[i] if i == 0 or i == 4 else Utils.dtryfloat(lineds[i])
+
+        tsplitlineis = [1] + [i for i in range(5, len(lines)) if lines[i] == 'NNNN']
+        columnnames = list(L2data_variables.keys())
+
+        level_metas = []
+        level_dfs = []
+        beam_count = 1
+
+        for i in range(len(tsplitlineis) - 1):
+            lineStart = tsplitlineis[i]
+            lineEnd = tsplitlineis[i + 1]
+            if i % beam_count == 0:
+                level_meta = {}
+                level_dfs_i = []
+                beamj = 0
+                lineStart += 1
+                lineds = lines[lineStart].split(' ')
+                keys = list(line2_variables.keys())
+                for j, key in enumerate(keys):
+                    level_meta[key] = Utils.dtryfloat(lineds[j])
+
+                lineStart += 1
+                lineds = lines[lineStart].split(' ')
+                keys = list(line3_variables.keys())
+                for j, key in enumerate(keys):
+                    if key == 'Beam_Order_Flag':
+                        level_meta[key] = lineds[j].replace('/', '')
+                        level_meta['Beam_Order_Flags'] = list(level_meta[key])
+                        level_meta['Beam_Count'] = len(level_meta['Beam_Order_Flags'])
+                    elif key in ('Observation_Start_Time', 'Observation_End_Time'):
+                        level_meta[key] = dateutil.parser.parse(lineds[j])
+                    else:
+                        level_meta[key] = Utils.dtryfloat(lineds[j])
+                beam_count = level_meta['Beam_Count']
+
+            level_dfs_i.append(lines[lineStart + 2:lineEnd])
+            beamj += 1
+
+            if beamj == beam_count:
+                dlevelcolumnnames = [
+                    f"{bof}_{key}" for bof in level_meta['Beam_Order_Flags'] for key in columnnames
+                ]
+                sscolumnnames = [dlevelcolumnnames[k] for k in range(0, len(dlevelcolumnnames), len(columnnames))]
+                arr = np.array(level_dfs_i).T
+                df = pd.read_csv(
+                    io.StringIO('\n'.join([' '.join(x) for x in list(arr)])),
+                    sep=' ', header=None, names=dlevelcolumnnames
+                )
+                df = df.rename(columns={sscolumnnames[0]: sscolumnnames[0][2:]}).drop(sscolumnnames[1:], axis=1)
+                df = df.apply(lambda x: pd.to_numeric(x, errors='coerce'))
+                level_meta_copy = {k: v for k, v in level_meta.items() if k != 'Data'}
+                level_metas.append(level_meta_copy)
+                level_dfs.append(df)
+
+        beam_order_flags = level_metas[0]['Beam_Order_Flags']
+        beam_count_val = level_metas[0]['Beam_Count']
+        levels_count = len(level_dfs)
+        if levels_count == 1:
+            dlevels = ['low']
+        elif levels_count == 2:
+            dlevels = ['low', 'high']
+        else:
+            dlevels = ['low', 'middle', 'high']
+
+        data_columns = [c for c in level_dfs[0].columns if c != 'Sampling_Height']
+        max_bins = max(len(df) for df in level_dfs)
+
+        sh_arr = np.full((levels_count, max_bins), np.nan)
+        for idx, df in enumerate(level_dfs):
+            sh_arr[idx, :len(df)] = df['Sampling_Height'].values
+
+        data_vars = {'Sampling_Height': (['level', 'height_bin'], sh_arr)}
+        for col in data_columns:
+            arr = np.full((levels_count, max_bins), np.nan)
+            for idx, df in enumerate(level_dfs):
+                if col in df.columns:
+                    arr[idx, :len(df)] = df[col].values
+            data_vars[col] = (['level', 'height_bin'], arr)
+
+        ds = xr.Dataset(
+            data_vars=data_vars,
+            coords={
+                'level': dlevels,
+                'height_bin': range(max_bins)
+            },
+            attrs={
+                **header0,
+                **header1,
+                'Beam_Order_Flags': beam_order_flags,
+                'Beam_Count': beam_count_val,
+                'levels_count': levels_count,
+                'level_metas': level_metas,
+            }
+        )
+        return ds
     except Exception as ex:
         print(ex)
         return None
