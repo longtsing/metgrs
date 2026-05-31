@@ -807,6 +807,132 @@ body {
     transform: translateY(-1px);
 }
 
+/* Contributors Section */
+.contributors {
+    padding: 100px 0;
+    background: var(--bg-darker);
+}
+
+.contributors-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.contributors-thanks,
+.contributors-cta {
+    padding: 32px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+}
+
+.thanks-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+.contributors-thanks h3,
+.contributors-cta h3 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: var(--text-primary);
+}
+
+.contributors-thanks p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 16px;
+}
+
+.contributors-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.contributor-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: rgba(37, 99, 235, 0.15);
+    border: 1px solid rgba(37, 99, 235, 0.3);
+    border-radius: 20px;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.contributor-badge:hover {
+    background: rgba(37, 99, 235, 0.25);
+    transform: translateY(-1px);
+}
+
+.contributor-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+}
+
+.contributor-badge span {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--primary-light);
+}
+
+.contributors-note {
+    font-size: 13px;
+    font-style: italic;
+}
+
+.contributors-cta p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+}
+
+.contribute-types {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.contribute-types li {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.contribute-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.contribute-types li strong {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.contribute-types li span {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.contribute-links {
+    display: flex;
+    gap: 12px;
+}
+
 /* Footer */
 .footer {
     padding: 60px 0 30px;
@@ -905,6 +1031,10 @@ body {
 
     .author-links {
         justify-content: center;
+    }
+
+    .contributors-content {
+        grid-template-columns: 1fr;
     }
 }
 
