@@ -14,11 +14,6 @@ plugins:
   - jekyll-seo-tag
   - jekyll-sitemap
 
-exclude:
-  - "*.js"
-  - "*.css"
-  - "assets/"
-
 collections:
   docs:
     output: true

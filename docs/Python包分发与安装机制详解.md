@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: doc
 title: Python 包分发与安装机制详解
 description: 深入了解 Python 包的分发方式（源码与二进制）、pip 安装流程、wheel 格式等底层细节
 ---

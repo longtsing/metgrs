@@ -1,3 +1,6 @@
+---
+---
+
 // Copy install command
 function copyInstallCmd() {
     const text = 'pip install metgrs';

@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: doc
 title: Python 环境管理与编译工具教程
 description: Python 环境管理工具（pip、venv、uv、conda/mamba）和编译工具的完整教程
 ---

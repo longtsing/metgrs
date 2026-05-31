@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: doc
 title: metgrs API 参考文档
 description: metgrs 库的完整 API 参考文档，包含风廓线仪、云雷达、激光雷达、微波辐射计等设备的数据读取和处理函数
 ---
