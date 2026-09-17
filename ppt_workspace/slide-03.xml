@@ -1,0 +1,68 @@
+<slide>
+  <style><fill><fillColor color="rgba(242,244,248,1)"/></fill></style>
+  <data>
+    <shape type="text" topLeftX="60" topLeftY="40" width="600" height="24">
+      <content textType="caption" fontSize="12" color="rgba(37,99,235,1)" letterSpacing="1">
+        <p>为什么需要 Skill · THE PROBLEM</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="60" topLeftY="70" width="840" height="50">
+      <content textType="headline" fontSize="26" bold="true" color="rgba(13,19,38,1)">
+        <p>直接让 AI 写雷达代码，为什么三步就报错？</p>
+      </content>
+    </shape>
+    <line startX="60" startY="135" endX="900" endY="135"><border color="rgba(203,213,225,1)" width="1"/></line>
+
+    <shape type="text" topLeftX="60" topLeftY="160" width="400" height="30">
+      <content textType="body" fontSize="15" bold="true" color="rgba(13,19,38,1)">
+        <p>新手直觉：把需求说清楚就行</p>
+      </content>
+    </shape>
+    <shape type="rect" topLeftX="60" topLeftY="200" width="400" height="250">
+      <fill><fillColor color="rgba(255,255,255,1)"/></fill>
+      <border color="rgba(203,213,225,1)" width="1"/>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="215" width="360" height="220">
+      <content textType="body" fontSize="13" color="rgba(75,85,99,1)" lineSpacing="multiple:1.6">
+        <p>• "帮我读一个 SA 波段雷达 bin 文件画 PPI"</p>
+        <p>• AI 给的代码用了 pyart.io.read，中国 bin 读不了</p>
+        <p>• 换 cinrad 后，变量名写成 REF，实际叫 dBZ</p>
+        <p>• 画出来时间差 8 小时（UTC 没转北京时）</p>
+        <p>• HCL 算不出来：漏了 ZDR/RHO/KDP 四件套</p>
+        <p>• 中文字体乱码、路径反斜杠、单位米写成千米</p>
+      </content>
+    </shape>
+
+    <shape type="text" topLeftX="500" topLeftY="160" width="400" height="30">
+      <content textType="body" fontSize="15" bold="true" color="rgba(37,99,235,1)">
+        <p>真相：AI 缺的不是能力，是领域上下文</p>
+      </content>
+    </shape>
+    <shape type="rect" topLeftX="500" topLeftY="200" width="400" height="250">
+      <fill><fillColor color="rgba(37,99,235,1)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="520" topLeftY="215" width="360" height="220">
+      <content textType="body" fontSize="13" color="rgba(255,255,255,1)" lineSpacing="multiple:1.6">
+        <p>• 每个库变量名不一致：REF / reflectivity / dBZ</p>
+        <p>• 中国标准格式必须走 cinrad.io.StandardData</p>
+        <p>• scantime 是 UTC，要手动 +8 小时</p>
+        <p>• HCL 必须按 S/C/X 波段传参</p>
+        <p>• CAPPI 高度单位是米，不是千米</p>
+        <p>• bz2 文件不用先解压，库自己处理</p>
+      </content>
+    </shape>
+
+    <shape type="text" topLeftX="60" topLeftY="475" width="840" height="30">
+      <content textType="body" fontSize="14" color="rgba(13,19,38,1)">
+        <p>把这些"只有踩过坑才知道"的规则写进 Skill，AI 一次就写对。</p>
+      </content>
+    </shape>
+  </data>
+  <note>
+    <content textType="body">
+      <p>这一页讲痛点。很多人第一次用 AI 写雷达代码，都会经历左边这个流程：需求看着很清楚，结果第一步就报错。</p>
+      <p>右边列的是真正的原因——不是 AI 不会写 Python，是它不知道中国雷达生态里那些不成文的规则。变量名、时区、单位、波段、文件格式，每一个都是坑。</p>
+      <p>Skill 的本质，就是把这些隐性知识显性化，一次性喂给 AI。</p>
+    </content>
+  </note>
+</slide>

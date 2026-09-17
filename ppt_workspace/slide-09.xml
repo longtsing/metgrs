@@ -1,0 +1,62 @@
+<slide>
+  <style><fill><fillColor color="rgba(242,244,248,1)"/></fill></style>
+  <data>
+    <shape type="text" topLeftX="60" topLeftY="40" width="600" height="24">
+      <content textType="caption" fontSize="12" color="rgba(22,163,74,1)" letterSpacing="1">
+        <p>Skill 03 · 已有 · pycinrad</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="60" topLeftY="70" width="840" height="40">
+      <content textType="headline" fontSize="24" bold="true" color="rgba(13,19,38,1)">
+        <p>PyCINRAD：中国雷达基数据读取与产品计算的主力</p>
+      </content>
+    </shape>
+    <line startX="60" startY="125" endX="900" endY="125"><border color="rgba(203,213,225,1)" width="1"/></line>
+
+    <shape type="text" topLeftX="60" topLeftY="145" width="380" height="24">
+      <content textType="body" fontSize="14" bold="true" color="rgba(37,99,235,1)"><p>覆盖内容</p></content>
+    </shape>
+    <shape type="text" topLeftX="60" topLeftY="175" width="380" height="220">
+      <content textType="body" fontSize="13" color="rgba(13,19,38,1)" lineSpacing="multiple:1.7">
+        <p>• read_auto：自动识别 SA/SB/CA/CB/相控阵 AXPT0364/DXK</p>
+        <p>• ROSE 2.0 PUP 产品：REF/VEL/ZDR/KDP/CR/ET/VIL/HCL/STI/UAM</p>
+        <p>• SWAN 产品：拼图、CR、TREC、QPE、VIL</p>
+        <p>• calc：quick_cr / quick_et / hydro_class / polar_to_xy</p>
+        <p>• visualize：PPI / Section(VCS) / 距离圈 / 城市名 / shapefile</p>
+        <p>• correct.dealias 速度退模糊</p>
+      </content>
+    </shape>
+
+    <shape type="text" topLeftX="480" topLeftY="145" width="420" height="24">
+      <content textType="body" fontSize="14" bold="true" color="rgba(37,99,235,1)"><p>最短工作流</p></content>
+    </shape>
+    <shape type="rect" topLeftX="480" topLeftY="175" width="420" height="240">
+      <fill><fillColor color="rgba(13,19,38,1)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="500" topLeftY="190" width="385" height="215">
+      <content textType="body" fontSize="11" color="rgba(226,232,240,1)" fontFamily="Consolas" lineSpacing="multiple:1.5">
+        <p>import cinrad, datetime</p>
+        <p>f = cinrad.io.read_auto("...CAP_FMT.bin.bz2")</p>
+        <p>f.scantime += datetime.timedelta(hours=8)  # 转北京时</p>
+        <p>r_list = list(f.iter_tilt(150, "REF"))</p>
+        <p>cr = cinrad.calc.quick_cr(r_list)</p>
+        <p>from cinrad.visualize import PPI</p>
+        <p>PPI(cr, style="black", add_city_names=True)("cr.png")</p>
+      </content>
+    </shape>
+
+    <shape type="text" topLeftX="60" topLeftY="430" width="840" height="80">
+      <content textType="body" fontSize="12" color="rgba(75,85,99,1)" lineSpacing="multiple:1.6">
+        <p><span bold="true" color="rgba(13,19,38,1)">高频坑：</span>老 SB 必须显式 CinradReader(radar_type="SB")；get_data 必须给 drange；HCL 要 REF/ZDR/RHO/KDP 四件套；bz2 不用解压。</p>
+        <p><span bold="true" color="rgba(13,19,38,1)">示例：</span>H:\hn\pycinrad\讲课示例.ipynb；H:\hn\pycinrad\ 下 30+ 个真实格式样例文件。</p>
+      </content>
+    </shape>
+  </data>
+  <note>
+    <content textType="body">
+      <p>PyCINRAD 是李有朋老师团队维护的库，也是中国雷达数据处理事实上的主力。这份 skill 之前就沉淀好了，内容最厚。</p>
+      <p>右边这段是经典五步：read_auto、转时区、iter_tilt 取所有仰角、quick_cr 算组合反射率、PPI 出图。这是周三课的主线。</p>
+      <p>注意第二行：scantime 是 UTC，必须手动加 8 小时。这是 AI 最容易忘的一步，skill 里标红了。</p>
+    </content>
+  </note>
+</slide>

@@ -1,0 +1,58 @@
+<slide>
+  <style><fill><fillColor color="rgba(242,244,248,1)"/></fill></style>
+  <data>
+    <shape type="text" topLeftX="60" topLeftY="40" width="600" height="24">
+      <content textType="caption" fontSize="12" color="rgba(37,99,235,1)" letterSpacing="1">
+        <p>自习环境 · SELF-STUDY WORKSPACE</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="60" topLeftY="70" width="840" height="40">
+      <content textType="headline" fontSize="24" bold="true" color="rgba(13,19,38,1)">
+        <p>E:\study\AIForRadar —— 已经为你备好的自习目录</p>
+      </content>
+    </shape>
+    <line startX="60" startY="125" endX="900" endY="125"><border color="rgba(203,213,225,1)" width="1"/></line>
+
+    <shape type="rect" topLeftX="60" topLeftY="150" width="430" height="330">
+      <fill><fillColor color="rgba(13,19,38,1)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="165" width="395" height="310">
+      <content textType="body" fontSize="11" color="rgba(226,232,240,1)" fontFamily="Consolas" lineSpacing="multiple:1.5">
+        <p>E:\study\AIForRadar\</p>
+        <p>├─ 自习训练任务.md     任务书</p>
+        <p>├─ task01_cr.py        AI 生成</p>
+        <p>├─ out\                出图目录</p>
+        <p>└─ Datas\</p>
+        <p>    ├─ 01_basics\   NumPy/Pandas/Xarray</p>
+        <p>    │   ppi_sample.npy / 站点 / 降水</p>
+        <p>    ├─ 02_pyart\    Py-ART 用 2 个 SA</p>
+        <p>    ├─ 03_pycinrad\ SA + SWAN 拼图</p>
+        <p>    └─ 04_pycwr\    PyCWR 全套</p>
+        <p>        Z9731 SA / Z9736 SB</p>
+        <p>        NUIST.AR2 / ZT002 YLD2-D</p>
+        <p>        探空.xlsx / 地面站.csv</p>
+      </content>
+    </shape>
+
+    <shape type="text" topLeftX="520" topLeftY="155" width="380" height="24">
+      <content textType="body" fontSize="14" bold="true" color="rgba(37,99,235,1)"><p>怎么用</p></content>
+    </shape>
+    <shape type="text" topLeftX="520" topLeftY="185" width="380" height="290">
+      <content textType="body" fontSize="13" color="rgba(13,19,38,1)" lineSpacing="multiple:1.8">
+        <p>• <span bold="true">任务书</span>：自习训练任务.md，60 分钟一个完整案例</p>
+        <p>• <span bold="true">数据</span>：按库分 4 个子目录，每个都对应一份 skill</p>
+        <p>• <span bold="true">出图</span>：统一进 out\，方便对比</p>
+        <p>• <span bold="true">脚本</span>：让 AI 生成到项目根，命名 taskNN_xxx.py</p>
+        <p></p>
+        <p>数据总量约 170 MB，其中 127 MB 是 X 波段相控阵 AR2（HCL 案例用），其余都很小。</p>
+      </content>
+    </shape>
+  </data>
+  <note>
+    <content textType="body">
+      <p>左边是目录树。这个目录已经建好，数据也复制进去了。任务书在根目录，数据在 Datas 下按库分子目录。</p>
+      <p>右边是用法：任务书 60 分钟一个案例；每个子目录对应一份 skill；出图统一进 out 方便对比。</p>
+      <p>注意总大小约 170 MB，大头是那个 127 MB 的 X 波段相控阵文件，做 HCL 案例才用。</p>
+    </content>
+  </note>
+</slide>

@@ -18,16 +18,16 @@ import matplotlib.pyplot as plt
 def readMWRFile(filename, encoding='gbk'):
     ds = pd.read_csv(filename, encoding=encoding, skiprows=2)
     ds['DateTime'] = pd.to_datetime(ds['DateTime'])
-    ds['10'] = ds['10'].astype(str).replace(
-        '11',
-        'TEM').replace(
-        '12',
-        'WVDen').replace(
-        '13',
-        'RHU').replace(
-        '14',
-        'WDen')
-    ds = ds.rename(columns={'10': 'dtype'})
+    # 兼容两种格式：
+    # 1) 旧版：dtype 列以数值编号（11/12/13/14）放在列名 '10' 下
+    # 2) 新版：已有字符串列 'dtype'（TEM/WVDen/RHU/WDen 等）
+    if '10' in ds.columns:
+        ds['10'] = ds['10'].astype(str).replace(
+            '11', 'TEM').replace(
+            '12', 'WVDen').replace(
+            '13', 'RHU').replace(
+            '14', 'WDen')
+        ds = ds.rename(columns={'10': 'dtype'})
     return ds
 
 

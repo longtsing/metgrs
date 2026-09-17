@@ -1,0 +1,63 @@
+<slide>
+  <style><fill><fillColor color="rgba(242,244,248,1)"/></fill></style>
+  <data>
+    <shape type="text" topLeftX="60" topLeftY="40" width="600" height="24">
+      <content textType="caption" fontSize="12" color="rgba(22,163,74,1)" letterSpacing="1">
+        <p>Skill 04 · 已有 · pycwr</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="60" topLeftY="70" width="840" height="40">
+      <content textType="headline" fontSize="24" bold="true" color="rgba(13,19,38,1)">
+        <p>PyCWR：PRD 模型 + 双偏振 QC + 风场反演</p>
+      </content>
+    </shape>
+    <line startX="60" startY="125" endX="900" endY="125"><border color="rgba(203,213,225,1)" width="1"/></line>
+
+    <shape type="text" topLeftX="60" topLeftY="145" width="380" height="24">
+      <content textType="body" fontSize="14" bold="true" color="rgba(37,99,235,1)"><p>覆盖内容</p></content>
+    </shape>
+    <shape type="text" topLeftX="60" topLeftY="175" width="380" height="220">
+      <content textType="body" fontSize="13" color="rgba(13,19,38,1)" lineSpacing="multiple:1.7">
+        <p>• PRD 对象：一个完整体扫，fields / product / summary()</p>
+        <p>• get_sweep_field(0,"dBZ")：aligned vs native</p>
+        <p>• plot_ppi / plot_ppi_map / plot_section / plot_section_lonlat</p>
+        <p>• apply_dualpol_qc：S/C/X 波段双偏振质控</p>
+        <p>• classify_hydrometeors：水凝物分类 HCL</p>
+        <p>• retrieve_vad / vvp / vwp / wind_volume_xy</p>
+        <p>• add_product_CR/CAPPI/VIL/ET_xy 或 _lonlat</p>
+      </content>
+    </shape>
+
+    <shape type="text" topLeftX="480" topLeftY="145" width="420" height="24">
+      <content textType="body" fontSize="14" bold="true" color="rgba(37,99,235,1)"><p>最短工作流</p></content>
+    </shape>
+    <shape type="rect" topLeftX="480" topLeftY="175" width="420" height="240">
+      <fill><fillColor color="rgba(13,19,38,1)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="500" topLeftY="190" width="385" height="215">
+      <content textType="body" fontSize="11" color="rgba(226,232,240,1)" fontFamily="Consolas" lineSpacing="multiple:1.5">
+        <p>from pycwr.io import read_auto</p>
+        <p>radar = read_auto("...Z9731_..._CAP_FMT.BIN.bz2")</p>
+        <p>qc = apply_dualpol_qc(radar, inplace=False,</p>
+        <p>                     clear_air_mode="mask", band='S')</p>
+        <p>hcl = qc.classify_hydrometeors(band="S", ...)</p>
+        <p>vwp = radar.retrieve_vwp(sweeps=[0,1,2])</p>
+        <p>plot_ppi_map(radar, field="dBZ", sweep=0, show=True)</p>
+      </content>
+    </shape>
+
+    <shape type="text" topLeftX="60" topLeftY="430" width="840" height="80">
+      <content textType="body" fontSize="12" color="rgba(75,85,99,1)" lineSpacing="multiple:1.6">
+        <p><span bold="true" color="rgba(13,19,38,1)">高频坑：</span>变量名 dBZ/V/ZDR/RHO/KDP 大小写敏感；CAPPI 的 level_height 单位是米；HCL 必须传 band；apply_dualpol_qc 默认返回新对象。</p>
+        <p><span bold="true" color="rgba(13,19,38,1)">示例：</span>H:\hn\PyCWR讲课与实习\pycwr实习2026\case 01~04（read / QC / HCL / 风场）。</p>
+      </content>
+    </shape>
+  </data>
+  <note>
+    <content textType="body">
+      <p>PyCWR 是郑玉老师团队的库，最大特点是 PRD 对象——一个对象包住整个体扫，所有操作都挂在它上面。</p>
+      <p>周四的四个案例分别是：读取+PPI+剖面、双偏振 QC、HCL、VAD/VVP/VWP 风场反演。这四个 case 就是 skill 里"推荐工作流"的来源。</p>
+      <p>特别提醒：pycwr 的变量名是 dBZ，不是 REF，也不是 reflectivity。三套并存，AI 最容易在这里混。</p>
+    </content>
+  </note>
+</slide>

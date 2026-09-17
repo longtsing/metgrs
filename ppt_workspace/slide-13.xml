@@ -1,0 +1,62 @@
+<slide>
+  <style><fill><fillColor color="rgba(242,244,248,1)"/></fill></style>
+  <data>
+    <shape type="text" topLeftX="60" topLeftY="40" width="600" height="24">
+      <content textType="caption" fontSize="12" color="rgba(37,99,235,1)" letterSpacing="1">
+        <p>实战 · A WORKED EXAMPLE</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="60" topLeftY="70" width="840" height="40">
+      <content textType="headline" fontSize="24" bold="true" color="rgba(13,19,38,1)">
+        <p>把一句话需求，变成一张能交差的 PPI 图</p>
+      </content>
+    </shape>
+    <line startX="60" startY="125" endX="900" endY="125"><border color="rgba(203,213,225,1)" width="1"/></line>
+
+    <shape type="text" topLeftX="60" topLeftY="145" width="400" height="24">
+      <content textType="body" fontSize="14" bold="true" color="rgba(37,99,235,1)"><p>你给 AI 的提示</p></content>
+    </shape>
+    <shape type="rect" topLeftX="60" topLeftY="175" width="400" height="200">
+      <fill><fillColor color="rgba(255,255,255,1)"/></fill>
+      <border color="rgba(203,213,225,1)" width="1"/>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="190" width="365" height="175">
+      <content textType="body" fontSize="12" color="rgba(13,19,38,1)" lineSpacing="multiple:1.6">
+        <p>"我有一个 Z_RADR_I_Z9731_20210510070930_O_DOR_SAD_CAP_FMT.BIN.bz2，S 波段双偏振。</p>
+        <p>帮我：1) 读取；2) 算组合反射率；3) 画 PPI，叠加湖南城市名，背景黑色；4) 时间转北京时；5) 保存 d:/cr.png。"</p>
+      </content>
+    </shape>
+
+    <shape type="text" topLeftX="500" topLeftY="145" width="400" height="24">
+      <content textType="body" fontSize="14" bold="true" color="rgba(37,99,235,1)"><p>AI 对照 pycinrad skill 给出</p></content>
+    </shape>
+    <shape type="rect" topLeftX="500" topLeftY="175" width="400" height="200">
+      <fill><fillColor color="rgba(13,19,38,1)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="520" topLeftY="190" width="365" height="175">
+      <content textType="body" fontSize="11" color="rgba(226,232,240,1)" fontFamily="Consolas" lineSpacing="multiple:1.5">
+        <p>import cinrad, datetime</p>
+        <p>f = cinrad.io.read_auto(fp)</p>
+        <p>f.scantime += timedelta(hours=8)</p>
+        <p>rl = list(f.iter_tilt(150,"REF"))</p>
+        <p>cr = cinrad.calc.quick_cr(rl)</p>
+        <p>PPI(cr, style="black",</p>
+        <p>    add_city_names=True, dpi=300)("d:/cr.png")</p>
+      </content>
+    </shape>
+
+    <shape type="text" topLeftX="60" topLeftY="400" width="840" height="110">
+      <content textType="body" fontSize="13" color="rgba(75,85,99,1)" lineSpacing="multiple:1.7">
+        <p><span bold="true" color="rgba(13,19,38,1)">没有 skill 时：</span>AI 会用 pyart.io.read 报错、变量名写 REF 还是 dBZ 猜、忘记 +8h、PPI 背景默认白色。</p>
+        <p><span bold="true" color="rgba(37,99,235,1)">有 skill 后：</span>七行代码一次跑通。关键差异不是 AI 变聪明了，是它知道了"中国 SA 标准格式该用 read_auto"。</p>
+      </content>
+    </shape>
+  </data>
+  <note>
+    <content textType="body">
+      <p>这是一个真实的小例子。左边是用户会说的话，右边是 AI 读了 pycinrad skill 之后给出的代码。</p>
+      <p>注意右边七行代码里的每一行，都对应 skill 里的一条规则：read_auto 自动识别格式、scantime +8 小时、iter_tilt 150 km、quick_cr 算组合反射率、PPI 黑色背景加城市名。</p>
+      <p>这些不是 AI 自己悟出来的，是 skill 里"推荐工作流"那一节白纸黑字写着的。</p>
+    </content>
+  </note>
+</slide>

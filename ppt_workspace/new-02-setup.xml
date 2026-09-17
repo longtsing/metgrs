@@ -1,0 +1,100 @@
+<slide>
+  <style><fill><fillColor color="rgba(242,244,248,1)"/></fill></style>
+  <data>
+    <shape type="text" topLeftX="60" topLeftY="40" width="600" height="24">
+      <content textType="caption" fontSize="12" color="rgba(37,99,235,1)" letterSpacing="1">
+        <p>配置 · SETUP IN TRAE</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="60" topLeftY="70" width="840" height="40">
+      <content textType="headline" fontSize="24" bold="true" color="rgba(13,19,38,1)">
+        <p>三步把 .skills 接进 Trae，让 AI 每次自动读</p>
+      </content>
+    </shape>
+    <line startX="60" startY="125" endX="900" endY="125"><border color="rgba(203,213,225,1)" width="1"/></line>
+
+    <!-- step 1 -->
+    <shape type="rect" topLeftX="60" topLeftY="150" width="270" height="290">
+      <fill><fillColor color="rgba(255,255,255,1)"/></fill>
+      <border color="rgba(203,213,225,1)" width="1"/>
+    </shape>
+    <shape type="rect" topLeftX="60" topLeftY="150" width="270" height="36">
+      <fill><fillColor color="rgba(37,99,235,1)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="75" topLeftY="155" width="240" height="26">
+      <content textType="body" fontSize="14" bold="true" color="rgba(255,255,255,1)"><p>1  打开项目目录</p></content>
+    </shape>
+    <shape type="text" topLeftX="78" topLeftY="200" width="235" height="230">
+      <content textType="body" fontSize="12" color="rgba(13,19,38,1)" lineSpacing="multiple:1.7">
+        <p>Trae → 文件 → 打开文件夹</p>
+        <p>选择：</p>
+        <p><span fontFamily="Consolas" color="rgba(37,99,235,1)">E:\study\AIForRadar</span></p>
+        <p>把整个自习目录作为项目根。</p>
+        <p></p>
+        <p>同时把</p>
+        <p><span fontFamily="Consolas" color="rgba(37,99,235,1)">E:\study\metgrs\.skills</span></p>
+        <p>加入工作区（可放侧栏）。</p>
+      </content>
+    </shape>
+
+    <!-- step 2 -->
+    <shape type="rect" topLeftX="345" topLeftY="150" width="270" height="290">
+      <fill><fillColor color="rgba(255,255,255,1)"/></fill>
+      <border color="rgba(203,213,225,1)" width="1"/>
+    </shape>
+    <shape type="rect" topLeftX="345" topLeftY="150" width="270" height="36">
+      <fill><fillColor color="rgba(37,99,235,1)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="360" topLeftY="155" width="240" height="26">
+      <content textType="body" fontSize="14" bold="true" color="rgba(255,255,255,1)"><p>2  建 Project Rules</p></content>
+    </shape>
+    <shape type="text" topLeftX="363" topLeftY="200" width="235" height="230">
+      <content textType="body" fontSize="12" color="rgba(13,19,38,1)" lineSpacing="multiple:1.7">
+        <p>侧栏 → Rules / 规则</p>
+        <p>新建 <span fontFamily="Consolas" color="rgba(37,99,235,1)">.trae/rules/project_rules.md</span>，写：</p>
+        <p></p>
+        <p><span fontFamily="Consolas" fontSize="11">当任务涉及雷达数据，</span></p>
+        <p><span fontFamily="Consolas" fontSize="11">先读 E:\study\metgrs\</span></p>
+        <p><span fontFamily="Consolas" fontSize="11">.skills\&lt;对应库&gt;\skill.md</span></p>
+        <p><span fontFamily="Consolas" fontSize="11">再动手写代码。</span></p>
+      </content>
+    </shape>
+
+    <!-- step 3 -->
+    <shape type="rect" topLeftX="630" topLeftY="150" width="270" height="290">
+      <fill><fillColor color="rgba(255,255,255,1)"/></fill>
+      <border color="rgba(203,213,225,1)" width="1"/>
+    </shape>
+    <shape type="rect" topLeftX="630" topLeftY="150" width="270" height="36">
+      <fill><fillColor color="rgba(37,99,235,1)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="645" topLeftY="155" width="240" height="26">
+      <content textType="body" fontSize="14" bold="true" color="rgba(255,255,255,1)"><p>3  对话里 @ 引用</p></content>
+    </shape>
+    <shape type="text" topLeftX="648" topLeftY="200" width="235" height="230">
+      <content textType="body" fontSize="12" color="rgba(13,19,38,1)" lineSpacing="multiple:1.7">
+        <p>打开右侧 Chat，输入：</p>
+        <p><span fontFamily="Consolas" fontSize="11">@file E:\...\pycinrad\skill.md</span></p>
+        <p><span fontFamily="Consolas" fontSize="11">@file E:\...\Z9731...bin.bz2</span></p>
+        <p>再写你的需求。</p>
+        <p></p>
+        <p>或用 Builder 模式：</p>
+        <p>直接说"读这个数据画 PPI"，</p>
+        <p>AI 会自己找规则、自己写脚本。</p>
+      </content>
+    </shape>
+
+    <shape type="text" topLeftX="60" topLeftY="460" width="840" height="40">
+      <content textType="body" fontSize="13" color="rgba(75,85,99,1)">
+        <p>关键：skill.md 是"长期记忆"，数据文件是"本次输入"，二者分开 @，AI 就不会张冠李戴。</p>
+      </content>
+    </shape>
+  </data>
+  <note>
+    <content textType="body">
+      <p>这一页是操作步骤。第一步打开项目目录，把 E:\study\AIForRadar 作为根。</p>
+      <p>第二步建 Project Rules，告诉 AI 遇到雷达任务先读 skill。这一步只做一次，以后每次对话都自动生效。</p>
+      <p>第三步在对话里用 @ 把 skill.md 和数据文件一起引用。区别在于：skill 是长期规则，数据是本次输入，别混。</p>
+    </content>
+  </note>
+</slide>

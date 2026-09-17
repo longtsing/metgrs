@@ -1,0 +1,63 @@
+<slide>
+  <style><fill><fillColor color="rgba(242,244,248,1)"/></fill></style>
+  <data>
+    <shape type="text" topLeftX="60" topLeftY="40" width="600" height="24">
+      <content textType="caption" fontSize="12" color="rgba(37,99,235,1)" letterSpacing="1">
+        <p>概念 · WHAT IS A SKILL</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="60" topLeftY="70" width="840" height="50">
+      <content textType="headline" fontSize="26" bold="true" color="rgba(13,19,38,1)">
+        <p>Skill 是给 AI 看的"领域操作手册"</p>
+      </content>
+    </shape>
+    <line startX="60" startY="135" endX="900" endY="135"><border color="rgba(203,213,225,1)" width="1"/></line>
+
+    <shape type="text" topLeftX="60" topLeftY="160" width="840" height="50">
+      <content textType="body" fontSize="15" color="rgba(75,85,99,1)" lineSpacing="multiple:1.5">
+        <p>一份 skill.md = 一个文件夹 + 一份 Markdown。AI 在用户提问时自动读取它，获得该领域的函数签名、</p>
+        <p>调用示例、返回结构、常见报错和推荐工作流，然后才动手写代码。</p>
+      </content>
+    </shape>
+
+    <shape type="text" topLeftX="60" topLeftY="240" width="180" height="24">
+      <content textType="body" fontSize="13" bold="true" color="rgba(37,99,235,1)"><p>目录结构</p></content>
+    </shape>
+    <shape type="rect" topLeftX="60" topLeftY="270" width="400" height="200">
+      <fill><fillColor color="rgba(13,19,38,1)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="285" width="360" height="180">
+      <content textType="body" fontSize="13" color="rgba(226,232,240,1)" fontFamily="Consolas" lineSpacing="multiple:1.5">
+        <p>E:\study\metgrs\.skills\</p>
+        <p>├─ metgrs\skill.md</p>
+        <p>├─ pycinrad\skill.md</p>
+        <p>├─ pycwr\skill.md</p>
+        <p>├─ pyart\skill.md          （新增）</p>
+        <p>└─ python-radar-basics\skill.md （新增）</p>
+      </content>
+    </shape>
+
+    <shape type="text" topLeftX="500" topLeftY="240" width="400" height="24">
+      <content textType="body" fontSize="13" bold="true" color="rgba(37,99,235,1)"><p>每份 skill 包含八节</p></content>
+    </shape>
+    <shape type="text" topLeftX="500" topLeftY="270" width="400" height="220">
+      <content textType="body" fontSize="13" color="rgba(13,19,38,1)" lineSpacing="multiple:1.7">
+        <p>1. 适用场景（什么时候该用）</p>
+        <p>2. 安装与导入</p>
+        <p>3. 模块结构与典型调用</p>
+        <p>4. 通用使用模式</p>
+        <p>5. 常见陷阱（踩坑清单）</p>
+        <p>6. 推荐工作流（最短可跑通代码）</p>
+        <p>7. 与其他库的衔接</p>
+        <p>8. 详细参考（文档/示例路径）</p>
+      </content>
+    </shape>
+  </data>
+  <note>
+    <content textType="body">
+      <p>Skill 不是什么神秘东西，就是一个文件夹加一份 Markdown。左边是它在 E 盘的实际位置，五个子目录对应五门课。</p>
+      <p>右边是每份 skill 的八节结构。这套结构是从现有三份 skill 反推出来的：适用场景、安装、典型调用、使用模式、陷阱、工作流、衔接、参考。</p>
+      <p>重点看第五、第六节——常见陷阱和推荐工作流，这是 AI 最需要、也最不会自己从网上找到的内容。</p>
+    </content>
+  </note>
+</slide>

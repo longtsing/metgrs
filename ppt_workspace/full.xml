@@ -1,0 +1,1490 @@
+<presentation id="GBzjssRtelD5mNdr7stcw4D9n3g" xmlns="https://www.larkoffice.com/sml/2.0" width="960" height="540">
+  <title>AI辅助编程处理雷达数据课程配套Skill包介绍</title>
+  <theme>
+    <textStyles>
+      <headline fontColor="rgba(31, 35, 41, 1)"/>
+      <sub-headline fontColor="rgba(31, 35, 41, 1)"/>
+      <body fontColor="rgba(31, 35, 41, 1)"/>
+      <caption fontColor="rgba(155, 158, 162, 1)" fontSize="14"/>
+    </textStyles>
+  </theme>
+  <slide id="pdd">
+    <style>
+      <fill id="fdd">
+        <fillColor color="rgba(13, 19, 38, 1)"/>
+      </fill>
+    </style>
+    <data>
+      <shape width="12" height="540" topLeftX="0" topLeftY="0" presetHandlers="0" type="rect" id="bWb">
+        <fill>
+          <fillColor color="rgba(37, 99, 235, 1)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="800" height="40" topLeftX="80" topLeftY="120" type="text" id="bWo">
+        <content textType="caption" fontSize="14" fontFamily="思源黑体" color="rgba(96, 165, 250, 1)" letterSpacing="2">
+          <p>第2期雷达产品数据处理基础讲习班 · 配套培训</p>
+        </content>
+      </shape>
+      <shape width="820" height="140" topLeftX="80" topLeftY="180" type="text" id="bWW">
+        <content textType="title" fontSize="44" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" bold="true" lineSpacing="multiple:1.2">
+          <p>AI 辅助编程处理雷达数据</p>
+          <p>——课程配套 Skill 包实战指南</p>
+        </content>
+      </shape>
+      <shape width="760" height="60" topLeftX="80" topLeftY="360" type="text" id="bWU">
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(203, 213, 225, 1)">
+          <p>把 Py-ART / PyCINRAD / PyCWR / metgrs / NumPy·Pandas·Xarray 的</p>
+          <p>API、坑与工作流，写成 AI 可直接调用的领域操作手册</p>
+        </content>
+      </shape>
+      <line id="bWI" startX="80" startY="450" endX="200.00416659433122" endY="450">
+        <border color="rgba(37, 99, 235, 1)"/>
+      </line>
+      <shape width="800" height="30" topLeftX="80" topLeftY="465" type="text" id="bWs">
+        <content textType="caption" fontSize="12" fontFamily="思源黑体" color="rgba(148, 163, 184, 1)">
+          <p>2026 年 9 月 · 湖南 · 雷达数据处理讲习班</p>
+        </content>
+      </shape>
+    </data>
+    <note id="bWO">
+      <content>
+        <p>各位老师、同学好。这次课我们不讲某个雷达库的 API 细节，而是讲怎么把这一周要用到的五个库，写成一套可以直接喂给 AI 的&quot;操作手册&quot;。</p>
+        <p>上完课大家会得到一个 .skills 目录，里面五个 skill，每个都是一份结构化的中文指南。把它给 AI，AI 就知道用什么函数、避什么坑。</p>
+        <p>今天的目标：让大家回去之后，遇到雷达数据处理任务，先想到&quot;查 skill、再提问&quot;，而不是翻半天 GitHub 文档。</p>
+      </content>
+    </note>
+  </slide>
+  <slide id="pdl">
+    <style>
+      <fill id="fdl">
+        <fillColor color="rgba(242, 244, 248, 1)"/>
+      </fill>
+    </style>
+    <data>
+      <shape width="600" height="24" topLeftX="60" topLeftY="40" type="text" id="bOU">
+        <content textType="caption" fontSize="12" fontFamily="思源黑体" color="rgba(37, 99, 235, 1)" letterSpacing="1">
+          <p>课程全景 · COURSE MAP</p>
+        </content>
+      </shape>
+      <shape width="840" height="50" topLeftX="60" topLeftY="70" type="text" id="bWc">
+        <content textType="headline" fontSize="28" fontFamily="思源黑体" color="rgba(13, 19, 38, 1)" bold="true">
+          <p>这一周，我们要打通五个雷达数据处理工具链</p>
+        </content>
+      </shape>
+      <line id="bWh" startX="60" startY="135" endX="900.0005952378843" endY="135">
+        <border color="rgba(203, 213, 225, 1)" width="1"/>
+      </line>
+      <table id="bWN" width="840" height="320" topLeftX="60" topLeftY="155">
+        <colgroup>
+          <col span="1" width="110"/>
+          <col span="1" width="360"/>
+          <col span="1" width="170"/>
+          <col span="1" width="200"/>
+        </colgroup>
+        <tr height="42">
+          <td id="bWC">
+            <fill>
+              <fillColor color="rgba(13, 19, 38, 1)"/>
+            </fill>
+            <content fontSize="13" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>日期</p>
+            </content>
+          </td>
+          <td id="bWf">
+            <fill>
+              <fillColor color="rgba(13, 19, 38, 1)"/>
+            </fill>
+            <content fontSize="13" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>课程</p>
+            </content>
+          </td>
+          <td id="bWe">
+            <fill>
+              <fillColor color="rgba(13, 19, 38, 1)"/>
+            </fill>
+            <content fontSize="13" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>主讲</p>
+            </content>
+          </td>
+          <td id="bOI">
+            <fill>
+              <fillColor color="rgba(13, 19, 38, 1)"/>
+            </fill>
+            <content fontSize="13" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>对应 Skill</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="56">
+          <td id="bWv">
+            <content fontSize="12" fontFamily="思源黑体">
+              <p>9/14 周一</p>
+            </content>
+          </td>
+          <td id="bWx">
+            <content fontSize="12" fontFamily="思源黑体" textAlign="left">
+              <p>雷达产品种类与数据结构；Python 基础 NumPy/Pandas/Xarray</p>
+            </content>
+          </td>
+          <td id="bWV">
+            <content fontSize="12" fontFamily="思源黑体">
+              <p>张深寿 / 陈鹤</p>
+            </content>
+          </td>
+          <td id="bWa">
+            <content fontSize="12" fontFamily="思源黑体" color="rgba(37, 99, 235, 1)">
+              <p>python-radar-basics</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="56">
+          <td id="bWm">
+            <content fontSize="12" fontFamily="思源黑体">
+              <p>9/15 周二</p>
+            </content>
+          </td>
+          <td id="bWK">
+            <content fontSize="12" fontFamily="思源黑体" textAlign="left">
+              <p>Py-ART 基础应用介绍与实习（一）（二）</p>
+            </content>
+          </td>
+          <td id="bWq">
+            <content fontSize="12" fontFamily="思源黑体">
+              <p>孟蕾</p>
+            </content>
+          </td>
+          <td id="bWk">
+            <content fontSize="12" fontFamily="思源黑体" color="rgba(37, 99, 235, 1)">
+              <p>pyart</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="56">
+          <td id="bWr">
+            <content fontSize="12" fontFamily="思源黑体">
+              <p>9/16 周三</p>
+            </content>
+          </td>
+          <td id="bWd">
+            <content fontSize="12" fontFamily="思源黑体" textAlign="left">
+              <p>PyCINRAD 基础应用介绍与实习（一）（二）</p>
+            </content>
+          </td>
+          <td id="bOO">
+            <content fontSize="12" fontFamily="思源黑体">
+              <p>李有朋</p>
+            </content>
+          </td>
+          <td id="bWz">
+            <content fontSize="12" fontFamily="思源黑体" color="rgba(37, 99, 235, 1)">
+              <p>pycinrad</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="56">
+          <td id="bWM">
+            <content fontSize="12" fontFamily="思源黑体">
+              <p>9/17 周四</p>
+            </content>
+          </td>
+          <td id="bWS">
+            <content fontSize="12" fontFamily="思源黑体" textAlign="left">
+              <p>PyCWR 基础应用介绍与实习（一）（二）</p>
+            </content>
+          </td>
+          <td id="bOW">
+            <content fontSize="12" fontFamily="思源黑体">
+              <p>郑玉</p>
+            </content>
+          </td>
+          <td id="bWY">
+            <content fontSize="12" fontFamily="思源黑体" color="rgba(37, 99, 235, 1)">
+              <p>pycwr</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="54">
+          <td id="bWy">
+            <content fontSize="12" fontFamily="思源黑体">
+              <p>9/18 周五</p>
+            </content>
+          </td>
+          <td id="bWn">
+            <content fontSize="12" fontFamily="思源黑体" textAlign="left">
+              <p>垂直观测：云雷达、微波辐射计、风廓线、激光雷达、GNSS</p>
+            </content>
+          </td>
+          <td id="bOb">
+            <content fontSize="12" fontFamily="思源黑体">
+              <p>王清龙</p>
+            </content>
+          </td>
+          <td id="bWX">
+            <content fontSize="12" fontFamily="思源黑体" color="rgba(37, 99, 235, 1)">
+              <p>metgrs</p>
+            </content>
+          </td>
+        </tr>
+      </table>
+      <shape width="840" height="20" topLeftX="60" topLeftY="490" type="text" id="bOo">
+        <content textType="caption" fontSize="11" fontFamily="思源黑体" color="rgba(100, 116, 139, 1)">
+          <p>来源：第2期雷达产品数据处理基础讲习班课程表（2026-09-13 至 09-19）</p>
+        </content>
+      </shape>
+    </data>
+    <note id="bWZ">
+      <content>
+        <p>这是本周的完整课表。可以看到，五天正好对应五个工具链：第一天是 Python 三件套，后面四天分别是 Py-ART、PyCINRAD、PyCWR 和 metgrs。</p>
+        <p>右边一列是今天重点：每一门课，我们都配了一份 skill。今天新增了两份：python-radar-basics 和 pyart；原有的 pycinrad、pycwr、metgrs 已经在 E 盘的 .skills 目录里。</p>
+        <p>看完这张表大家应该明白：skill 不是新东西，就是把这一周的教学经验结构化。</p>
+      </content>
+    </note>
+  </slide>
+  <slide id="pdf">
+    <style>
+      <fill id="fdf">
+        <fillColor color="rgba(242, 244, 248, 1)"/>
+      </fill>
+    </style>
+    <data>
+      <shape width="600" height="24" topLeftX="60" topLeftY="40" type="text" id="bWF">
+        <content textType="caption" fontSize="12" fontFamily="思源黑体" color="rgba(37, 99, 235, 1)" letterSpacing="1">
+          <p>为什么需要 Skill · THE PROBLEM</p>
+        </content>
+      </shape>
+      <shape width="840" height="50" topLeftX="60" topLeftY="70" type="text" id="bWg">
+        <content textType="headline" fontSize="26" fontFamily="思源黑体" color="rgba(13, 19, 38, 1)" bold="true">
+          <p>直接让 AI 写雷达代码，为什么三步就报错？</p>
+        </content>
+      </shape>
+      <line id="bWE" startX="60" startY="135" endX="900.0005952378843" endY="135">
+        <border color="rgba(203, 213, 225, 1)" width="1"/>
+      </line>
+      <shape width="400" height="30" topLeftX="60" topLeftY="160" type="text" id="bWL">
+        <content fontSize="15" fontFamily="思源黑体" color="rgba(13, 19, 38, 1)" bold="true">
+          <p>新手直觉：把需求说清楚就行</p>
+        </content>
+      </shape>
+      <shape width="400" height="250" topLeftX="60" topLeftY="200" presetHandlers="0" type="rect" id="bWD">
+        <fill>
+          <fillColor color="rgba(255, 255, 255, 1)"/>
+        </fill>
+        <border color="rgba(203, 213, 225, 1)" width="1"/>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="360" height="220" topLeftX="80" topLeftY="215" type="text" id="bWP">
+        <content fontSize="13" fontFamily="思源黑体" color="rgba(75, 85, 99, 1)" lineSpacing="multiple:1.6">
+          <p>• &quot;帮我读一个 SA 波段雷达 bin 文件画 PPI&quot;</p>
+          <p>• AI 给的代码用了 pyart.io.read，中国 bin 读不了</p>
+          <p>• 换 cinrad 后，变量名写成 REF，实际叫 dBZ</p>
+          <p>• 画出来时间差 8 小时（UTC 没转北京时）</p>
+          <p>• HCL 算不出来：漏了 ZDR/RHO/KDP 四件套</p>
+          <p>• 中文字体乱码、路径反斜杠、单位米写成千米</p>
+        </content>
+      </shape>
+      <shape width="400" height="30" topLeftX="500" topLeftY="160" type="text" id="bWl">
+        <content fontSize="15" fontFamily="思源黑体" color="rgba(37, 99, 235, 1)" bold="true">
+          <p>真相：AI 缺的不是能力，是领域上下文</p>
+        </content>
+      </shape>
+      <shape width="400" height="250" topLeftX="500" topLeftY="200" presetHandlers="0" type="rect" id="bWw">
+        <fill>
+          <fillColor color="rgba(37, 99, 235, 1)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="360" height="220" topLeftX="520" topLeftY="215" type="text" id="bWR">
+        <content fontSize="13" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" lineSpacing="multiple:1.6">
+          <p>• 每个库变量名不一致：REF / reflectivity / dBZ</p>
+          <p>• 中国标准格式必须走 cinrad.io.StandardData</p>
+          <p>• scantime 是 UTC，要手动 +8 小时</p>
+          <p>• HCL 必须按 S/C/X 波段传参</p>
+          <p>• CAPPI 高度单位是米，不是千米</p>
+          <p>• bz2 文件不用先解压，库自己处理</p>
+        </content>
+      </shape>
+      <shape width="840" height="30" topLeftX="60" topLeftY="475" type="text" id="bWG">
+        <content fontSize="14" fontFamily="思源黑体" color="rgba(13, 19, 38, 1)">
+          <p>把这些&quot;只有踩过坑才知道&quot;的规则写进 Skill，AI 一次就写对。</p>
+        </content>
+      </shape>
+    </data>
+    <note id="bWQ">
+      <content>
+        <p>这一页讲痛点。很多人第一次用 AI 写雷达代码，都会经历左边这个流程：需求看着很清楚，结果第一步就报错。</p>
+        <p>右边列的是真正的原因——不是 AI 不会写 Python，是它不知道中国雷达生态里那些不成文的规则。变量名、时区、单位、波段、文件格式，每一个都是坑。</p>
+        <p>Skill 的本质，就是把这些隐性知识显性化，一次性喂给 AI。</p>
+      </content>
+    </note>
+  </slide>
+  <slide id="pdY">
+    <style>
+      <fill id="fdY">
+        <fillColor color="rgba(242, 244, 248, 1)"/>
+      </fill>
+    </style>
+    <data>
+      <shape width="600" height="24" topLeftX="60" topLeftY="40" type="text" id="bWi">
+        <content textType="caption" fontSize="12" fontFamily="思源黑体" color="rgba(37, 99, 235, 1)" letterSpacing="1">
+          <p>概念 · WHAT IS A SKILL</p>
+        </content>
+      </shape>
+      <shape width="840" height="50" topLeftX="60" topLeftY="70" type="text" id="bWJ">
+        <content textType="headline" fontSize="26" fontFamily="思源黑体" color="rgba(13, 19, 38, 1)" bold="true">
+          <p>Skill 是给 AI 看的&quot;领域操作手册&quot;</p>
+        </content>
+      </shape>
+      <line id="bWp" startX="60" startY="135" endX="900.0005952378843" endY="135">
+        <border color="rgba(203, 213, 225, 1)" width="1"/>
+      </line>
+      <shape width="840" height="50" topLeftX="60" topLeftY="160" type="text" id="bWt">
+        <content fontSize="15" fontFamily="思源黑体" color="rgba(75, 85, 99, 1)">
+          <p>一份 skill.md = 一个文件夹 + 一份 Markdown。AI 在用户提问时自动读取它，获得该领域的函数签名、</p>
+          <p>调用示例、返回结构、常见报错和推荐工作流，然后才动手写代码。</p>
+        </content>
+      </shape>
+      <shape width="180" height="24" topLeftX="60" topLeftY="240" type="text" id="bWH">
+        <content fontSize="13" fontFamily="思源黑体" color="rgba(37, 99, 235, 1)" bold="true">
+          <p>目录结构</p>
+        </content>
+      </shape>
+      <shape width="400" height="200" topLeftX="60" topLeftY="270" presetHandlers="0" type="rect" id="bWj">
+        <fill>
+          <fillColor color="rgba(13, 19, 38, 1)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="360" height="180" topLeftX="80" topLeftY="285" type="text" id="bWT">
+        <content fontSize="13" fontFamily="Consolas" color="rgba(226, 232, 240, 1)">
+          <p>E:\study\metgrs\.skills\</p>
+          <p>├─ metgrs\skill.md</p>
+          <p>├─ pycinrad\skill.md</p>
+          <p>├─ pycwr\skill.md</p>
+          <p>├─ pyart\skill.md （新增）</p>
+          <p>└─ python-radar-basics\skill.md （新增）</p>
+        </content>
+      </shape>
+      <shape width="400" height="24" topLeftX="500" topLeftY="240" type="text" id="bWu">
+        <content fontSize="13" fontFamily="思源黑体" color="rgba(37, 99, 235, 1)" bold="true">
+          <p>每份 skill 包含八节</p>
+        </content>
+      </shape>
+      <shape width="400" height="220" topLeftX="500" topLeftY="270" type="text" id="bWB">
+        <content fontSize="13" fontFamily="思源黑体" color="rgba(13, 19, 38, 1)" lineSpacing="multiple:1.7">
+          <p>1. 适用场景（什么时候该用）</p>
+          <p>2. 安装与导入</p>
+          <p>3. 模块结构与典型调用</p>
+          <p>4. 通用使用模式</p>
+          <p>5. 常见陷阱（踩坑清单）</p>
+          <p>6. 推荐工作流（最短可跑通代码）</p>
+          <p>7. 与其他库的衔接</p>
+          <p>8. 详细参考（文档/示例路径）</p>
+        </content>
+      </shape>
+    </data>
+    <note id="bWA">
+      <content>
+        <p>Skill 不是什么神秘东西，就是一个文件夹加一份 Markdown。左边是它在 E 盘的实际位置，五个子目录对应五门课。</p>
+        <p>右边是每份 skill 的八节结构。这套结构是从现有三份 skill 反推出来的：适用场景、安装、典型调用、使用模式、陷阱、工作流、衔接、参考。</p>
+        <p>重点看第五、第六节——常见陷阱和推荐工作流，这是 AI 最需要、也最不会自己从网上找到的内容。</p>
+      </content>
+    </note>
+  </slide>
+  <slide id="pdr">
+    <style>
+      <fill id="fdr">
+        <fillColor color="rgba(242, 244, 248, 1)"/>
+      </fill>
+    </style>
+    <data>
+      <shape width="600" height="24" topLeftX="60" topLeftY="40" type="text" id="bOF">
+        <content textType="caption" fontSize="12" fontFamily="思源黑体" color="rgba(37, 99, 235, 1)" letterSpacing="1">
+          <p>工作流 · HOW IT WORKS</p>
+        </content>
+      </shape>
+      <shape width="840" height="50" topLeftX="60" topLeftY="70" type="text" id="bOE">
+        <content textType="headline" fontSize="26" fontFamily="思源黑体" color="rgba(13, 19, 38, 1)" bold="true">
+          <p>提问 → 命中 Skill → 生成代码 → 跑通验证</p>
+        </content>
+      </shape>
+      <line id="bOD" startX="60" startY="135" endX="900.0005952378843" endY="135">
+        <border color="rgba(203, 213, 225, 1)" width="1"/>
+      </line>
+      <shape width="48" height="48" topLeftX="80" topLeftY="200" type="ellipse" id="bOY">
+        <fill>
+          <fillColor color="rgba(37, 99, 235, 1)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="48" height="32" topLeftX="80" topLeftY="208" type="text" id="bOC">
+        <content fontSize="18" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" bold="true" textAlign="center">
+          <p>1</p>
+        </content>
+      </shape>
+      <shape width="180" height="24" topLeftX="145" topLeftY="200" type="text" id="bOr">
+        <content fontSize="14" fontFamily="思源黑体" color="rgba(13, 19, 38, 1)" bold="true">
+          <p>提出任务</p>
+        </content>
+      </shape>
+      <shape width="180" height="60" topLeftX="145" topLeftY="228" type="text" id="bOp">
+        <content textType="caption" fontSize="12" fontFamily="思源黑体" color="rgba(75, 85, 99, 1)" lineSpacing="multiple:1.4">
+          <p>&quot;读 Z9731 的 SA 基数据，画 0.5° 反射率 PPI，叠加湖南城市名&quot;</p>
+        </content>
+      </shape>
+      <line id="bOl" startX="330" startY="224" endX="370.0124980474851" endY="224">
+        <border color="rgba(37, 99, 235, 1)"/>
+        <endArrow type="arrow"/>
+      </line>
+      <shape width="48" height="48" topLeftX="380" topLeftY="200" type="ellipse" id="bOR">
+        <fill>
+          <fillColor color="rgba(37, 99, 235, 1)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="48" height="32" topLeftX="380" topLeftY="208" type="text" id="bOz">
+        <content fontSize="18" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" bold="true" textAlign="center">
+          <p>2</p>
+        </content>
+      </shape>
+      <shape width="180" height="24" topLeftX="445" topLeftY="200" type="text" id="bOc">
+        <content fontSize="14" fontFamily="思源黑体" color="rgba(13, 19, 38, 1)" bold="true">
+          <p>命中 Skill</p>
+        </content>
+      </shape>
+      <shape width="180" height="60" topLeftX="445" topLeftY="228" type="text" id="bOm">
+        <content textType="caption" fontSize="12" fontFamily="思源黑体" color="rgba(75, 85, 99, 1)" lineSpacing="multiple:1.4">
+          <p>识别到 &quot;SA 基数据 / PPI / 城市名&quot;，自动加载 pycinrad skill.md</p>
+        </content>
+      </shape>
+      <line id="bOQ" startX="630" startY="224" endX="670.0124980474851" endY="224">
+        <border color="rgba(37, 99, 235, 1)"/>
+        <endArrow type="arrow"/>
+      </line>
+      <shape width="48" height="48" topLeftX="680" topLeftY="200" type="ellipse" id="bOg">
+        <fill>
+          <fillColor color="rgba(37, 99, 235, 1)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="48" height="32" topLeftX="680" topLeftY="208" type="text" id="bOL">
+        <content fontSize="18" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" bold="true" textAlign="center">
+          <p>3</p>
+        </content>
+      </shape>
+      <shape width="180" height="24" topLeftX="745" topLeftY="200" type="text" id="bOk">
+        <content fontSize="14" fontFamily="思源黑体" color="rgba(13, 19, 38, 1)" bold="true">
+          <p>生成代码</p>
+        </content>
+      </shape>
+      <shape width="180" height="80" topLeftX="745" topLeftY="228" type="text" id="bOa">
+        <content textType="caption" fontSize="12" fontFamily="思源黑体" color="rgba(75, 85, 99, 1)" lineSpacing="multiple:1.4">
+          <p>read_auto → get_data(0,230,&quot;REF&quot;) → +8h → PPI(add_city_names=True)</p>
+        </content>
+      </shape>
+      <shape width="48" height="48" topLeftX="380" topLeftY="340" type="ellipse" id="bOy">
+        <fill>
+          <fillColor color="rgba(13, 19, 38, 1)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="48" height="32" topLeftX="380" topLeftY="348" type="text" id="bOP">
+        <content fontSize="18" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" bold="true" textAlign="center">
+          <p>4</p>
+        </content>
+      </shape>
+      <shape width="400" height="24" topLeftX="445" topLeftY="340" type="text" id="bOw">
+        <content fontSize="14" fontFamily="思源黑体" color="rgba(13, 19, 38, 1)" bold="true">
+          <p>本地运行 / 报错回喂 / 修正</p>
+        </content>
+      </shape>
+      <shape width="420" height="60" topLeftX="445" topLeftY="368" type="text" id="bOG">
+        <content textType="caption" fontSize="12" fontFamily="思源黑体" color="rgba(75, 85, 99, 1)" lineSpacing="multiple:1.4">
+          <p>把 traceback 粘回对话，AI 对照 skill 里的&quot;常见陷阱&quot;逐条排查，直到图出得来、坐标对得上</p>
+        </content>
+      </shape>
+      <shape width="840" height="40" topLeftX="60" topLeftY="460" type="text" id="bOX">
+        <content fontSize="13" fontFamily="思源黑体" color="rgba(75, 85, 99, 1)">
+          <p>关键：AI 写代码只是起点，<strong><span color="rgba(37, 99, 235, 1)">第 4 步的&quot;跑通—回喂—修正&quot;</span></strong>才是真正的产能放大器。</p>
+        </content>
+      </shape>
+    </data>
+    <note id="bOv">
+      <content>
+        <p>这是一次完整的 Skill 使用闭环。第一步像平时一样提需求；第二步 AI 自动判断该读哪份 skill；第三步按 skill 里的推荐工作流生成代码。</p>
+        <p>第四步最容易被忽略——代码不可能一次就完美，跑出问题把报错贴回去，AI 会对照 skill 里的陷阱清单逐条检查。</p>
+        <p>这个闭环跑顺了，原来要查半天 GitHub 的事，现在一杯茶的功夫就能出图。</p>
+      </content>
+    </note>
+  </slide>
+  <slide id="pdL">
+    <style>
+      <fill id="fdL">
+        <fillColor color="rgba(242, 244, 248, 1)"/>
+      </fill>
+    </style>
+    <data>
+      <shape width="600" height="24" topLeftX="60" topLeftY="40" type="text" id="bUH">
+        <content textType="caption" fontSize="12" fontFamily="思源黑体" color="rgba(37, 99, 235, 1)" letterSpacing="1">
+          <p>Skill 地图 · OVERVIEW</p>
+        </content>
+      </shape>
+      <shape width="840" height="50" topLeftX="60" topLeftY="70" type="text" id="bUQ">
+        <content textType="headline" fontSize="26" fontFamily="思源黑体" color="rgba(13, 19, 38, 1)" bold="true">
+          <p>五份 Skill，覆盖本周全部教学代码</p>
+        </content>
+      </shape>
+      <line id="bUW" startX="60" startY="135" endX="900.0005952378843" endY="135">
+        <border color="rgba(203, 213, 225, 1)" width="1"/>
+      </line>
+      <table id="bUt" width="840" height="310" topLeftX="60" topLeftY="160">
+        <colgroup>
+          <col span="1" width="180"/>
+          <col span="1" width="220"/>
+          <col span="1" width="320"/>
+          <col span="1" width="120"/>
+        </colgroup>
+        <tr height="34">
+          <td id="bUb">
+            <fill>
+              <fillColor color="rgba(13, 19, 38, 1)"/>
+            </fill>
+            <content fontSize="12" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>Skill</p>
+            </content>
+          </td>
+          <td id="bUj">
+            <fill>
+              <fillColor color="rgba(13, 19, 38, 1)"/>
+            </fill>
+            <content fontSize="12" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>对象</p>
+            </content>
+          </td>
+          <td id="bUF">
+            <fill>
+              <fillColor color="rgba(13, 19, 38, 1)"/>
+            </fill>
+            <content fontSize="12" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>核心能力</p>
+            </content>
+          </td>
+          <td id="bUU">
+            <fill>
+              <fillColor color="rgba(13, 19, 38, 1)"/>
+            </fill>
+            <content fontSize="12" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>状态</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="55">
+          <td id="bUA">
+            <content fontSize="12" fontFamily="思源黑体" color="rgba(37, 99, 235, 1)" bold="true">
+              <p>python-radar-basics</p>
+            </content>
+          </td>
+          <td id="bUP">
+            <content fontSize="11" fontFamily="思源黑体">
+              <p>NumPy / Pandas / Xarray</p>
+            </content>
+          </td>
+          <td id="bUL">
+            <content fontSize="11" fontFamily="思源黑体" textAlign="left">
+              <p>雷达回波数组、站点/降水表、带坐标 Dataset 的切片与广播</p>
+            </content>
+          </td>
+          <td id="bON">
+            <content fontSize="11" fontFamily="思源黑体" color="rgba(220, 38, 38, 1)" bold="true">
+              <p>本次新增</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="55">
+          <td id="bUo">
+            <content fontSize="12" fontFamily="思源黑体" color="rgba(37, 99, 235, 1)" bold="true">
+              <p>pyart</p>
+            </content>
+          </td>
+          <td id="bUT">
+            <content fontSize="11" fontFamily="思源黑体">
+              <p>Py-ART（ARM）</p>
+            </content>
+          </td>
+          <td id="bUg">
+            <content fontSize="11" fontFamily="思源黑体" textAlign="left">
+              <p>PyCINRAD 桥接导入、PPI/Map、速度退模糊、GateFilter、衰减订正、Z-R/Kdp 估雨</p>
+            </content>
+          </td>
+          <td id="bUR">
+            <content fontSize="11" fontFamily="思源黑体" color="rgba(220, 38, 38, 1)" bold="true">
+              <p>本次新增</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="55">
+          <td id="bUI">
+            <content fontSize="12" fontFamily="思源黑体" color="rgba(37, 99, 235, 1)" bold="true">
+              <p>pycinrad</p>
+            </content>
+          </td>
+          <td id="bUi">
+            <content fontSize="11" fontFamily="思源黑体">
+              <p>PyCINRAD</p>
+            </content>
+          </td>
+          <td id="bUl">
+            <content fontSize="11" fontFamily="思源黑体" textAlign="left">
+              <p>SA/SB/CA/CB 与相控阵读取、PUP/SWAN 产品、CR/ET/VIL/HCL、PPI/VCS、拼图</p>
+            </content>
+          </td>
+          <td id="bOV">
+            <content fontSize="11" fontFamily="思源黑体" color="rgba(22, 163, 74, 1)" bold="true">
+              <p>已有</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="55">
+          <td id="bUB">
+            <content fontSize="12" fontFamily="思源黑体" color="rgba(37, 99, 235, 1)" bold="true">
+              <p>pycwr</p>
+            </content>
+          </td>
+          <td id="bUu">
+            <content fontSize="11" fontFamily="思源黑体">
+              <p>PyCWR</p>
+            </content>
+          </td>
+          <td id="bUE">
+            <content fontSize="11" fontFamily="思源黑体" textAlign="left">
+              <p>PRD 模型、双偏振 QC、HCL、VAD/VVP/VWP、CAPPI/VIL/ET、多雷达拼图、导出 Py-ART</p>
+            </content>
+          </td>
+          <td id="bUG">
+            <content fontSize="11" fontFamily="思源黑体" color="rgba(22, 163, 74, 1)" bold="true">
+              <p>已有</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="56">
+          <td id="bOq">
+            <content fontSize="12" fontFamily="思源黑体" color="rgba(37, 99, 235, 1)" bold="true">
+              <p>metgrs</p>
+            </content>
+          </td>
+          <td id="bUs">
+            <content fontSize="11" fontFamily="思源黑体">
+              <p>MetGRS</p>
+            </content>
+          </td>
+          <td id="bUJ">
+            <content fontSize="11" fontFamily="思源黑体" textAlign="left">
+              <p>风廓线、云雷达、激光雷达、微波辐射计四类垂直观测数据读取与 xarray 接入</p>
+            </content>
+          </td>
+          <td id="bUw">
+            <content fontSize="11" fontFamily="思源黑体" color="rgba(22, 163, 74, 1)" bold="true">
+              <p>已有</p>
+            </content>
+          </td>
+        </tr>
+      </table>
+      <shape width="840" height="20" topLeftX="60" topLeftY="490" type="text" id="bUp">
+        <content textType="caption" fontSize="11" fontFamily="思源黑体" color="rgba(100, 116, 139, 1)">
+          <p>路径：E:\study\metgrs\.skills\&lt;name&gt;\skill.md</p>
+        </content>
+      </shape>
+    </data>
+    <note id="bUO">
+      <content>
+        <p>这是五份 skill 的全景图。红底标注的两份是这次新写的：python-radar-basics 对应周一上午的 Python 基础，pyart 对应周二全天。</p>
+        <p>绿底三份是之前就沉淀好的：pycinrad、pycwr、metgrs。每份 skill 的核心能力列在中间那一列，大家看完就能判断自己的任务该用哪份。</p>
+        <p>注意：这五份不是互斥的。比如 Py-ART 的案例实际上要先用 pycinrad.StandardData 读数据，再 standard_data_to_pyart 桥接，所以两份 skill 会配合用。</p>
+      </content>
+    </note>
+  </slide>
+  <slide id="pdH">
+    <style>
+      <fill id="fdH">
+        <fillColor color="rgba(242, 244, 248, 1)"/>
+      </fill>
+    </style>
+    <data>
+      <shape width="600" height="24" topLeftX="60" topLeftY="40" type="text" id="bOt">
+        <content textType="caption" fontSize="12" fontFamily="思源黑体" color="rgba(220, 38, 38, 1)" letterSpacing="1">
+          <p>Skill 01 · 新增 · python-radar-basics</p>
+        </content>
+      </shape>
+      <shape width="840" height="40" topLeftX="60" topLeftY="70" type="text" id="bOA">
+        <content textType="headline" fontSize="24" fontFamily="思源黑体" color="rgba(13, 19, 38, 1)" bold="true">
+          <p>NumPy / Pandas / Xarray：把雷达数据接成可计算的三件套</p>
+        </content>
+      </shape>
+      <line id="bOT" startX="60" startY="125" endX="900.0005952378843" endY="125">
+        <border color="rgba(203, 213, 225, 1)" width="1"/>
+      </line>
+      <shape width="380" height="24" topLeftX="60" topLeftY="145" type="text" id="bOu">
+        <content fontSize="14" fontFamily="思源黑体" color="rgba(37, 99, 235, 1)" bold="true">
+          <p>覆盖内容</p>
+        </content>
+      </shape>
+      <shape width="380" height="200" topLeftX="60" topLeftY="175" type="text" id="bOB">
+        <content fontSize="13" fontFamily="思源黑体" color="rgba(13, 19, 38, 1)" lineSpacing="multiple:1.7">
+          <p>• NumPy：PPI 二维数组、掩膜、广播、np.nanmax</p>
+          <p>• Pandas：站点表/降水 CSV、筛选、分组、merge、编码</p>
+          <p>• Xarray：Dataset 构造、sel/isel、where、concat、.plot</p>
+          <p>• 三种数据形态如何互转（数组 ↔ 表格 ↔ Dataset）</p>
+          <p>• 与后续 Py-ART / cinrad / pycwr 返回值的衔接</p>
+        </content>
+      </shape>
+      <shape width="420" height="24" topLeftX="480" topLeftY="145" type="text" id="bOH">
+        <content fontSize="14" fontFamily="思源黑体" color="rgba(37, 99, 235, 1)" bold="true">
+          <p>最短工作流</p>
+        </content>
+      </shape>
+      <shape width="420" height="240" topLeftX="480" topLeftY="175" presetHandlers="0" type="rect" id="bOj">
+        <fill>
+          <fillColor color="rgba(13, 19, 38, 1)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="385" height="215" topLeftX="500" topLeftY="190" type="text" id="bOi">
+        <content fontSize="11" fontFamily="Consolas" color="rgba(226, 232, 240, 1)">
+          <p>import numpy as np, pandas as pd</p>
+          <p>import xarray as xr</p>
+          <p>arr = np.load(&quot;ppi_sample.npy&quot;)</p>
+          <p>ds = xr.Dataset({&quot;dbz&quot;: ((&quot;az&quot;,&quot;r&quot;), arr)},</p>
+          <p>coords={&quot;az&quot;: np.linspace(0,360,360,False),</p>
+          <p>&quot;r&quot;: np.linspace(0,230,400)})</p>
+          <p>hi = ds[&quot;dbz&quot;].where(ds[&quot;dbz&quot;]&gt;=30)</p>
+          <p>hi.plot(x=&quot;r&quot;, y=&quot;az&quot;, cmap=&quot;jet&quot;)</p>
+        </content>
+      </shape>
+      <shape width="840" height="80" topLeftX="60" topLeftY="430" type="text" id="bOJ">
+        <content fontSize="12" fontFamily="思源黑体" color="rgba(75, 85, 99, 1)" lineSpacing="multiple:1.6">
+          <p><strong><span color="rgba(13, 19, 38, 1)">高频坑：</span></strong>sel 用标签、isel 用位置；坐标要单调递增；np.nan 与 np.ma 不混用；CSV 用 utf-8-sig 写出。</p>
+          <p><strong><span color="rgba(13, 19, 38, 1)">示例：</span></strong>H:\hn\radar_202609\ 下三个 ipynb（NumPy 回波数组 / Pandas 站点降水 / Xarray 读写索引）。</p>
+        </content>
+      </shape>
+    </data>
+    <note id="bOs">
+      <content>
+        <p>第一份 skill 是新加的，对应周一下午陈鹤老师的 Python 基础。很多同学以为&quot;我会 Python&quot;就跳过这一节，但雷达数据的 NumPy/Pandas/Xarray 用法和教材里的不一样。</p>
+        <p>右边这段是最短可跑通代码：把一个 npy 读成 xarray，掩膜出 30 dBZ 以上，直接 plot。这就是后面所有雷达库返回值的通用形态。</p>
+        <p>底部两个坑特别提醒：sel 和 isel 别混，中文 CSV 写出用 utf-8-sig，否则 Excel 打开乱码。</p>
+      </content>
+    </note>
+  </slide>
+  <slide id="pdy">
+    <style>
+      <fill id="fdy">
+        <fillColor color="rgba(242, 244, 248, 1)"/>
+      </fill>
+    </style>
+    <data>
+      <shape width="600" height="24" topLeftX="60" topLeftY="40" type="text" id="bOM">
+        <content textType="caption" fontSize="12" fontFamily="思源黑体" color="rgba(220, 38, 38, 1)" letterSpacing="1">
+          <p>Skill 02 · 新增 · pyart</p>
+        </content>
+      </shape>
+      <shape width="840" height="40" topLeftX="60" topLeftY="70" type="text" id="bOZ">
+        <content textType="headline" fontSize="24" fontFamily="思源黑体" color="rgba(13, 19, 38, 1)" bold="true">
+          <p>Py-ART：国际雷达生态的&quot;桥&quot;——读图、退模糊、估雨</p>
+        </content>
+      </shape>
+      <line id="bOf" startX="60" startY="125" endX="900.0005952378843" endY="125">
+        <border color="rgba(203, 213, 225, 1)" width="1"/>
+      </line>
+      <shape width="380" height="24" topLeftX="60" topLeftY="145" type="text" id="bOd">
+        <content fontSize="14" fontFamily="思源黑体" color="rgba(37, 99, 235, 1)" bold="true">
+          <p>覆盖内容</p>
+        </content>
+      </shape>
+      <shape width="380" height="220" topLeftX="60" topLeftY="175" type="text" id="bOn">
+        <content fontSize="13" fontFamily="思源黑体" color="rgba(13, 19, 38, 1)" lineSpacing="multiple:1.7">
+          <p>• PyCINRAD 桥接：StandardData → standard_data_to_pyart</p>
+          <p>• RadarDisplay：多仰角 PPI、mask_tuple、距离圈</p>
+          <p>• RadarMapDisplay：地图 PPI、plot_point、经纬度裁剪</p>
+          <p>• 速度退模糊：calculate_velocity_texture + dealias_region_based</p>
+          <p>• QC：GateFilter（CC&lt;0.7、dBZ&lt;10）+ calculate_attenuation</p>
+          <p>• 估雨：est_rain_rate_z / est_rain_rate_kdp</p>
+        </content>
+      </shape>
+      <shape width="420" height="24" topLeftX="480" topLeftY="145" type="text" id="bOh">
+        <content fontSize="14" fontFamily="思源黑体" color="rgba(37, 99, 235, 1)" bold="true">
+          <p>最短工作流</p>
+        </content>
+      </shape>
+      <shape width="420" height="240" topLeftX="480" topLeftY="175" presetHandlers="0" type="rect" id="bOx">
+        <fill>
+          <fillColor color="rgba(13, 19, 38, 1)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="385" height="215" topLeftX="500" topLeftY="190" type="text" id="bOK">
+        <content fontSize="11" fontFamily="Consolas" color="rgba(226, 232, 240, 1)">
+          <p>from cinrad.io import StandardData</p>
+          <p>from cinrad.io.export import standard_data_to_pyart</p>
+          <p>f = StandardData(&quot;...Z9731_..._CAP_FMT.bz2&quot;)</p>
+          <p>radar = standard_data_to_pyart(f)</p>
+          <p>disp = pyart.graph.RadarMapDisplay(radar)</p>
+          <p>disp.plot_ppi_map(&apos;reflectivity&apos;, sweep=0,</p>
+          <p>resolution=&apos;10m&apos;, vmin=-5, vmax=75)</p>
+        </content>
+      </shape>
+      <shape width="840" height="80" topLeftX="60" topLeftY="430" type="text" id="bOS">
+        <content fontSize="12" fontFamily="思源黑体" color="rgba(75, 85, 99, 1)" lineSpacing="multiple:1.6">
+          <p><strong><span color="rgba(13, 19, 38, 1)">高频坑：</span></strong>字段名是 reflectivity / cross_correlation_ratio（不是 REF/RHO）；数据在 [&apos;data&apos;] 里；sweep 是序号不是角度；dealias 需要 C 编译器。</p>
+          <p><strong><span color="rgba(13, 19, 38, 1)">示例：</span></strong>H:\hn\一、Py-ART实习\pyart case 01~04.py（PPI / 地图 / 退模糊 / 估雨）。</p>
+        </content>
+      </shape>
+    </data>
+    <note id="bOe">
+      <content>
+        <p>Py-ART 是 ARM 实验室的国际通用库，原生不读中国 bin。所以本 skill 的第一句话就是：用 PyCINRAD 的 StandardData 读进来，再 standard_data_to_pyart 桥接。</p>
+        <p>四个案例分别对应 PPI、地图、速度退模糊、估雨。这四份代码就是 skill 里&quot;推荐工作流&quot;那一节的素材来源。</p>
+        <p>最大的坑是字段名：Py-ART 用英文名 reflectivity，PyCINRAD 用 REF，PyCWR 用 dBZ，三套并存。skill 里专门列了对照表。</p>
+      </content>
+    </note>
+  </slide>
+  <slide id="pdG">
+    <style>
+      <fill id="fdG">
+        <fillColor color="rgba(242, 244, 248, 1)"/>
+      </fill>
+    </style>
+    <data>
+      <shape width="600" height="24" topLeftX="60" topLeftY="40" type="text" id="bUX">
+        <content textType="caption" fontSize="12" fontFamily="思源黑体" color="rgba(22, 163, 74, 1)" letterSpacing="1">
+          <p>Skill 03 · 已有 · pycinrad</p>
+        </content>
+      </shape>
+      <shape width="840" height="40" topLeftX="60" topLeftY="70" type="text" id="bUc">
+        <content textType="headline" fontSize="24" fontFamily="思源黑体" color="rgba(13, 19, 38, 1)" bold="true">
+          <p>PyCINRAD：中国雷达基数据读取与产品计算的主力</p>
+        </content>
+      </shape>
+      <line id="bUv" startX="60" startY="125" endX="900.0005952378843" endY="125">
+        <border color="rgba(203, 213, 225, 1)" width="1"/>
+      </line>
+      <shape width="380" height="24" topLeftX="60" topLeftY="145" type="text" id="bUD">
+        <content fontSize="14" fontFamily="思源黑体" color="rgba(37, 99, 235, 1)" bold="true">
+          <p>覆盖内容</p>
+        </content>
+      </shape>
+      <shape width="380" height="220" topLeftX="60" topLeftY="175" type="text" id="bUY">
+        <content fontSize="13" fontFamily="思源黑体" color="rgba(13, 19, 38, 1)" lineSpacing="multiple:1.7">
+          <p>• read_auto：自动识别 SA/SB/CA/CB/相控阵 AXPT0364/DXK</p>
+          <p>• ROSE 2.0 PUP 产品：REF/VEL/ZDR/KDP/CR/ET/VIL/HCL/STI/UAM</p>
+          <p>• SWAN 产品：拼图、CR、TREC、QPE、VIL</p>
+          <p>• calc：quick_cr / quick_et / hydro_class / polar_to_xy</p>
+          <p>• visualize：PPI / Section(VCS) / 距离圈 / 城市名 / shapefile</p>
+          <p>• correct.dealias 速度退模糊</p>
+        </content>
+      </shape>
+      <shape width="420" height="24" topLeftX="480" topLeftY="145" type="text" id="bUC">
+        <content fontSize="14" fontFamily="思源黑体" color="rgba(37, 99, 235, 1)" bold="true">
+          <p>最短工作流</p>
+        </content>
+      </shape>
+      <shape width="420" height="240" topLeftX="480" topLeftY="175" presetHandlers="0" type="rect" id="bUa">
+        <fill>
+          <fillColor color="rgba(13, 19, 38, 1)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="385" height="215" topLeftX="500" topLeftY="190" type="text" id="bUr">
+        <content fontSize="11" fontFamily="Consolas" color="rgba(226, 232, 240, 1)">
+          <p>import cinrad, datetime</p>
+          <p>f = cinrad.io.read_auto(&quot;...CAP_FMT.bin.bz2&quot;)</p>
+          <p>f.scantime += datetime.timedelta(hours=8) # 转北京时</p>
+          <p>r_list = list(f.iter_tilt(150, &quot;REF&quot;))</p>
+          <p>cr = cinrad.calc.quick_cr(r_list)</p>
+          <p>from cinrad.visualize import PPI</p>
+          <p>PPI(cr, style=&quot;black&quot;, add_city_names=True)(&quot;cr.png&quot;)</p>
+        </content>
+      </shape>
+      <shape width="840" height="80" topLeftX="60" topLeftY="430" type="text" id="bUk">
+        <content fontSize="12" fontFamily="思源黑体" color="rgba(75, 85, 99, 1)" lineSpacing="multiple:1.6">
+          <p><strong><span color="rgba(13, 19, 38, 1)">高频坑：</span></strong>老 SB 必须显式 CinradReader(radar_type=&quot;SB&quot;)；get_data 必须给 drange；HCL 要 REF/ZDR/RHO/KDP 四件套；bz2 不用解压。</p>
+          <p><strong><span color="rgba(13, 19, 38, 1)">示例：</span></strong>H:\hn\pycinrad\讲课示例.ipynb；H:\hn\pycinrad\ 下 30+ 个真实格式样例文件。</p>
+        </content>
+      </shape>
+    </data>
+    <note id="bUz">
+      <content>
+        <p>PyCINRAD 是李有朋老师团队维护的库，也是中国雷达数据处理事实上的主力。这份 skill 之前就沉淀好了，内容最厚。</p>
+        <p>右边这段是经典五步：read_auto、转时区、iter_tilt 取所有仰角、quick_cr 算组合反射率、PPI 出图。这是周三课的主线。</p>
+        <p>注意第二行：scantime 是 UTC，必须手动加 8 小时。这是 AI 最容易忘的一步，skill 里标红了。</p>
+      </content>
+    </note>
+  </slide>
+  <slide id="pds">
+    <style>
+      <fill id="fds">
+        <fillColor color="rgba(242, 244, 248, 1)"/>
+      </fill>
+    </style>
+    <data>
+      <shape width="600" height="24" topLeftX="60" topLeftY="40" type="text" id="bUh">
+        <content textType="caption" fontSize="12" fontFamily="思源黑体" color="rgba(22, 163, 74, 1)" letterSpacing="1">
+          <p>Skill 04 · 已有 · pycwr</p>
+        </content>
+      </shape>
+      <shape width="840" height="40" topLeftX="60" topLeftY="70" type="text" id="bUx">
+        <content textType="headline" fontSize="24" fontFamily="思源黑体" color="rgba(13, 19, 38, 1)" bold="true">
+          <p>PyCWR：PRD 模型 + 双偏振 QC + 风场反演</p>
+        </content>
+      </shape>
+      <line id="bUd" startX="60" startY="125" endX="900.0005952378843" endY="125">
+        <border color="rgba(203, 213, 225, 1)" width="1"/>
+      </line>
+      <shape width="380" height="24" topLeftX="60" topLeftY="145" type="text" id="bUn">
+        <content fontSize="14" fontFamily="思源黑体" color="rgba(37, 99, 235, 1)" bold="true">
+          <p>覆盖内容</p>
+        </content>
+      </shape>
+      <shape width="380" height="220" topLeftX="60" topLeftY="175" type="text" id="bUm">
+        <content fontSize="13" fontFamily="思源黑体" color="rgba(13, 19, 38, 1)" lineSpacing="multiple:1.7">
+          <p>• PRD 对象：一个完整体扫，fields / product / summary()</p>
+          <p>• get_sweep_field(0,&quot;dBZ&quot;)：aligned vs native</p>
+          <p>• plot_ppi / plot_ppi_map / plot_section / plot_section_lonlat</p>
+          <p>• apply_dualpol_qc：S/C/X 波段双偏振质控</p>
+          <p>• classify_hydrometeors：水凝物分类 HCL</p>
+          <p>• retrieve_vad / vvp / vwp / wind_volume_xy</p>
+          <p>• add_product_CR/CAPPI/VIL/ET_xy 或 _lonlat</p>
+        </content>
+      </shape>
+      <shape width="420" height="24" topLeftX="480" topLeftY="145" type="text" id="bUM">
+        <content fontSize="14" fontFamily="思源黑体" color="rgba(37, 99, 235, 1)" bold="true">
+          <p>最短工作流</p>
+        </content>
+      </shape>
+      <shape width="420" height="240" topLeftX="480" topLeftY="175" presetHandlers="0" type="rect" id="bUZ">
+        <fill>
+          <fillColor color="rgba(13, 19, 38, 1)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="385" height="215" topLeftX="500" topLeftY="190" type="text" id="bUf">
+        <content fontSize="11" fontFamily="Consolas" color="rgba(226, 232, 240, 1)">
+          <p>from pycwr.io import read_auto</p>
+          <p>radar = read_auto(&quot;...Z9731_..._CAP_FMT.BIN.bz2&quot;)</p>
+          <p>qc = apply_dualpol_qc(radar, inplace=False,</p>
+          <p>clear_air_mode=&quot;mask&quot;, band=&apos;S&apos;)</p>
+          <p>hcl = qc.classify_hydrometeors(band=&quot;S&quot;, ...)</p>
+          <p>vwp = radar.retrieve_vwp(sweeps=[0,1,2])</p>
+          <p>plot_ppi_map(radar, field=&quot;dBZ&quot;, sweep=0, show=True)</p>
+        </content>
+      </shape>
+      <shape width="840" height="80" topLeftX="60" topLeftY="430" type="text" id="bUK">
+        <content fontSize="12" fontFamily="思源黑体" color="rgba(75, 85, 99, 1)" lineSpacing="multiple:1.6">
+          <p><strong><span color="rgba(13, 19, 38, 1)">高频坑：</span></strong>变量名 dBZ/V/ZDR/RHO/KDP 大小写敏感；CAPPI 的 level_height 单位是米；HCL 必须传 band；apply_dualpol_qc 默认返回新对象。</p>
+          <p><strong><span color="rgba(13, 19, 38, 1)">示例：</span></strong>H:\hn\PyCWR讲课与实习\pycwr实习2026\case 01~04（read / QC / HCL / 风场）。</p>
+        </content>
+      </shape>
+    </data>
+    <note id="bUy">
+      <content>
+        <p>PyCWR 是郑玉老师团队的库，最大特点是 PRD 对象——一个对象包住整个体扫，所有操作都挂在它上面。</p>
+        <p>周四的四个案例分别是：读取+PPI+剖面、双偏振 QC、HCL、VAD/VVP/VWP 风场反演。这四个 case 就是 skill 里&quot;推荐工作流&quot;的来源。</p>
+        <p>特别提醒：pycwr 的变量名是 dBZ，不是 REF，也不是 reflectivity。三套并存，AI 最容易在这里混。</p>
+      </content>
+    </note>
+  </slide>
+  <slide id="pdz">
+    <style>
+      <fill id="fdz">
+        <fillColor color="rgba(242, 244, 248, 1)"/>
+      </fill>
+    </style>
+    <data>
+      <shape width="600" height="24" topLeftX="60" topLeftY="40" type="text" id="bUq">
+        <content textType="caption" fontSize="12" fontFamily="思源黑体" color="rgba(22, 163, 74, 1)" letterSpacing="1">
+          <p>Skill 05 · 已有 · metgrs</p>
+        </content>
+      </shape>
+      <shape width="840" height="40" topLeftX="60" topLeftY="70" type="text" id="bbW">
+        <content textType="headline" fontSize="24" fontFamily="思源黑体" color="rgba(13, 19, 38, 1)" bold="true">
+          <p>metgrs：地基垂直观测四类仪器的 xarray 入口</p>
+        </content>
+      </shape>
+      <line id="bbU" startX="60" startY="125" endX="900.000595153537" endY="135.00000708516114">
+        <border color="rgba(203, 213, 225, 1)" width="1"/>
+      </line>
+      <shape width="380" height="24" topLeftX="60" topLeftY="145" type="text" id="bbI">
+        <content fontSize="14" fontFamily="思源黑体" color="rgba(37, 99, 235, 1)" bold="true">
+          <p>覆盖内容</p>
+        </content>
+      </shape>
+      <shape width="380" height="220" topLeftX="60" topLeftY="175" type="text" id="bUS">
+        <content fontSize="13" fontFamily="思源黑体" color="rgba(13, 19, 38, 1)" lineSpacing="multiple:1.7">
+          <p>• WindProfileRadar：风廓线 L1/L2/L3，readL3files 多进程</p>
+          <p>• CloudRadar：云雷达 FFT / 基础数据，.cld.plot(&quot;Z1&quot;)</p>
+          <p>• Lidar：激光雷达 L0/L1/L2/CDWL 风产品</p>
+          <p>• MicroWaveRadiometer：微波辐射计亮温，gbk 编码</p>
+          <p>• Utils：vw2uv 风分量互换、dtryfloat 容错</p>
+          <p>• accessor：.wpr / .cld / .lidar</p>
+        </content>
+      </shape>
+      <shape width="420" height="24" topLeftX="480" topLeftY="145" type="text" id="bUN">
+        <content fontSize="14" fontFamily="思源黑体" color="rgba(37, 99, 235, 1)" bold="true">
+          <p>最短工作流</p>
+        </content>
+      </shape>
+      <shape width="420" height="240" topLeftX="480" topLeftY="175" presetHandlers="0" type="rect" id="bUV">
+        <fill>
+          <fillColor color="rgba(13, 19, 38, 1)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="385" height="215" topLeftX="500" topLeftY="190" type="text" id="bbO">
+        <content fontSize="11" fontFamily="Consolas" color="rgba(226, 232, 240, 1)">
+          <p>from metgrs import WindProfileRadar, CloudRadar</p>
+          <p>fps = sorted(glob.glob(&quot;...ROBS/*.TXT&quot;))</p>
+          <p>ds = WindProfileRadar.readL3files(</p>
+          <p>fps, use_multiprocess=True)</p>
+          <p>ds[&quot;U_Wind_Speed&quot;].plot(x=&quot;time&quot;, y=&quot;height&quot;)</p>
+          <p>ds_c = CloudRadar.readBaseDatas(...)</p>
+          <p>ds_c.cld.plot(&quot;Z1&quot;)</p>
+        </content>
+      </shape>
+      <shape width="840" height="80" topLeftX="60" topLeftY="430" type="text" id="bbb">
+        <content fontSize="12" fontFamily="思源黑体" color="rgba(75, 85, 99, 1)" lineSpacing="multiple:1.6">
+          <p><strong><span color="rgba(13, 19, 38, 1)">高频坑：</span></strong>依赖 joblib；CDWL 的 / 读入是 NaN；微波辐射计列名带中文括号、编码 gbk；L3 时间在 attrs 里。</p>
+          <p><strong><span color="rgba(13, 19, 38, 1)">示例：</span></strong>GitCode longtsing/metgrs examples 1~4（风廓线/云雷达/激光雷达/微波辐射计）。</p>
+        </content>
+      </shape>
+    </data>
+    <note id="bUe">
+      <content>
+        <p>metgrs 是王清龙老师团队的库，对应周五的垂直观测课。它和前面四个库的区别是：读的不是天气雷达 PPI，而是风廓线、云雷达、激光雷达、微波辐射计这四类垂直廓线仪器。</p>
+        <p>右边这段是典型用法：批量读 L3 ROBS 文件，多进程加速，直接 plot 出时间-高度剖面。</p>
+        <p>注意它返回的全是 xarray.Dataset，和周一讲的 Xarray 无缝衔接——这就是为什么第一份 skill 要先打基础。</p>
+      </content>
+    </note>
+  </slide>
+  <slide id="pdQ">
+    <style>
+      <fill id="fdQ">
+        <fillColor color="rgba(242, 244, 248, 1)"/>
+      </fill>
+    </style>
+    <data>
+      <shape width="600" height="24" topLeftX="60" topLeftY="40" type="text" id="bbB">
+        <content textType="caption" fontSize="12" fontFamily="思源黑体" color="rgba(37, 99, 235, 1)" letterSpacing="1">
+          <p>跨库对照 · CHEAT SHEET</p>
+        </content>
+      </shape>
+      <shape width="840" height="40" topLeftX="60" topLeftY="70" type="text" id="bbu">
+        <content textType="headline" fontSize="24" fontFamily="思源黑体" color="rgba(13, 19, 38, 1)" bold="true">
+          <p>同一回事，三套叫法——AI 最容易在这里翻车</p>
+        </content>
+      </shape>
+      <line id="bbE" startX="60" startY="125" endX="900.0005952378843" endY="125">
+        <border color="rgba(203, 213, 225, 1)" width="1"/>
+      </line>
+      <table id="bbY" width="840" height="300" topLeftX="60" topLeftY="150">
+        <colgroup>
+          <col span="1" width="160"/>
+          <col span="3" width="180"/>
+          <col span="1" width="140"/>
+        </colgroup>
+        <tr height="34">
+          <td id="bbs">
+            <fill>
+              <fillColor color="rgba(13, 19, 38, 1)"/>
+            </fill>
+            <content fontSize="12" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>概念</p>
+            </content>
+          </td>
+          <td id="bbJ">
+            <fill>
+              <fillColor color="rgba(13, 19, 38, 1)"/>
+            </fill>
+            <content fontSize="12" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>PyCINRAD</p>
+            </content>
+          </td>
+          <td id="bbw">
+            <fill>
+              <fillColor color="rgba(13, 19, 38, 1)"/>
+            </fill>
+            <content fontSize="12" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>PyCWR</p>
+            </content>
+          </td>
+          <td id="bbX">
+            <fill>
+              <fillColor color="rgba(13, 19, 38, 1)"/>
+            </fill>
+            <content fontSize="12" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>Py-ART</p>
+            </content>
+          </td>
+          <td id="bbQ">
+            <fill>
+              <fillColor color="rgba(13, 19, 38, 1)"/>
+            </fill>
+            <content fontSize="12" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>注意</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="44">
+          <td id="bbL">
+            <content fontSize="11" fontFamily="思源黑体" bold="true">
+              <p>反射率</p>
+            </content>
+          </td>
+          <td id="bbc">
+            <content fontSize="11" fontFamily="Consolas">
+              <p>REF</p>
+            </content>
+          </td>
+          <td id="bbh">
+            <content fontSize="11" fontFamily="Consolas">
+              <p>dBZ</p>
+            </content>
+          </td>
+          <td id="bbf">
+            <content fontSize="11" fontFamily="Consolas">
+              <p>reflectivity</p>
+            </content>
+          </td>
+          <td id="bbH">
+            <content fontSize="11" fontFamily="思源黑体"/>
+          </td>
+        </tr>
+        <tr height="44">
+          <td id="bbp">
+            <content fontSize="11" fontFamily="思源黑体" bold="true">
+              <p>径向速度</p>
+            </content>
+          </td>
+          <td id="bbR">
+            <content fontSize="11" fontFamily="Consolas">
+              <p>VEL</p>
+            </content>
+          </td>
+          <td id="bbC">
+            <content fontSize="11" fontFamily="Consolas">
+              <p>V</p>
+            </content>
+          </td>
+          <td id="bbx">
+            <content fontSize="11" fontFamily="Consolas">
+              <p>velocity</p>
+            </content>
+          </td>
+          <td id="bbt">
+            <content fontSize="11" fontFamily="思源黑体"/>
+          </td>
+        </tr>
+        <tr height="44">
+          <td id="bbF">
+            <content fontSize="11" fontFamily="思源黑体" bold="true">
+              <p>相关系数</p>
+            </content>
+          </td>
+          <td id="bbD">
+            <content fontSize="11" fontFamily="Consolas">
+              <p>RHO</p>
+            </content>
+          </td>
+          <td id="bbv">
+            <content fontSize="11" fontFamily="Consolas">
+              <p>RHO</p>
+            </content>
+          </td>
+          <td id="bbm">
+            <content fontSize="11" fontFamily="Consolas">
+              <p>cross_correlation_ratio</p>
+            </content>
+          </td>
+          <td id="bbK">
+            <content fontSize="11" fontFamily="思源黑体"/>
+          </td>
+        </tr>
+        <tr height="44">
+          <td id="bbj">
+            <content fontSize="11" fontFamily="思源黑体" bold="true">
+              <p>扫描时间</p>
+            </content>
+          </td>
+          <td id="bbP">
+            <content fontSize="11" fontFamily="Consolas">
+              <p>UTC，需 +8h</p>
+            </content>
+          </td>
+          <td id="bbG">
+            <content fontSize="11" fontFamily="Consolas">
+              <p>对象内自动</p>
+            </content>
+          </td>
+          <td id="bba">
+            <content fontSize="11" fontFamily="Consolas">
+              <p>继承自 cinrad</p>
+            </content>
+          </td>
+          <td id="bbr">
+            <content fontSize="11" fontFamily="思源黑体"/>
+          </td>
+        </tr>
+        <tr height="44">
+          <td id="bbd">
+            <content fontSize="11" fontFamily="思源黑体" bold="true">
+              <p>高度单位</p>
+            </content>
+          </td>
+          <td id="bbA">
+            <content fontSize="11" fontFamily="思源黑体"/>
+          </td>
+          <td id="bbT">
+            <content fontSize="11" fontFamily="思源黑体"/>
+          </td>
+          <td id="bbg">
+            <content fontSize="11" fontFamily="思源黑体"/>
+          </td>
+          <td id="bbk">
+            <content fontSize="11" fontFamily="思源黑体" color="rgba(220, 38, 38, 1)" bold="true"/>
+          </td>
+        </tr>
+        <tr height="46">
+          <td id="bbM">
+            <content fontSize="11" fontFamily="思源黑体" bold="true">
+              <p>读取入口</p>
+            </content>
+          </td>
+          <td id="bbo">
+            <content fontSize="11" fontFamily="Consolas">
+              <p>read_auto / StandardData</p>
+            </content>
+          </td>
+          <td id="bbi">
+            <content fontSize="11" fontFamily="Consolas">
+              <p>read_auto</p>
+            </content>
+          </td>
+          <td id="bbl">
+            <content fontSize="11" fontFamily="Consolas">
+              <p>cinrad 桥接</p>
+            </content>
+          </td>
+          <td id="bbz">
+            <content fontSize="11" fontFamily="思源黑体"/>
+          </td>
+        </tr>
+      </table>
+      <shape width="840" height="30" topLeftX="60" topLeftY="470" type="text" id="bbZ">
+        <content fontSize="13" fontFamily="思源黑体" color="rgba(13, 19, 38, 1)">
+          <p>把这张表贴进对话，AI 就不会再把 REF 和 dBZ 和 reflectivity 混用。</p>
+        </content>
+      </shape>
+    </data>
+    <note id="bby">
+      <content>
+        <p>这一页是今天最实用的 cheat sheet。三个库对同一物理量的叫法完全不一样，变量名、时间基准、单位都有差异。</p>
+        <p>最坑的两个：一是 pycwr 的 CAPPI 高度单位是米，不是千米；二是 cinrad 的 scantime 是 UTC，画出来差 8 小时。这两点 skill 里都用粗体标了。</p>
+        <p>建议大家把这张表截图，下次让 AI 写代码时一起贴进去，比口头描述&quot;用中文雷达&quot;管用得多。</p>
+      </content>
+    </note>
+  </slide>
+  <slide id="pdR">
+    <style>
+      <fill id="fdR">
+        <fillColor color="rgba(242, 244, 248, 1)"/>
+      </fill>
+    </style>
+    <data>
+      <shape width="600" height="24" topLeftX="60" topLeftY="40" type="text" id="bIs">
+        <content textType="caption" fontSize="12" fontFamily="思源黑体" color="rgba(37, 99, 235, 1)" letterSpacing="1">
+          <p>实战 · A WORKED EXAMPLE</p>
+        </content>
+      </shape>
+      <shape width="840" height="40" topLeftX="60" topLeftY="70" type="text" id="bIt">
+        <content textType="headline" fontSize="24" fontFamily="思源黑体" color="rgba(13, 19, 38, 1)" bold="true">
+          <p>把一句话需求，变成一张能交差的 PPI 图</p>
+        </content>
+      </shape>
+      <line id="bIA" startX="60" startY="125" endX="900.0005952378843" endY="125">
+        <border color="rgba(203, 213, 225, 1)" width="1"/>
+      </line>
+      <shape width="400" height="24" topLeftX="60" topLeftY="145" type="text" id="bIi">
+        <content fontSize="14" fontFamily="思源黑体" color="rgba(37, 99, 235, 1)" bold="true">
+          <p>你给 AI 的提示</p>
+        </content>
+      </shape>
+      <shape width="400" height="200" topLeftX="60" topLeftY="175" presetHandlers="0" type="rect" id="bIJ">
+        <fill>
+          <fillColor color="rgba(255, 255, 255, 1)"/>
+        </fill>
+        <border color="rgba(203, 213, 225, 1)" width="1"/>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="365" height="175" topLeftX="80" topLeftY="190" type="text" id="bIo">
+        <content fontSize="12" fontFamily="思源黑体" color="rgba(13, 19, 38, 1)" lineSpacing="multiple:1.6">
+          <p>&quot;我有一个 Z_RADR_I_Z9731_20210510070930_O_DOR_SAD_CAP_FMT.BIN.bz2，S 波段双偏振。</p>
+          <p>帮我：1) 读取；2) 算组合反射率；3) 画 PPI，叠加湖南城市名，背景黑色；4) 时间转北京时；5) 保存 d:/cr.png。&quot;</p>
+        </content>
+      </shape>
+      <shape width="400" height="24" topLeftX="500" topLeftY="145" type="text" id="bIB">
+        <content fontSize="14" fontFamily="思源黑体" color="rgba(37, 99, 235, 1)" bold="true">
+          <p>AI 对照 pycinrad skill 给出</p>
+        </content>
+      </shape>
+      <shape width="400" height="200" topLeftX="500" topLeftY="175" presetHandlers="0" type="rect" id="bIH">
+        <fill>
+          <fillColor color="rgba(13, 19, 38, 1)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="365" height="175" topLeftX="520" topLeftY="190" type="text" id="bIj">
+        <content fontSize="11" fontFamily="Consolas" color="rgba(226, 232, 240, 1)">
+          <p>import cinrad, datetime</p>
+          <p>f = cinrad.io.read_auto(fp)</p>
+          <p>f.scantime += timedelta(hours=8)</p>
+          <p>rl = list(f.iter_tilt(150,&quot;REF&quot;))</p>
+          <p>cr = cinrad.calc.quick_cr(rl)</p>
+          <p>PPI(cr, style=&quot;black&quot;,</p>
+          <p>add_city_names=True, dpi=300)(&quot;d:/cr.png&quot;)</p>
+        </content>
+      </shape>
+      <shape width="840" height="110" topLeftX="60" topLeftY="400" type="text" id="bIT">
+        <content fontSize="13" fontFamily="思源黑体" color="rgba(75, 85, 99, 1)" lineSpacing="multiple:1.7">
+          <p><strong><span color="rgba(13, 19, 38, 1)">没有 skill 时：</span></strong>AI 会用 pyart.io.read 报错、变量名写 REF 还是 dBZ 猜、忘记 +8h、PPI 背景默认白色。</p>
+          <p><strong><span color="rgba(37, 99, 235, 1)">有 skill 后：</span></strong>七行代码一次跑通。关键差异不是 AI 变聪明了，是它知道了&quot;中国 SA 标准格式该用 read_auto&quot;。</p>
+        </content>
+      </shape>
+    </data>
+    <note id="bII">
+      <content>
+        <p>这是一个真实的小例子。左边是用户会说的话，右边是 AI 读了 pycinrad skill 之后给出的代码。</p>
+        <p>注意右边七行代码里的每一行，都对应 skill 里的一条规则：read_auto 自动识别格式、scantime +8 小时、iter_tilt 150 km、quick_cr 算组合反射率、PPI 黑色背景加城市名。</p>
+        <p>这些不是 AI 自己悟出来的，是 skill 里&quot;推荐工作流&quot;那一节白纸黑字写着的。</p>
+      </content>
+    </note>
+  </slide>
+  <slide id="pdg">
+    <style>
+      <fill id="fdg">
+        <fillColor color="rgba(242, 244, 248, 1)"/>
+      </fill>
+    </style>
+    <data>
+      <shape width="600" height="24" topLeftX="60" topLeftY="40" type="text" id="bbS">
+        <content textType="caption" fontSize="12" fontFamily="思源黑体" color="rgba(37, 99, 235, 1)" letterSpacing="1">
+          <p>维护 · HOW TO EXTEND</p>
+        </content>
+      </shape>
+      <shape width="840" height="40" topLeftX="60" topLeftY="70" type="text" id="bbN">
+        <content textType="headline" fontSize="24" fontFamily="思源黑体" color="rgba(13, 19, 38, 1)" bold="true">
+          <p>Skill 不是写完就完——遇到新坑，就补一节</p>
+        </content>
+      </shape>
+      <line id="bbV" startX="60" startY="125" endX="900.0005952378843" endY="125">
+        <border color="rgba(203, 213, 225, 1)" width="1"/>
+      </line>
+      <shape width="400" height="24" topLeftX="60" topLeftY="155" type="text" id="bIO">
+        <content fontSize="14" fontFamily="思源黑体" color="rgba(37, 99, 235, 1)" bold="true">
+          <p>什么时候更新 skill</p>
+        </content>
+      </shape>
+      <shape width="400" height="200" topLeftX="60" topLeftY="185" type="text" id="bIU">
+        <content fontSize="13" fontFamily="思源黑体" color="rgba(13, 19, 38, 1)" lineSpacing="multiple:1.8">
+          <p>• 同一个坑踩了第二次 → 写进&quot;常见陷阱&quot;</p>
+          <p>• 库升级改了 API → 改&quot;典型调用&quot;</p>
+          <p>• 发现新的可复用 case → 加进&quot;推荐工作流&quot;</p>
+          <p>• 换了一个雷达型号读不进 → 补&quot;适用场景&quot;</p>
+          <p>• 同事问了一个高频问题 → 直接写成一节</p>
+        </content>
+      </shape>
+      <shape width="400" height="24" topLeftX="500" topLeftY="155" type="text" id="bbn">
+        <content fontSize="14" fontFamily="思源黑体" color="rgba(37, 99, 235, 1)" bold="true">
+          <p>新建一份 skill 的模板</p>
+        </content>
+      </shape>
+      <shape width="400" height="240" topLeftX="500" topLeftY="185" presetHandlers="0" type="rect" id="bbe">
+        <fill>
+          <fillColor color="rgba(13, 19, 38, 1)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="365" height="215" topLeftX="520" topLeftY="200" type="text" id="bbq">
+        <content fontSize="11" fontFamily="思源黑体" color="rgba(226, 232, 240, 1)">
+          <p># 名称 使用指南</p>
+          <p>&gt; 一句话说明它是干嘛的</p>
+          <p>1. 适用场景（什么时候用）</p>
+          <p>2. 安装与导入</p>
+          <p>3. 模块结构与典型调用</p>
+          <p>4. 通用使用模式</p>
+          <p>5. 常见陷阱（最有价值）</p>
+          <p>6. 推荐工作流（最短可跑通）</p>
+          <p>7. 详细参考（文档/示例路径）</p>
+        </content>
+      </shape>
+      <shape width="840" height="60" topLeftX="60" topLeftY="445" type="text" id="bIW">
+        <content fontSize="13" fontFamily="思源黑体" color="rgba(75, 85, 99, 1)" lineSpacing="multiple:1.6">
+          <p><strong><span color="rgba(13, 19, 38, 1)">本次新增：</span></strong>pyart\skill.md、python-radar-basics\skill.md，已按上述模板写好；原有 pycinrad / pycwr / metgrs 三份保持不动。</p>
+        </content>
+      </shape>
+    </data>
+    <note id="bIb">
+      <content>
+        <p>Skill 是活文档。左边是更新时机：同一个坑踩两次就该写进去，库升级了就改调用示例，新 case 就加进工作流。</p>
+        <p>右边是新建 skill 的七节模板。今天新增的两份就是按这个模板写的——pyart 和 python-radar-basics。</p>
+        <p>强调一点：第五节&quot;常见陷阱&quot;是最值钱的，因为这是 GitHub README 里不会写、只有真正踩过才知道的东西。</p>
+      </content>
+    </note>
+  </slide>
+  <slide id="pdq">
+    <style>
+      <fill id="fdq">
+        <fillColor color="rgba(13, 19, 38, 1)"/>
+      </fill>
+    </style>
+    <data>
+      <shape width="12" height="540" topLeftX="0" topLeftY="0" presetHandlers="0" type="rect" id="bIP">
+        <fill>
+          <fillColor color="rgba(37, 99, 235, 1)"/>
+        </fill>
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(31, 35, 41, 1)"/>
+      </shape>
+      <shape width="800" height="30" topLeftX="80" topLeftY="80" type="text" id="bIl">
+        <content textType="caption" fontSize="14" fontFamily="思源黑体" color="rgba(96, 165, 250, 1)" letterSpacing="2">
+          <p>结语 · TAKEAWAYS</p>
+        </content>
+      </shape>
+      <shape width="820" height="80" topLeftX="80" topLeftY="130" type="text" id="bIu">
+        <content textType="title" fontSize="34" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" bold="true" lineSpacing="multiple:1.3">
+          <p>让 AI 成为你最熟的那个实习生——</p>
+          <p>但先把&quot;操作手册&quot;交给它。</p>
+        </content>
+      </shape>
+      <line id="bIQ" startX="80" startY="260" endX="200.00416659433122" endY="260">
+        <border color="rgba(37, 99, 235, 1)"/>
+      </line>
+      <shape width="820" height="180" topLeftX="80" topLeftY="285" type="text" id="bIF">
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(226, 232, 240, 1)" lineSpacing="multiple:1.9">
+          <p>• 本周五门课 = 五份 skill，路径 <span color="rgba(147, 197, 253, 1)" fontFamily="Consolas">E:\study\metgrs\.skills\</span></p>
+          <p>• 新增两份：<strong><span color="rgba(147, 197, 253, 1)">python-radar-basics</span></strong> 与 <strong><span color="rgba(147, 197, 253, 1)">pyart</span></strong>；原有三份已沉淀</p>
+          <p>• 用法：提需求 → AI 自动读 skill → 写代码 → 跑不通把报错贴回去</p>
+          <p>• 心法：变量名、时区、单位、波段这四件事，永远不要让 AI 猜</p>
+        </content>
+      </shape>
+      <shape width="820" height="30" topLeftX="80" topLeftY="490" type="text" id="bIg">
+        <content textType="caption" fontSize="12" fontFamily="思源黑体" color="rgba(148, 163, 184, 1)">
+          <p>祝大家这一周出图顺利 · 雷达产品数据处理基础讲习班 · 2026.09</p>
+        </content>
+      </shape>
+    </data>
+    <note id="bIp">
+      <content>
+        <p>最后一页收束。一句话：AI 是个聪明的实习生，但它没见过中国雷达的 bin 文件、不知道北京时和 UTC 差八小时。</p>
+        <p>把这份操作手册交给它，它就能上手；不给，它只能瞎猜。</p>
+        <p>这一周大家会在机房里把五个库都跑一遍，遇到坑随时把报错贴回对话，我们一起把它写进 skill。谢谢大家。</p>
+      </content>
+    </note>
+  </slide>
+</presentation>

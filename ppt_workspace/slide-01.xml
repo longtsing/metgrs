@@ -1,0 +1,44 @@
+<slide>
+  <style>
+    <fill>
+      <fillColor color="rgba(13,19,38,1)"/>
+    </fill>
+  </style>
+  <data>
+    <shape type="rect" topLeftX="0" topLeftY="0" width="12" height="540">
+      <fill><fillColor color="rgba(37,99,235,1)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="120" width="800" height="40">
+      <content textType="caption" fontSize="14" color="rgba(96,165,250,1)" letterSpacing="2">
+        <p>第2期雷达产品数据处理基础讲习班 · 配套培训</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="180" width="820" height="140">
+      <content textType="title" fontSize="44" bold="true" color="rgba(255,255,255,1)" lineSpacing="multiple:1.2">
+        <p>AI 辅助编程处理雷达数据</p>
+        <p>——课程配套 Skill 包实战指南</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="360" width="760" height="60">
+      <content textType="body" fontSize="16" color="rgba(203,213,225,1)" lineSpacing="multiple:1.5">
+        <p>把 Py-ART / PyCINRAD / PyCWR / metgrs / NumPy·Pandas·Xarray 的</p>
+        <p>API、坑与工作流，写成 AI 可直接调用的领域操作手册</p>
+      </content>
+    </shape>
+    <line startX="80" startY="450" endX="200" endY="450">
+      <border color="rgba(37,99,235,1)" width="2"/>
+    </line>
+    <shape type="text" topLeftX="80" topLeftY="465" width="800" height="30">
+      <content textType="caption" fontSize="12" color="rgba(148,163,184,1)">
+        <p>2026 年 9 月 · 湖南 · 雷达数据处理讲习班</p>
+      </content>
+    </shape>
+  </data>
+  <note>
+    <content textType="body">
+      <p>各位老师、同学好。这次课我们不讲某个雷达库的 API 细节，而是讲怎么把这一周要用到的五个库，写成一套可以直接喂给 AI 的"操作手册"。</p>
+      <p>上完课大家会得到一个 .skills 目录，里面五个 skill，每个都是一份结构化的中文指南。把它给 AI，AI 就知道用什么函数、避什么坑。</p>
+      <p>今天的目标：让大家回去之后，遇到雷达数据处理任务，先想到"查 skill、再提问"，而不是翻半天 GitHub 文档。</p>
+    </content>
+  </note>
+</slide>

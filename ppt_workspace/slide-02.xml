@@ -1,0 +1,80 @@
+<slide>
+  <style>
+    <fill><fillColor color="rgba(242,244,248,1)"/></fill>
+  </style>
+  <data>
+    <shape type="text" topLeftX="60" topLeftY="40" width="600" height="24">
+      <content textType="caption" fontSize="12" color="rgba(37,99,235,1)" letterSpacing="1">
+        <p>课程全景 · COURSE MAP</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="60" topLeftY="70" width="840" height="50">
+      <content textType="headline" fontSize="28" bold="true" color="rgba(13,19,38,1)">
+        <p>这一周，我们要打通五个雷达数据处理工具链</p>
+      </content>
+    </shape>
+    <line startX="60" startY="135" endX="900" endY="135">
+      <border color="rgba(203,213,225,1)" width="1"/>
+    </line>
+    <table topLeftX="60" topLeftY="155" width="840" height="320">
+      <colgroup>
+        <col width="110"/>
+        <col width="360"/>
+        <col width="170"/>
+        <col width="200"/>
+      </colgroup>
+      <tr height="36">
+        <td><fill><fillColor color="rgba(13,19,38,1)"/></fill>
+          <content textType="body" fontSize="13" bold="true" color="rgba(255,255,255,1)" textAlign="center"><p>日期</p></content></td>
+        <td><fill><fillColor color="rgba(13,19,38,1)"/></fill>
+          <content textType="body" fontSize="13" bold="true" color="rgba(255,255,255,1)" textAlign="center"><p>课程</p></content></td>
+        <td><fill><fillColor color="rgba(13,19,38,1)"/></fill>
+          <content textType="body" fontSize="13" bold="true" color="rgba(255,255,255,1)" textAlign="center"><p>主讲</p></content></td>
+        <td><fill><fillColor color="rgba(13,19,38,1)"/></fill>
+          <content textType="body" fontSize="13" bold="true" color="rgba(255,255,255,1)" textAlign="center"><p>对应 Skill</p></content></td>
+      </tr>
+      <tr height="48">
+        <td><content textType="body" fontSize="12" textAlign="center"><p>9/14 周一</p></content></td>
+        <td><content textType="body" fontSize="12" textAlign="left"><p>雷达产品种类与数据结构；Python 基础 NumPy/Pandas/Xarray</p></content></td>
+        <td><content textType="body" fontSize="12" textAlign="center"><p>张深寿 / 陈鹤</p></content></td>
+        <td><content textType="body" fontSize="12" textAlign="center" color="rgba(37,99,235,1)"><p>python-radar-basics</p></content></td>
+      </tr>
+      <tr height="48">
+        <td><content textType="body" fontSize="12" textAlign="center"><p>9/15 周二</p></content></td>
+        <td><content textType="body" fontSize="12" textAlign="left"><p>Py-ART 基础应用介绍与实习（一）（二）</p></content></td>
+        <td><content textType="body" fontSize="12" textAlign="center"><p>孟蕾</p></content></td>
+        <td><content textType="body" fontSize="12" textAlign="center" color="rgba(37,99,235,1)"><p>pyart</p></content></td>
+      </tr>
+      <tr height="48">
+        <td><content textType="body" fontSize="12" textAlign="center"><p>9/16 周三</p></content></td>
+        <td><content textType="body" fontSize="12" textAlign="left"><p>PyCINRAD 基础应用介绍与实习（一）（二）</p></content></td>
+        <td><content textType="body" fontSize="12" textAlign="center"><p>李有朋</p></content></td>
+        <td><content textType="body" fontSize="12" textAlign="center" color="rgba(37,99,235,1)"><p>pycinrad</p></content></td>
+      </tr>
+      <tr height="48">
+        <td><content textType="body" fontSize="12" textAlign="center"><p>9/17 周四</p></content></td>
+        <td><content textType="body" fontSize="12" textAlign="left"><p>PyCWR 基础应用介绍与实习（一）（二）</p></content></td>
+        <td><content textType="body" fontSize="12" textAlign="center"><p>郑玉</p></content></td>
+        <td><content textType="body" fontSize="12" textAlign="center" color="rgba(37,99,235,1)"><p>pycwr</p></content></td>
+      </tr>
+      <tr height="48">
+        <td><content textType="body" fontSize="12" textAlign="center"><p>9/18 周五</p></content></td>
+        <td><content textType="body" fontSize="12" textAlign="left"><p>垂直观测：云雷达、微波辐射计、风廓线、激光雷达、GNSS</p></content></td>
+        <td><content textType="body" fontSize="12" textAlign="center"><p>王清龙</p></content></td>
+        <td><content textType="body" fontSize="12" textAlign="center" color="rgba(37,99,235,1)"><p>metgrs</p></content></td>
+      </tr>
+    </table>
+    <shape type="text" topLeftX="60" topLeftY="490" width="840" height="20">
+      <content textType="caption" fontSize="11" color="rgba(100,116,139,1)">
+        <p>来源：第2期雷达产品数据处理基础讲习班课程表（2026-09-13 至 09-19）</p>
+      </content>
+    </shape>
+  </data>
+  <note>
+    <content textType="body">
+      <p>这是本周的完整课表。可以看到，五天正好对应五个工具链：第一天是 Python 三件套，后面四天分别是 Py-ART、PyCINRAD、PyCWR 和 metgrs。</p>
+      <p>右边一列是今天重点：每一门课，我们都配了一份 skill。今天新增了两份：python-radar-basics 和 pyart；原有的 pycinrad、pycwr、metgrs 已经在 E 盘的 .skills 目录里。</p>
+      <p>看完这张表大家应该明白：skill 不是新东西，就是把这一周的教学经验结构化。</p>
+    </content>
+  </note>
+</slide>

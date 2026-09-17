@@ -1,0 +1,62 @@
+<slide>
+  <style><fill><fillColor color="rgba(242,244,248,1)"/></fill></style>
+  <data>
+    <shape type="text" topLeftX="60" topLeftY="40" width="600" height="24">
+      <content textType="caption" fontSize="12" color="rgba(220,38,38,1)" letterSpacing="1">
+        <p>Skill 02 · 新增 · pyart</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="60" topLeftY="70" width="840" height="40">
+      <content textType="headline" fontSize="24" bold="true" color="rgba(13,19,38,1)">
+        <p>Py-ART：国际雷达生态的"桥"——读图、退模糊、估雨</p>
+      </content>
+    </shape>
+    <line startX="60" startY="125" endX="900" endY="125"><border color="rgba(203,213,225,1)" width="1"/></line>
+
+    <shape type="text" topLeftX="60" topLeftY="145" width="380" height="24">
+      <content textType="body" fontSize="14" bold="true" color="rgba(37,99,235,1)"><p>覆盖内容</p></content>
+    </shape>
+    <shape type="text" topLeftX="60" topLeftY="175" width="380" height="220">
+      <content textType="body" fontSize="13" color="rgba(13,19,38,1)" lineSpacing="multiple:1.7">
+        <p>• PyCINRAD 桥接：StandardData → standard_data_to_pyart</p>
+        <p>• RadarDisplay：多仰角 PPI、mask_tuple、距离圈</p>
+        <p>• RadarMapDisplay：地图 PPI、plot_point、经纬度裁剪</p>
+        <p>• 速度退模糊：calculate_velocity_texture + dealias_region_based</p>
+        <p>• QC：GateFilter（CC&lt;0.7、dBZ&lt;10）+ calculate_attenuation</p>
+        <p>• 估雨：est_rain_rate_z / est_rain_rate_kdp</p>
+      </content>
+    </shape>
+
+    <shape type="text" topLeftX="480" topLeftY="145" width="420" height="24">
+      <content textType="body" fontSize="14" bold="true" color="rgba(37,99,235,1)"><p>最短工作流</p></content>
+    </shape>
+    <shape type="rect" topLeftX="480" topLeftY="175" width="420" height="240">
+      <fill><fillColor color="rgba(13,19,38,1)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="500" topLeftY="190" width="385" height="215">
+      <content textType="body" fontSize="11" color="rgba(226,232,240,1)" fontFamily="Consolas" lineSpacing="multiple:1.5">
+        <p>from cinrad.io import StandardData</p>
+        <p>from cinrad.io.export import standard_data_to_pyart</p>
+        <p>f = StandardData("...Z9731_..._CAP_FMT.bz2")</p>
+        <p>radar = standard_data_to_pyart(f)</p>
+        <p>disp = pyart.graph.RadarMapDisplay(radar)</p>
+        <p>disp.plot_ppi_map('reflectivity', sweep=0,</p>
+        <p>    resolution='10m', vmin=-5, vmax=75)</p>
+      </content>
+    </shape>
+
+    <shape type="text" topLeftX="60" topLeftY="430" width="840" height="80">
+      <content textType="body" fontSize="12" color="rgba(75,85,99,1)" lineSpacing="multiple:1.6">
+        <p><span bold="true" color="rgba(13,19,38,1)">高频坑：</span>字段名是 reflectivity / cross_correlation_ratio（不是 REF/RHO）；数据在 ['data'] 里；sweep 是序号不是角度；dealias 需要 C 编译器。</p>
+        <p><span bold="true" color="rgba(13,19,38,1)">示例：</span>H:\hn\一、Py-ART实习\pyart case 01~04.py（PPI / 地图 / 退模糊 / 估雨）。</p>
+      </content>
+    </shape>
+  </data>
+  <note>
+    <content textType="body">
+      <p>Py-ART 是 ARM 实验室的国际通用库，原生不读中国 bin。所以本 skill 的第一句话就是：用 PyCINRAD 的 StandardData 读进来，再 standard_data_to_pyart 桥接。</p>
+      <p>四个案例分别对应 PPI、地图、速度退模糊、估雨。这四份代码就是 skill 里"推荐工作流"那一节的素材来源。</p>
+      <p>最大的坑是字段名：Py-ART 用英文名 reflectivity，PyCINRAD 用 REF，PyCWR 用 dBZ，三套并存。skill 里专门列了对照表。</p>
+    </content>
+  </note>
+</slide>

@@ -1,0 +1,73 @@
+<slide>
+  <style><fill><fillColor color="rgba(242,244,248,1)"/></fill></style>
+  <data>
+    <shape type="text" topLeftX="60" topLeftY="40" width="600" height="24">
+      <content textType="caption" fontSize="12" color="rgba(37,99,235,1)" letterSpacing="1">
+        <p>Skill 地图 · OVERVIEW</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="60" topLeftY="70" width="840" height="50">
+      <content textType="headline" fontSize="26" bold="true" color="rgba(13,19,38,1)">
+        <p>五份 Skill，覆盖本周全部教学代码</p>
+      </content>
+    </shape>
+    <line startX="60" startY="135" endX="900" endY="135"><border color="rgba(203,213,225,1)" width="1"/></line>
+
+    <table topLeftX="60" topLeftY="160" width="840" height="310">
+      <colgroup>
+        <col width="180"/>
+        <col width="220"/>
+        <col width="320"/>
+        <col width="120"/>
+      </colgroup>
+      <tr height="34">
+        <td><fill><fillColor color="rgba(13,19,38,1)"/></fill><content textType="body" fontSize="12" bold="true" color="rgba(255,255,255,1)" textAlign="center"><p>Skill</p></content></td>
+        <td><fill><fillColor color="rgba(13,19,38,1)"/></fill><content textType="body" fontSize="12" bold="true" color="rgba(255,255,255,1)" textAlign="center"><p>对象</p></content></td>
+        <td><fill><fillColor color="rgba(13,19,38,1)"/></fill><content textType="body" fontSize="12" bold="true" color="rgba(255,255,255,1)" textAlign="center"><p>核心能力</p></content></td>
+        <td><fill><fillColor color="rgba(13,19,38,1)"/></fill><content textType="body" fontSize="12" bold="true" color="rgba(255,255,255,1)" textAlign="center"><p>状态</p></content></td>
+      </tr>
+      <tr height="55">
+        <td><content textType="body" fontSize="12" bold="true" color="rgba(37,99,235,1)" textAlign="center"><p>python-radar-basics</p></content></td>
+        <td><content textType="body" fontSize="11" textAlign="center"><p>NumPy / Pandas / Xarray</p></content></td>
+        <td><content textType="body" fontSize="11" textAlign="left"><p>雷达回波数组、站点/降水表、带坐标 Dataset 的切片与广播</p></content></td>
+        <td><content textType="body" fontSize="11" textAlign="center" color="rgba(220,38,38,1)" bold="true"><p>本次新增</p></content></td>
+      </tr>
+      <tr height="55">
+        <td><content textType="body" fontSize="12" bold="true" color="rgba(37,99,235,1)" textAlign="center"><p>pyart</p></content></td>
+        <td><content textType="body" fontSize="11" textAlign="center"><p>Py-ART（ARM）</p></content></td>
+        <td><content textType="body" fontSize="11" textAlign="left"><p>PyCINRAD 桥接导入、PPI/Map、速度退模糊、GateFilter、衰减订正、Z-R/Kdp 估雨</p></content></td>
+        <td><content textType="body" fontSize="11" textAlign="center" color="rgba(220,38,38,1)" bold="true"><p>本次新增</p></content></td>
+      </tr>
+      <tr height="55">
+        <td><content textType="body" fontSize="12" bold="true" color="rgba(37,99,235,1)" textAlign="center"><p>pycinrad</p></content></td>
+        <td><content textType="body" fontSize="11" textAlign="center"><p>PyCINRAD</p></content></td>
+        <td><content textType="body" fontSize="11" textAlign="left"><p>SA/SB/CA/CB 与相控阵读取、PUP/SWAN 产品、CR/ET/VIL/HCL、PPI/VCS、拼图</p></content></td>
+        <td><content textType="body" fontSize="11" textAlign="center" color="rgba(22,163,74,1)" bold="true"><p>已有</p></content></td>
+      </tr>
+      <tr height="55">
+        <td><content textType="body" fontSize="12" bold="true" color="rgba(37,99,235,1)" textAlign="center"><p>pycwr</p></content></td>
+        <td><content textType="body" fontSize="11" textAlign="center"><p>PyCWR</p></content></td>
+        <td><content textType="body" fontSize="11" textAlign="left"><p>PRD 模型、双偏振 QC、HCL、VAD/VVP/VWP、CAPPI/VIL/ET、多雷达拼图、导出 Py-ART</p></content></td>
+        <td><content textType="body" fontSize="11" textAlign="center" color="rgba(22,163,74,1)" bold="true"><p>已有</p></content></td>
+      </tr>
+      <tr height="55">
+        <td><content textType="body" fontSize="12" bold="true" color="rgba(37,99,235,1)" textAlign="center"><p>metgrs</p></content></td>
+        <td><content textType="body" fontSize="11" textAlign="center"><p>MetGRS</p></content></td>
+        <td><content textType="body" fontSize="11" textAlign="left"><p>风廓线、云雷达、激光雷达、微波辐射计四类垂直观测数据读取与 xarray 接入</p></content></td>
+        <td><content textType="body" fontSize="11" textAlign="center" color="rgba(22,163,74,1)" bold="true"><p>已有</p></content></td>
+      </tr>
+    </table>
+    <shape type="text" topLeftX="60" topLeftY="490" width="840" height="20">
+      <content textType="caption" fontSize="11" color="rgba(100,116,139,1)">
+        <p>路径：E:\study\metgrs\.skills\&lt;name&gt;\skill.md</p>
+      </content>
+    </shape>
+  </data>
+  <note>
+    <content textType="body">
+      <p>这是五份 skill 的全景图。红底标注的两份是这次新写的：python-radar-basics 对应周一上午的 Python 基础，pyart 对应周二全天。</p>
+      <p>绿底三份是之前就沉淀好的：pycinrad、pycwr、metgrs。每份 skill 的核心能力列在中间那一列，大家看完就能判断自己的任务该用哪份。</p>
+      <p>注意：这五份不是互斥的。比如 Py-ART 的案例实际上要先用 pycinrad.StandardData 读数据，再 standard_data_to_pyart 桥接，所以两份 skill 会配合用。</p>
+    </content>
+  </note>
+</slide>

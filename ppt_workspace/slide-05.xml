@@ -1,0 +1,97 @@
+<slide>
+  <style><fill><fillColor color="rgba(242,244,248,1)"/></fill></style>
+  <data>
+    <shape type="text" topLeftX="60" topLeftY="40" width="600" height="24">
+      <content textType="caption" fontSize="12" color="rgba(37,99,235,1)" letterSpacing="1">
+        <p>工作流 · HOW IT WORKS</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="60" topLeftY="70" width="840" height="50">
+      <content textType="headline" fontSize="26" bold="true" color="rgba(13,19,38,1)">
+        <p>提问 → 命中 Skill → 生成代码 → 跑通验证</p>
+      </content>
+    </shape>
+    <line startX="60" startY="135" endX="900" endY="135"><border color="rgba(203,213,225,1)" width="1"/></line>
+
+    <!-- step 1 -->
+    <shape type="ellipse" topLeftX="80" topLeftY="200" width="48" height="48">
+      <fill><fillColor color="rgba(37,99,235,1)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="208" width="48" height="32">
+      <content textType="body" fontSize="18" bold="true" color="rgba(255,255,255,1)" textAlign="center"><p>1</p></content>
+    </shape>
+    <shape type="text" topLeftX="145" topLeftY="200" width="180" height="24">
+      <content textType="body" fontSize="14" bold="true" color="rgba(13,19,38,1)"><p>提出任务</p></content>
+    </shape>
+    <shape type="text" topLeftX="145" topLeftY="228" width="180" height="60">
+      <content textType="caption" fontSize="12" color="rgba(75,85,99,1)" lineSpacing="multiple:1.4">
+        <p>"读 Z9731 的 SA 基数据，画 0.5° 反射率 PPI，叠加湖南城市名"</p>
+      </content>
+    </shape>
+
+    <line startX="330" startY="224" endX="370" endY="224"><border color="rgba(37,99,235,1)" width="2"/><endArrow type="arrow"/></line>
+
+    <!-- step 2 -->
+    <shape type="ellipse" topLeftX="380" topLeftY="200" width="48" height="48">
+      <fill><fillColor color="rgba(37,99,235,1)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="380" topLeftY="208" width="48" height="32">
+      <content textType="body" fontSize="18" bold="true" color="rgba(255,255,255,1)" textAlign="center"><p>2</p></content>
+    </shape>
+    <shape type="text" topLeftX="445" topLeftY="200" width="180" height="24">
+      <content textType="body" fontSize="14" bold="true" color="rgba(13,19,38,1)"><p>命中 Skill</p></content>
+    </shape>
+    <shape type="text" topLeftX="445" topLeftY="228" width="180" height="60">
+      <content textType="caption" fontSize="12" color="rgba(75,85,99,1)" lineSpacing="multiple:1.4">
+        <p>识别到 "SA 基数据 / PPI / 城市名"，自动加载 pycinrad skill.md</p>
+      </content>
+    </shape>
+
+    <line startX="630" startY="224" endX="670" endY="224"><border color="rgba(37,99,235,1)" width="2"/><endArrow type="arrow"/></line>
+
+    <!-- step 3 -->
+    <shape type="ellipse" topLeftX="680" topLeftY="200" width="48" height="48">
+      <fill><fillColor color="rgba(37,99,235,1)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="680" topLeftY="208" width="48" height="32">
+      <content textType="body" fontSize="18" bold="true" color="rgba(255,255,255,1)" textAlign="center"><p>3</p></content>
+    </shape>
+    <shape type="text" topLeftX="745" topLeftY="200" width="180" height="24">
+      <content textType="body" fontSize="14" bold="true" color="rgba(13,19,38,1)"><p>生成代码</p></content>
+    </shape>
+    <shape type="text" topLeftX="745" topLeftY="228" width="180" height="80">
+      <content textType="caption" fontSize="12" color="rgba(75,85,99,1)" lineSpacing="multiple:1.4">
+        <p>read_auto → get_data(0,230,"REF") → +8h → PPI(add_city_names=True)</p>
+      </content>
+    </shape>
+
+    <!-- step 4 lower -->
+    <shape type="ellipse" topLeftX="380" topLeftY="340" width="48" height="48">
+      <fill><fillColor color="rgba(13,19,38,1)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="380" topLeftY="348" width="48" height="32">
+      <content textType="body" fontSize="18" bold="true" color="rgba(255,255,255,1)" textAlign="center"><p>4</p></content>
+    </shape>
+    <shape type="text" topLeftX="445" topLeftY="340" width="400" height="24">
+      <content textType="body" fontSize="14" bold="true" color="rgba(13,19,38,1)"><p>本地运行 / 报错回喂 / 修正</p></content>
+    </shape>
+    <shape type="text" topLeftX="445" topLeftY="368" width="420" height="60">
+      <content textType="caption" fontSize="12" color="rgba(75,85,99,1)" lineSpacing="multiple:1.4">
+        <p>把 traceback 粘回对话，AI 对照 skill 里的"常见陷阱"逐条排查，直到图出得来、坐标对得上</p>
+      </content>
+    </shape>
+
+    <shape type="text" topLeftX="60" topLeftY="460" width="840" height="40">
+      <content textType="body" fontSize="13" color="rgba(75,85,99,1)">
+        <p>关键：AI 写代码只是起点，<span bold="true" color="rgba(37,99,235,1)">第 4 步的"跑通—回喂—修正"</span>才是真正的产能放大器。</p>
+      </content>
+    </shape>
+  </data>
+  <note>
+    <content textType="body">
+      <p>这是一次完整的 Skill 使用闭环。第一步像平时一样提需求；第二步 AI 自动判断该读哪份 skill；第三步按 skill 里的推荐工作流生成代码。</p>
+      <p>第四步最容易被忽略——代码不可能一次就完美，跑出问题把报错贴回去，AI 会对照 skill 里的陷阱清单逐条检查。</p>
+      <p>这个闭环跑顺了，原来要查半天 GitHub 的事，现在一杯茶的功夫就能出图。</p>
+    </content>
+  </note>
+</slide>

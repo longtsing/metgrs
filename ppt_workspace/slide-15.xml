@@ -1,0 +1,43 @@
+<slide>
+  <style><fill><fillColor color="rgba(13,19,38,1)"/></fill></style>
+  <data>
+    <shape type="rect" topLeftX="0" topLeftY="0" width="12" height="540">
+      <fill><fillColor color="rgba(37,99,235,1)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="80" width="800" height="30">
+      <content textType="caption" fontSize="14" color="rgba(96,165,250,1)" letterSpacing="2">
+        <p>结语 · TAKEAWAYS</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="130" width="820" height="80">
+      <content textType="title" fontSize="34" bold="true" color="rgba(255,255,255,1)" lineSpacing="multiple:1.3">
+        <p>让 AI 成为你最熟的那个实习生——</p>
+        <p>但先把"操作手册"交给它。</p>
+      </content>
+    </shape>
+
+    <line startX="80" startY="260" endX="200" endY="260"><border color="rgba(37,99,235,1)" width="2"/></line>
+
+    <shape type="text" topLeftX="80" topLeftY="285" width="820" height="180">
+      <content textType="body" fontSize="16" color="rgba(226,232,240,1)" lineSpacing="multiple:1.9">
+        <p>• 本周五门课 = 五份 skill，路径 <span fontFamily="Consolas" color="rgba(147,197,253,1)">E:\study\metgrs\.skills\</span></p>
+        <p>• 新增两份：<span color="rgba(147,197,253,1)" bold="true">python-radar-basics</span> 与 <span color="rgba(147,197,253,1)" bold="true">pyart</span>；原有三份已沉淀</p>
+        <p>• 用法：提需求 → AI 自动读 skill → 写代码 → 跑不通把报错贴回去</p>
+        <p>• 心法：变量名、时区、单位、波段这四件事，永远不要让 AI 猜</p>
+      </content>
+    </shape>
+
+    <shape type="text" topLeftX="80" topLeftY="490" width="820" height="30">
+      <content textType="caption" fontSize="12" color="rgba(148,163,184,1)">
+        <p>祝大家这一周出图顺利 · 雷达产品数据处理基础讲习班 · 2026.09</p>
+      </content>
+    </shape>
+  </data>
+  <note>
+    <content textType="body">
+      <p>最后一页收束。一句话：AI 是个聪明的实习生，但它没见过中国雷达的 bin 文件、不知道北京时和 UTC 差八小时。</p>
+      <p>把这份操作手册交给它，它就能上手；不给，它只能瞎猜。</p>
+      <p>这一周大家会在机房里把五个库都跑一遍，遇到坑随时把报错贴回对话，我们一起把它写进 skill。谢谢大家。</p>
+    </content>
+  </note>
+</slide>

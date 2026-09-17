@@ -1,0 +1,62 @@
+<slide>
+  <style><fill><fillColor color="rgba(242,244,248,1)"/></fill></style>
+  <data>
+    <shape type="text" topLeftX="60" topLeftY="40" width="600" height="24">
+      <content textType="caption" fontSize="12" color="rgba(37,99,235,1)" letterSpacing="1">
+        <p>维护 · HOW TO EXTEND</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="60" topLeftY="70" width="840" height="40">
+      <content textType="headline" fontSize="24" bold="true" color="rgba(13,19,38,1)">
+        <p>Skill 不是写完就完——遇到新坑，就补一节</p>
+      </content>
+    </shape>
+    <line startX="60" startY="125" endX="900" endY="125"><border color="rgba(203,213,225,1)" width="1"/></line>
+
+    <shape type="text" topLeftX="60" topLeftY="155" width="400" height="24">
+      <content textType="body" fontSize="14" bold="true" color="rgba(37,99,235,1)"><p>什么时候更新 skill</p></content>
+    </shape>
+    <shape type="text" topLeftX="60" topLeftY="185" width="400" height="200">
+      <content textType="body" fontSize="13" color="rgba(13,19,38,1)" lineSpacing="multiple:1.8">
+        <p>• 同一个坑踩了第二次 → 写进"常见陷阱"</p>
+        <p>• 库升级改了 API → 改"典型调用"</p>
+        <p>• 发现新的可复用 case → 加进"推荐工作流"</p>
+        <p>• 换了一个雷达型号读不进 → 补"适用场景"</p>
+        <p>• 同事问了一个高频问题 → 直接写成一节</p>
+      </content>
+    </shape>
+
+    <shape type="text" topLeftX="500" topLeftY="155" width="400" height="24">
+      <content textType="body" fontSize="14" bold="true" color="rgba(37,99,235,1)"><p>新建一份 skill 的模板</p></content>
+    </shape>
+    <shape type="rect" topLeftX="500" topLeftY="185" width="400" height="240">
+      <fill><fillColor color="rgba(13,19,38,1)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="520" topLeftY="200" width="365" height="215">
+      <content textType="body" fontSize="11" color="rgba(226,232,240,1)" lineSpacing="multiple:1.5">
+        <p># 名称 使用指南</p>
+        <p>&gt; 一句话说明它是干嘛的</p>
+        <p>1. 适用场景（什么时候用）</p>
+        <p>2. 安装与导入</p>
+        <p>3. 模块结构与典型调用</p>
+        <p>4. 通用使用模式</p>
+        <p>5. 常见陷阱（最有价值）</p>
+        <p>6. 推荐工作流（最短可跑通）</p>
+        <p>7. 详细参考（文档/示例路径）</p>
+      </content>
+    </shape>
+
+    <shape type="text" topLeftX="60" topLeftY="445" width="840" height="60">
+      <content textType="body" fontSize="13" color="rgba(75,85,99,1)" lineSpacing="multiple:1.6">
+        <p><span bold="true" color="rgba(13,19,38,1)">本次新增：</span>pyart\skill.md、python-radar-basics\skill.md，已按上述模板写好；原有 pycinrad / pycwr / metgrs 三份保持不动。</p>
+      </content>
+    </shape>
+  </data>
+  <note>
+    <content textType="body">
+      <p>Skill 是活文档。左边是更新时机：同一个坑踩两次就该写进去，库升级了就改调用示例，新 case 就加进工作流。</p>
+      <p>右边是新建 skill 的七节模板。今天新增的两份就是按这个模板写的——pyart 和 python-radar-basics。</p>
+      <p>强调一点：第五节"常见陷阱"是最值钱的，因为这是 GitHub README 里不会写、只有真正踩过才知道的东西。</p>
+    </content>
+  </note>
+</slide>

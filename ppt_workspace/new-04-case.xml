@@ -1,0 +1,66 @@
+<slide>
+  <style><fill><fillColor color="rgba(242,244,248,1)"/></fill></style>
+  <data>
+    <shape type="text" topLeftX="60" topLeftY="40" width="600" height="24">
+      <content textType="caption" fontSize="12" color="rgba(37,99,235,1)" letterSpacing="1">
+        <p>自习案例 · PRACTICE CASE</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="60" topLeftY="70" width="840" height="40">
+      <content textType="headline" fontSize="24" bold="true" color="rgba(13,19,38,1)">
+        <p>60 分钟案例：读 Z9731，算 CR，画带城市名的 PPI</p>
+      </content>
+    </shape>
+    <line startX="60" startY="125" endX="900" endY="125"><border color="rgba(203,213,225,1)" width="1"/></line>
+
+    <shape type="text" topLeftX="60" topLeftY="145" width="400" height="24">
+      <content textType="body" fontSize="14" bold="true" color="rgba(37,99,235,1)"><p>给 Trae 的初始提示（直接复制）</p></content>
+    </shape>
+    <shape type="rect" topLeftX="60" topLeftY="175" width="400" height="290">
+      <fill><fillColor color="rgba(13,19,38,1)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="78" topLeftY="190" width="370" height="265">
+      <content textType="body" fontSize="11" color="rgba(226,232,240,1)" fontFamily="Consolas" lineSpacing="multiple:1.5">
+        <p>@pycinrad\skill.md</p>
+        <p>读 Datas\04_pycwr\</p>
+        <p> Z9731_20210510_..._CAP.BIN.bz2</p>
+        <p>1) read_auto 读取，scantime +8h</p>
+        <p>2) iter_tilt(230,"REF") 取全仰角</p>
+        <p>3) quick_cr 算组合反射率</p>
+        <p>4) PPI 黑底 + 城市名 + dpi=300</p>
+        <p>5) 红色轮廓标 CR&gt;40 dBZ</p>
+        <p>6) 存 out\cr_09731.png</p>
+        <p>脚本存 task01_cr.py 并直接运行</p>
+      </content>
+    </shape>
+
+    <shape type="text" topLeftX="490" topLeftY="145" width="410" height="24">
+      <content textType="body" fontSize="14" bold="true" color="rgba(37,99,235,1)"><p>完成标准（自查清单）</p></content>
+    </shape>
+    <shape type="text" topLeftX="490" topLeftY="175" width="410" height="290">
+      <content textType="body" fontSize="13" color="rgba(13,19,38,1)" lineSpacing="multiple:1.8">
+        <p>□ out\cr_09731.png 能正常打开</p>
+        <p>□ 标题时间是 15:09（北京时），不是 07:09</p>
+        <p>□ 图上有长沙、株洲、湘潭等城市名</p>
+        <p>□ 强回波 &gt;40 dBZ 有红色轮廓</p>
+        <p>□ task01_cr.py 路径用变量、无硬编码</p>
+        <p>□ 把你踩过的坑追加到 pycinrad\skill.md</p>
+        <p></p>
+        <p><span bold="true" color="rgba(220,38,38,1)">报错回喂：</span>把终端红字整段贴回，加一句"对照 skill 第 5 节排查"。</p>
+      </content>
+    </shape>
+
+    <shape type="text" topLeftX="60" topLeftY="480" width="840" height="30">
+      <content textType="caption" fontSize="11" color="rgba(100,116,139,1)">
+        <p>进阶：换 NUIST.AR2 做 HCL / 换 02_pyart 做速度退模糊 / 用 01_basics 画 xarray 图 —— 见 自习训练任务.md</p>
+      </content>
+    </shape>
+  </data>
+  <note>
+    <content textType="body">
+      <p>这是自习案例的核心页。左边是给 Trae 的提示词，直接复制就行——@ 上 skill.md，再 @ 数据文件，列六步要求。</p>
+      <p>右边是完成标准，六条自查。特别提醒第二条：标题时间必须是 15:09，不是 07:09，这是检验北京时转换是否做对的最直观证据。</p>
+      <p>报错别慌，红字整段贴回去，让 AI 对照 skill 第 5 节排查。完成后把新踩的坑追加到 skill，这才是闭环。</p>
+    </content>
+  </note>
+</slide>

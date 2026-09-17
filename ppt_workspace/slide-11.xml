@@ -1,0 +1,62 @@
+<slide>
+  <style><fill><fillColor color="rgba(242,244,248,1)"/></fill></style>
+  <data>
+    <shape type="text" topLeftX="60" topLeftY="40" width="600" height="24">
+      <content textType="caption" fontSize="12" color="rgba(22,163,74,1)" letterSpacing="1">
+        <p>Skill 05 · 已有 · metgrs</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="60" topLeftY="70" width="840" height="40">
+      <content textType="headline" fontSize="24" bold="true" color="rgba(13,19,38,1)">
+        <p>metgrs：地基垂直观测四类仪器的 xarray 入口</p>
+      </content>
+    </shape>
+    <line startX="60" startY="125" endX="900" endY="135"><border color="rgba(203,213,225,1)" width="1"/></line>
+
+    <shape type="text" topLeftX="60" topLeftY="145" width="380" height="24">
+      <content textType="body" fontSize="14" bold="true" color="rgba(37,99,235,1)"><p>覆盖内容</p></content>
+    </shape>
+    <shape type="text" topLeftX="60" topLeftY="175" width="380" height="220">
+      <content textType="body" fontSize="13" color="rgba(13,19,38,1)" lineSpacing="multiple:1.7">
+        <p>• WindProfileRadar：风廓线 L1/L2/L3，readL3files 多进程</p>
+        <p>• CloudRadar：云雷达 FFT / 基础数据，.cld.plot("Z1")</p>
+        <p>• Lidar：激光雷达 L0/L1/L2/CDWL 风产品</p>
+        <p>• MicroWaveRadiometer：微波辐射计亮温，gbk 编码</p>
+        <p>• Utils：vw2uv 风分量互换、dtryfloat 容错</p>
+        <p>• accessor：.wpr / .cld / .lidar</p>
+      </content>
+    </shape>
+
+    <shape type="text" topLeftX="480" topLeftY="145" width="420" height="24">
+      <content textType="body" fontSize="14" bold="true" color="rgba(37,99,235,1)"><p>最短工作流</p></content>
+    </shape>
+    <shape type="rect" topLeftX="480" topLeftY="175" width="420" height="240">
+      <fill><fillColor color="rgba(13,19,38,1)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="500" topLeftY="190" width="385" height="215">
+      <content textType="body" fontSize="11" color="rgba(226,232,240,1)" fontFamily="Consolas" lineSpacing="multiple:1.5">
+        <p>from metgrs import WindProfileRadar, CloudRadar</p>
+        <p>fps = sorted(glob.glob("...ROBS/*.TXT"))</p>
+        <p>ds = WindProfileRadar.readL3files(</p>
+        <p>    fps, use_multiprocess=True)</p>
+        <p>ds["U_Wind_Speed"].plot(x="time", y="height")</p>
+        <p>ds_c = CloudRadar.readBaseDatas(...)</p>
+        <p>ds_c.cld.plot("Z1")</p>
+      </content>
+    </shape>
+
+    <shape type="text" topLeftX="60" topLeftY="430" width="840" height="80">
+      <content textType="body" fontSize="12" color="rgba(75,85,99,1)" lineSpacing="multiple:1.6">
+        <p><span bold="true" color="rgba(13,19,38,1)">高频坑：</span>依赖 joblib；CDWL 的 / 读入是 NaN；微波辐射计列名带中文括号、编码 gbk；L3 时间在 attrs 里。</p>
+        <p><span bold="true" color="rgba(13,19,38,1)">示例：</span>GitCode longtsing/metgrs examples 1~4（风廓线/云雷达/激光雷达/微波辐射计）。</p>
+      </content>
+    </shape>
+  </data>
+  <note>
+    <content textType="body">
+      <p>metgrs 是王清龙老师团队的库，对应周五的垂直观测课。它和前面四个库的区别是：读的不是天气雷达 PPI，而是风廓线、云雷达、激光雷达、微波辐射计这四类垂直廓线仪器。</p>
+      <p>右边这段是典型用法：批量读 L3 ROBS 文件，多进程加速，直接 plot 出时间-高度剖面。</p>
+      <p>注意它返回的全是 xarray.Dataset，和周一讲的 Xarray 无缝衔接——这就是为什么第一份 skill 要先打基础。</p>
+    </content>
+  </note>
+</slide>

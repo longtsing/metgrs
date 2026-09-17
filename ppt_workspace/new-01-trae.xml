@@ -1,0 +1,57 @@
+<slide>
+  <style><fill><fillColor color="rgba(13,19,38,1)"/></fill></style>
+  <data>
+    <shape type="rect" topLeftX="0" topLeftY="0" width="12" height="540">
+      <fill><fillColor color="rgba(37,99,235,1)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="60" width="700" height="24">
+      <content textType="caption" fontSize="13" color="rgba(96,165,250,1)" letterSpacing="2">
+        <p>推荐工具 · WHY TRAE</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="95" width="820" height="80">
+      <content textType="headline" fontSize="30" bold="true" color="rgba(255,255,255,1)" lineSpacing="multiple:1.3">
+        <p>为什么选 Trae Code 做雷达数据处理的 AI 工作台</p>
+      </content>
+    </shape>
+    <line startX="80" startY="195" endX="200" endY="195"><border color="rgba(37,99,235,1)" width="2"/></line>
+
+    <shape type="text" topLeftX="80" topLeftY="220" width="380" height="24">
+      <content textType="body" fontSize="14" bold="true" color="rgba(147,197,253,1)"><p>它是什么</p></content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="250" width="380" height="100">
+      <content textType="body" fontSize="13" color="rgba(226,232,240,1)" lineSpacing="multiple:1.7">
+        <p>Trae 是字节跳动出品的 AI IDE（基于 VS Code 内核），</p>
+        <p>把"读代码库 + 写代码 + 跑脚本 + 看报错"四件事</p>
+        <p>放进同一个窗口。对气象数据处理这种</p>
+        <p>"一边跑一边贴报错"的工作流尤其顺手。</p>
+      </content>
+    </shape>
+
+    <shape type="text" topLeftX="500" topLeftY="220" width="380" height="24">
+      <content textType="body" fontSize="14" bold="true" color="rgba(147,197,253,1)"><p>为什么适合本课程</p></content>
+    </shape>
+    <shape type="text" topLeftX="500" topLeftY="250" width="380" height="200">
+      <content textType="body" fontSize="13" color="rgba(226,232,240,1)" lineSpacing="multiple:1.7">
+        <p>• 内置终端：生成的 .py 直接跑，不用切窗口</p>
+        <p>• Builder/Agent 模式：AI 自己改文件、自己装依赖</p>
+        <p>• @ 文件：把 skill.md 直接 @ 进对话</p>
+        <p>• Project Rules：把 .skills 设为长期规则，每次自动加载</p>
+        <p>• 对中文 Windows / 中文路径 / 反斜杠友好</p>
+      </content>
+    </shape>
+
+    <shape type="text" topLeftX="80" topLeftY="475" width="820" height="30">
+      <content textType="body" fontSize="13" color="rgba(148,163,184,1)">
+        <p>下载：trae.com.cn · 安装后用手机号登录即可，学生环境建议选"全局安装 + Python 3.10 内核"</p>
+      </content>
+    </shape>
+  </data>
+  <note>
+    <content textType="body">
+      <p>上一页讲的是通用 AI 工作流，这一页讲为什么我们推荐 Trae 作为承载它的 IDE。</p>
+      <p>Trae 是字节出的 AI IDE，VS Code 内核，国内网络直连，不用挂代理。对我们这种"写脚本、跑脚本、贴报错、再改"的循环特别合适。</p>
+      <p>右侧五条是它和本次课程最相关的能力：终端内置、Agent 模式自己改文件、@ 文件、Project Rules 长期记忆、中文 Windows 友好。</p>
+    </content>
+  </note>
+</slide>

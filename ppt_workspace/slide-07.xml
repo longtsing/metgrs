@@ -1,0 +1,62 @@
+<slide>
+  <style><fill><fillColor color="rgba(242,244,248,1)"/></fill></style>
+  <data>
+    <shape type="text" topLeftX="60" topLeftY="40" width="600" height="24">
+      <content textType="caption" fontSize="12" color="rgba(220,38,38,1)" letterSpacing="1">
+        <p>Skill 01 · 新增 · python-radar-basics</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="60" topLeftY="70" width="840" height="40">
+      <content textType="headline" fontSize="24" bold="true" color="rgba(13,19,38,1)">
+        <p>NumPy / Pandas / Xarray：把雷达数据接成可计算的三件套</p>
+      </content>
+    </shape>
+    <line startX="60" startY="125" endX="900" endY="125"><border color="rgba(203,213,225,1)" width="1"/></line>
+
+    <shape type="text" topLeftX="60" topLeftY="145" width="380" height="24">
+      <content textType="body" fontSize="14" bold="true" color="rgba(37,99,235,1)"><p>覆盖内容</p></content>
+    </shape>
+    <shape type="text" topLeftX="60" topLeftY="175" width="380" height="200">
+      <content textType="body" fontSize="13" color="rgba(13,19,38,1)" lineSpacing="multiple:1.7">
+        <p>• NumPy：PPI 二维数组、掩膜、广播、np.nanmax</p>
+        <p>• Pandas：站点表/降水 CSV、筛选、分组、merge、编码</p>
+        <p>• Xarray：Dataset 构造、sel/isel、where、concat、.plot</p>
+        <p>• 三种数据形态如何互转（数组 ↔ 表格 ↔ Dataset）</p>
+        <p>• 与后续 Py-ART / cinrad / pycwr 返回值的衔接</p>
+      </content>
+    </shape>
+
+    <shape type="text" topLeftX="480" topLeftY="145" width="420" height="24">
+      <content textType="body" fontSize="14" bold="true" color="rgba(37,99,235,1)"><p>最短工作流</p></content>
+    </shape>
+    <shape type="rect" topLeftX="480" topLeftY="175" width="420" height="240">
+      <fill><fillColor color="rgba(13,19,38,1)"/></fill>
+    </shape>
+    <shape type="text" topLeftX="500" topLeftY="190" width="385" height="215">
+      <content textType="body" fontSize="11" color="rgba(226,232,240,1)" fontFamily="Consolas" lineSpacing="multiple:1.5">
+        <p>import numpy as np, pandas as pd</p>
+        <p>import xarray as xr</p>
+        <p>arr = np.load("ppi_sample.npy")</p>
+        <p>ds = xr.Dataset({"dbz": (("az","r"), arr)},</p>
+        <p>    coords={"az": np.linspace(0,360,360,False),</p>
+        <p>            "r": np.linspace(0,230,400)})</p>
+        <p>hi = ds["dbz"].where(ds["dbz"]&gt;=30)</p>
+        <p>hi.plot(x="r", y="az", cmap="jet")</p>
+      </content>
+    </shape>
+
+    <shape type="text" topLeftX="60" topLeftY="430" width="840" height="80">
+      <content textType="body" fontSize="12" color="rgba(75,85,99,1)" lineSpacing="multiple:1.6">
+        <p><span bold="true" color="rgba(13,19,38,1)">高频坑：</span>sel 用标签、isel 用位置；坐标要单调递增；np.nan 与 np.ma 不混用；CSV 用 utf-8-sig 写出。</p>
+        <p><span bold="true" color="rgba(13,19,38,1)">示例：</span>H:\hn\radar_202609\ 下三个 ipynb（NumPy 回波数组 / Pandas 站点降水 / Xarray 读写索引）。</p>
+      </content>
+    </shape>
+  </data>
+  <note>
+    <content textType="body">
+      <p>第一份 skill 是新加的，对应周一下午陈鹤老师的 Python 基础。很多同学以为"我会 Python"就跳过这一节，但雷达数据的 NumPy/Pandas/Xarray 用法和教材里的不一样。</p>
+      <p>右边这段是最短可跑通代码：把一个 npy 读成 xarray，掩膜出 30 dBZ 以上，直接 plot。这就是后面所有雷达库返回值的通用形态。</p>
+      <p>底部两个坑特别提醒：sel 和 isel 别混，中文 CSV 写出用 utf-8-sig，否则 Excel 打开乱码。</p>
+    </content>
+  </note>
+</slide>

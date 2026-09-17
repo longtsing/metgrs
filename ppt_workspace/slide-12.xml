@@ -1,0 +1,87 @@
+<slide>
+  <style><fill><fillColor color="rgba(242,244,248,1)"/></fill></style>
+  <data>
+    <shape type="text" topLeftX="60" topLeftY="40" width="600" height="24">
+      <content textType="caption" fontSize="12" color="rgba(37,99,235,1)" letterSpacing="1">
+        <p>跨库对照 · CHEAT SHEET</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="60" topLeftY="70" width="840" height="40">
+      <content textType="headline" fontSize="24" bold="true" color="rgba(13,19,38,1)">
+        <p>同一回事，三套叫法——AI 最容易在这里翻车</p>
+      </content>
+    </shape>
+    <line startX="60" startY="125" endX="900" endY="125"><border color="rgba(203,213,225,1)" width="1"/></line>
+
+    <table topLeftX="60" topLeftY="150" width="840" height="300">
+      <colgroup>
+        <col width="160"/>
+        <col width="180"/>
+        <col width="180"/>
+        <col width="180"/>
+        <col width="140"/>
+      </colgroup>
+      <tr height="34">
+        <td><fill><fillColor color="rgba(13,19,38,1)"/></fill><content textType="body" fontSize="12" bold="true" color="rgba(255,255,255,1)" textAlign="center"><p>概念</p></content></td>
+        <td><fill><fillColor color="rgba(13,19,38,1)"/></fill><content textType="body" fontSize="12" bold="true" color="rgba(255,255,255,1)" textAlign="center"><p>PyCINRAD</p></content></td>
+        <td><fill><fillColor color="rgba(13,19,38,1)"/></fill><content textType="body" fontSize="12" bold="true" color="rgba(255,255,255,1)" textAlign="center"><p>PyCWR</p></content></td>
+        <td><fill><fillColor color="rgba(13,19,38,1)"/></fill><content textType="body" fontSize="12" bold="true" color="rgba(255,255,255,1)" textAlign="center"><p>Py-ART</p></content></td>
+        <td><fill><fillColor color="rgba(13,19,38,1)"/></fill><content textType="body" fontSize="12" bold="true" color="rgba(255,255,255,1)" textAlign="center"><p>注意</p></content></td>
+      </tr>
+      <tr height="44">
+        <td><content textType="body" fontSize="11" bold="true" textAlign="center"><p>反射率</p></content></td>
+        <td><content textType="body" fontSize="11" textAlign="center" fontFamily="Consolas"><p>REF</p></content></td>
+        <td><content textType="body" fontSize="11" textAlign="center" fontFamily="Consolas"><p>dBZ</p></content></td>
+        <td><content textType="body" fontSize="11" textAlign="center" fontFamily="Consolas"><p>reflectivity</p></content></td>
+        <td><content textType="body" fontSize="11" textAlign="center">大小写敏感</content></td>
+      </tr>
+      <tr height="44">
+        <td><content textType="body" fontSize="11" bold="true" textAlign="center"><p>径向速度</p></content></td>
+        <td><content textType="body" fontSize="11" textAlign="center" fontFamily="Consolas"><p>VEL</p></content></td>
+        <td><content textType="body" fontSize="11" textAlign="center" fontFamily="Consolas"><p>V</p></content></td>
+        <td><content textType="body" fontSize="11" textAlign="center" fontFamily="Consolas"><p>velocity</p></content></td>
+        <td><content textType="body" fontSize="11" textAlign="center">—</content></td>
+      </tr>
+      <tr height="44">
+        <td><content textType="body" fontSize="11" bold="true" textAlign="center"><p>相关系数</p></content></td>
+        <td><content textType="body" fontSize="11" textAlign="center" fontFamily="Consolas"><p>RHO</p></content></td>
+        <td><content textType="body" fontSize="11" textAlign="center" fontFamily="Consolas"><p>RHO</p></content></td>
+        <td><content textType="body" fontSize="11" textAlign="center" fontFamily="Consolas"><p>cross_correlation_ratio</p></content></td>
+        <td><content textType="body" fontSize="11" textAlign="center">Py-ART 最长</content></td>
+      </tr>
+      <tr height="44">
+        <td><content textType="body" fontSize="11" bold="true" textAlign="center"><p>扫描时间</p></content></td>
+        <td><content textType="body" fontSize="11" textAlign="center" fontFamily="Consolas"><p>UTC，需 +8h</p></content></td>
+        <td><content textType="body" fontSize="11" textAlign="center" fontFamily="Consolas"><p>对象内自动</p></content></td>
+        <td><content textType="body" fontSize="11" textAlign="center" fontFamily="Consolas"><p>继承自 cinrad</p></content></td>
+        <td><content textType="body" fontSize="11" textAlign="center">北京时手动转</content></td>
+      </tr>
+      <tr height="44">
+        <td><content textType="body" fontSize="11" bold="true" textAlign="center"><p>高度单位</p></content></td>
+        <td><content textType="body" fontSize="11" textAlign="center">km</content></td>
+        <td><content textType="body" fontSize="11" textAlign="center">米（CAPPI）</content></td>
+        <td><content textType="body" fontSize="11" textAlign="center">m</content></td>
+        <td><content textType="body" fontSize="11" textAlign="center" color="rgba(220,38,38,1)" bold="true">pycwr 最易踩</content></td>
+      </tr>
+      <tr height="44">
+        <td><content textType="body" fontSize="11" bold="true" textAlign="center"><p>读取入口</p></content></td>
+        <td><content textType="body" fontSize="11" textAlign="center" fontFamily="Consolas"><p>read_auto / StandardData</p></content></td>
+        <td><content textType="body" fontSize="11" textAlign="center" fontFamily="Consolas"><p>read_auto</p></content></td>
+        <td><content textType="body" fontSize="11" textAlign="center" fontFamily="Consolas"><p>cinrad 桥接</p></content></td>
+        <td><content textType="body" fontSize="11" textAlign="center">不直接读 bin</content></td>
+      </tr>
+    </table>
+    <shape type="text" topLeftX="60" topLeftY="470" width="840" height="30">
+      <content textType="body" fontSize="13" color="rgba(13,19,38,1)">
+        <p>把这张表贴进对话，AI 就不会再把 REF 和 dBZ 和 reflectivity 混用。</p>
+      </content>
+    </shape>
+  </data>
+  <note>
+    <content textType="body">
+      <p>这一页是今天最实用的 cheat sheet。三个库对同一物理量的叫法完全不一样，变量名、时间基准、单位都有差异。</p>
+      <p>最坑的两个：一是 pycwr 的 CAPPI 高度单位是米，不是千米；二是 cinrad 的 scantime 是 UTC，画出来差 8 小时。这两点 skill 里都用粗体标了。</p>
+      <p>建议大家把这张表截图，下次让 AI 写代码时一起贴进去，比口头描述"用中文雷达"管用得多。</p>
+    </content>
+  </note>
+</slide>

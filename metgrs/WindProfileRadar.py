@@ -231,8 +231,26 @@ def readSingleL1file(fp: str):
             obs_infos.append(obs_info)
             speeds.append(speed_per_fft)
 
+        # 各 observation 的 BinNum / ScanBeamN 可能不完全一致，统一对齐到最大值以便堆叠
+        max_bin_num = max(int(p['BinNum']) for p in perf_infos)
+        max_beam = max(int(p['ScanBeamN']) for p in perf_infos)
+        padded = []
+        for arr, perf_info in zip(obs_list, perf_infos):
+            beam_n, bin_n, fft_n = arr.shape
+            pad_bin = max_bin_num - bin_n
+            pad_beam = max_beam - beam_n
+            if pad_bin > 0 or pad_beam > 0:
+                arr = np.pad(
+                    arr,
+                    ((0, pad_beam), (0, pad_bin), (0, 0)),
+                    mode='constant',
+                    constant_values=0,
+                )
+            padded.append(arr)
+        obs_list = padded
+
         beam_dir = obs_infos[0]['BeamDir']
-        heights = np.arange(perf_infos[0]['BinNum']) * perf_infos[0]['BinLength'] + perf_infos[0]['StartSamplBin']
+        heights = np.arange(max_bin_num) * perf_infos[0]['BinLength'] + perf_infos[0]['StartSamplBin']
         times = [
             datetime(oi['SYear'], oi['SMonth'], oi['SDay'], oi['SHour'], oi['SMinute'], oi['SSecond'])
             for oi in obs_infos
